@@ -4,10 +4,10 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Clone)]
 pub struct Configuration {
-    environment: String,
-    server_port: u16,
-    database_connection_string: String,
-    admin_email: String
+    pub environment: String,
+    //pub server_port: u16,
+    pub database_connection_string: String,
+    //pub admin_email: String
 }
 
 impl Configuration {

@@ -5,7 +5,7 @@ use axum::{
     Router,
 };
 
-use tokio::{fs, net::TcpListener};
+use tokio::{net::TcpListener};
 
 use crate::configuration::Configuration;
 
@@ -24,16 +24,25 @@ pub struct AppState {
 async fn main() {
 
     // use a local configuration file if exists (for local debug)
-    let config_file = std::fs::read_to_string("configuration.json")
-        .unwrap_or_else(|_| {
-        std::env::var("CONFIGURATION_FILE")
-            .expect("CONFIGURATION_FILE environment variable must be set")
-        });
+    let config_file = match std::fs::exists("configuration.json") {
+        Ok(true) => { 
+            println!("Using local configuration file 'configuration.json'"); 
+            String::from("configuration.json")
+        },
+        Ok(false) => { 
+            println!("No local configuration file 'configuration.json' found, using CONFIGURATION_FILE environment variable"); 
+            std::env::var("CONFIGURATION_FILE")
+                .expect("CONFIGURATION_FILE environment variable must be set")
+        },
+        Err(e) => panic!("Failed to check for local configuration file 'configuration.json': {}", e),
+    };
 
-    println!("Load configuration from: {}", config_file);
+    println!("Load configuration from '{}'", config_file);
 
     let config = Configuration::load_from_json_file(&config_file)
         .expect("Failed to create Configuration");
+
+    println!("Configuration loaded for environment '{}'", config.environment);
 
     let app = Router::new()
         .route("/", get(endpoints::common::home))

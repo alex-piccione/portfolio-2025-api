@@ -13,13 +13,13 @@
                     "--package=api_axum"
                 ],
             },
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}\\src", // this path is required to find the configuration file
             "env": {
                 //"CONFIGURATION_FILE": "/d/Programming/projects/pc-axum-api/configuration.json"
             }   
         },
         {
-            "name": "Debug unit tests in API",
+            "name": "Unit tests",
             "type": "lldb",
             "request": "launch",            
             "cargo": {
