@@ -1,0 +1,11 @@
+# configuration file for local debug
+src/configuration.json
+
+# Cargo build output
+target/
+
+# local environment variables
+.env
+
+#*.exe
+#*.pdb

@@ -1,0 +1,41 @@
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug API",
+            "type": "lldb",
+            "request": "launch",            
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=api_axum",
+                    "--package=api_axum"
+                ],
+            },
+            "cwd": "${workspaceFolder}",
+            "env": {
+                //"CONFIGURATION_FILE": "/d/Programming/projects/pc-axum-api/configuration.json"
+            }   
+        },
+        {
+            "name": "Debug unit tests in API",
+            "type": "lldb",
+            "request": "launch",            
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=api_axum",
+                    "--package=poc-axum"
+                ],
+                "filter": {
+                    "name": "poc-axum",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
