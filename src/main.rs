@@ -4,9 +4,8 @@ use axum::{
     routing::post,
     Router,
 };
-
 use tokio::{net::TcpListener};
-
+use sqlx::PgPool;
 use crate::configuration::Configuration;
 
 mod endpoints;
@@ -16,7 +15,8 @@ mod configuration;
 
 #[derive(Clone)]
 pub struct AppState {
-    pub config: configuration::Configuration
+    pub config: configuration::Configuration,
+    pub db_pool: PgPool
 }
 
 // The tokio::main macro is used to run the async main function
@@ -44,21 +44,33 @@ async fn main() {
 
     println!("Configuration loaded for environment '{}'", config.environment);
 
+    let db_pool = PgPool::connect(&config.database_connection_string)
+        .await
+        .unwrap_or_else(|e| panic!(
+            "Failed to create database connection pool. Connection string: '{}'. {}", 
+            config.database_connection_string, e));
+
+    let app_state = AppState {
+        config: config.clone(),
+        db_pool,
+    };
+
     let app = Router::new()
         .route("/", get(endpoints::common::home))
         .route("/currency", get(endpoints::currency::list))
         .route("/currency/{id}", get(endpoints::currency::single))
-        .route("/currency", post(endpoints::currency::create));
+        .route("/currency", post(endpoints::currency::create))
+        .with_state(app_state);
 
     // read the port from environment variable or use a default
-    let port = std::env::var("PORT")
-        .unwrap_or_else(|_| "3000".to_string())
-        .parse::<u16>()
-        .expect("Failed to parse PORT environment variable as a number");
+    //let port = std::env::var("PORT")
+    //    .unwrap_or_else(|_| "3000".to_string())
+    //    .parse::<u16>()
+    //    .expect("Failed to parse PORT environment variable as a number");
     
     // Bind on server (Azure or private linux Docker container) requires 0.0.0.0
     // it will bind 127.0.0.1 and localhost locally 
-    let address = format!("0.0.0.0:{}", port);
+    let address = format!("0.0.0.0:{}", config.server_port);
 
     let listener = TcpListener::bind(&address)
         .await

@@ -5,7 +5,7 @@ use serde::Deserialize;
 #[derive(Deserialize, Clone)]
 pub struct Configuration {
     pub environment: String,
-    //pub server_port: u16,
+    pub server_port: u16,
     pub database_connection_string: String,
     //pub admin_email: String
 }
