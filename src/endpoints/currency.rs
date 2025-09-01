@@ -1,10 +1,36 @@
-use axum::{extract::Path,  extract::State, http::StatusCode, Json};
-use axum::response::{IntoResponse};
+use axum::{extract::Path,  extract::State, http::StatusCode, Json, response::IntoResponse};
 
 use super::helpers::{response_ok, response_error};
 use crate::AppState;
 use crate::endpoints::{currency_models as models};
 
+pub async fn create(State(state): State<AppState>, Json(data): Json<models::CreateRequest>) -> impl IntoResponse {
+
+    match data.to_entity() {
+        Ok(entity) => {
+            match state.currency_repository.create(entity).await {
+                Ok(new_id) => {
+                    let response = models::CreateResponse { new_id };
+                    response_ok(response)
+                },
+                Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str())
+            }
+        },
+        Err(e) => response_error(StatusCode::BAD_REQUEST,  e.as_str())       
+    }
+}
+
+pub async fn update(State(state): State<AppState>, Json(data): Json<models::UpdateRequest>) -> impl IntoResponse {
+    match data.to_entity() {
+        Ok(entity) => {
+            match state.currency_repository.update(entity).await {
+                Ok(()) => response_ok("Currency updated successfully"),
+                Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str()),
+            }
+        },
+        Err(e) => response_error(StatusCode::BAD_REQUEST, e.as_str()),
+    }
+}
 
 pub async fn single(_id:Path<i32>) -> impl IntoResponse {
 
@@ -19,8 +45,6 @@ pub async fn single(_id:Path<i32>) -> impl IntoResponse {
 
     Json(data)
 }
-
-
 
 pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
 
@@ -44,21 +68,7 @@ pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
     }
 }
 
-pub async fn create(State(state): State<AppState>, Json(data): Json<models::CreateRequest>) -> impl IntoResponse {
 
-    match data.to_entity() {
-        Ok(entity) => {
-            match state.currency_repository.create(entity).await {
-                Ok(new_id) => {
-                    let response = models::CreateResponse { new_id };
-                    response_ok(response)
-                },
-                Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str())
-            }
-        },
-        Err(e) => response_error(StatusCode::BAD_REQUEST,  e.as_str())       
-    }
-}
 
 /* 
         // Handle the error case

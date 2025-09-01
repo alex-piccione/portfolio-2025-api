@@ -63,6 +63,7 @@ async fn main() {
         .route("/currency", get(endpoints::currency::list))
         .route("/currency/{id}", get(endpoints::currency::single))
         .route("/currency", post(endpoints::currency::create))
+        .route("/currency", axum::routing::put(endpoints::currency::update))
         .with_state(app_state);
 
     // read the port from environment variable or use a default

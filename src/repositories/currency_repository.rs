@@ -9,6 +9,29 @@ pub struct CurrencyRepository {
 }
 
 impl CurrencyRepository {
+    pub async fn update(&self, currency: Currency) -> Result<(), String> {
+        let result = sqlx::query!(
+            r#"
+                UPDATE Currency 
+                SET symbol = $1, name = $2, kind = $3, is_active = $4, precision = $5
+                WHERE id = $6
+            "#,
+            currency.symbol,
+            currency.name,
+            currency.kind as CurrencyKind,
+            currency.is_active,
+            currency.precision,
+            currency.id
+        )
+        .execute(&self.db_pool)
+        .await
+        .map_err(|e| e.to_string())?;
+
+        if result.rows_affected() == 0 {
+            return Err("No currency updated".to_string());
+        }
+        Ok(())
+    }
 
     pub fn new(db_pool: PgPool) -> Self {
         Self { db_pool }
@@ -38,8 +61,7 @@ impl CurrencyRepository {
         //let currencies = sqlx::query_as!(Currency, "SELECT id, symbol, name, kind as \"kind: _\", is_active, precision FROM currencies")
         let currencies = sqlx::query_as!(Currency, 
             r#"
-            SELECT 
-                id, symbol, name, kind as "kind!: CurrencyKind", is_active, precision 
+            SELECT id, symbol, name, kind as "kind!: CurrencyKind", is_active, precision 
             FROM Currency
             "#)
             .fetch_all(&self.db_pool)

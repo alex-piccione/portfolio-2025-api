@@ -1,8 +1,7 @@
-//pub(crate) struct Currency {
 use sqlx::FromRow;
 use sqlx::Type;
 
-#[derive(FromRow, Debug, Clone)]
+#[derive(Debug, Clone, FromRow)]
 pub struct Currency {
     pub id: i32,
     pub symbol: String,
@@ -20,16 +19,22 @@ pub enum CurrencyKind {
     Stablecoin,
 }
 
+impl CurrencyKind {
+    pub fn from_string(kind: &str) -> Result<Self, String> {
+        match kind {
+            "Fiat" => Ok(CurrencyKind::Fiat),
+            "Crypto" => Ok(CurrencyKind::Crypto),
+            "Stablecoin" => Ok(CurrencyKind::Stablecoin),
+            _ => Err(format!("Invalid currency kind: {}", kind)),
+        }
+    }
+}
+
 impl TryFrom<String> for CurrencyKind {
     type Error = String;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        match value.as_str() {
-            "Fiat" => Ok(CurrencyKind::Fiat),
-            "Crypto" => Ok(CurrencyKind::Crypto),
-            "Stablecoin" => Ok(CurrencyKind::Stablecoin),
-            _ => Err(format!("Invalid currency kind: {}", value)),
-        }
+        CurrencyKind::from_string(&value)
     }
 }
 
