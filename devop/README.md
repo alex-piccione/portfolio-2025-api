@@ -32,7 +32,7 @@ These commands can be used to manage database creation and changes:
 - ``cargo sqlx database create``    # Create database
 - ``cargo sqlx database drop``    # Drop database
 
-See the _.local_sqlx_comamnds.sh_ file with prepared commands.  
+See the *.local_sqlx_comamnds.sh* file with prepared commands.  
 
 
 ### Deploy

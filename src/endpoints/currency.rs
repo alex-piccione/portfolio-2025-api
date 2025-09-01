@@ -34,6 +34,7 @@ pub async fn update(State(state): State<AppState>, Json(data): Json<models::Upda
 
 pub async fn single(_id:Path<i32>) -> impl IntoResponse {
 
+    // TODO
     let data = models::Currency {
         id: 1,
         symbol: "USD".to_string(),

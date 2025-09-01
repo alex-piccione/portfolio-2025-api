@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE Currency \n                SET symbol = $1, name = $2, kind = $3, is_active = $4, precision = $5\n                WHERE id = $6\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Bool",
+        "Int2",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "02bbf20295e98012e7a3556294854bf439d688723b5fabb510ecb7b9e63186ba"
+}

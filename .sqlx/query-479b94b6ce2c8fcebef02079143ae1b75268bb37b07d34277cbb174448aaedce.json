@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT \n                id, symbol, name, kind as \"kind!: CurrencyKind\", is_active, precision \n            FROM Currency\n            ",
+  "query": "\n            SELECT id, symbol, name, kind as \"kind!: CurrencyKind\", is_active, precision \n            FROM Currency\n            ",
   "describe": {
     "columns": [
       {
@@ -46,5 +46,5 @@
       false
     ]
   },
-  "hash": "bb7086f245686ca13efed8a1be2230f66bc6d412bff74b573c075b5c35839371"
+  "hash": "479b94b6ce2c8fcebef02079143ae1b75268bb37b07d34277cbb174448aaedce"
 }

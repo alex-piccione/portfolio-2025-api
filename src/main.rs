@@ -6,8 +6,10 @@ use axum::{
 };
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
-use crate::configuration::Configuration;
-use crate::repositories::currency_repository::CurrencyRepository;
+use crate::{
+    configuration::Configuration, 
+    repositories::currency_repository::CurrencyRepository,
+    repositories::custodian_repository::CustodianRepository};
 
 mod configuration;
 mod endpoints;
@@ -18,6 +20,7 @@ mod repositories;
 pub struct AppState {
     pub config: configuration::Configuration,
     pub currency_repository: CurrencyRepository,
+    pub custodian_repository: CustodianRepository,
 }
 
 // The tokio::main macro is used to run the async main function
@@ -52,10 +55,10 @@ async fn main() {
             config.database_connection_string, e
         ));
 
-    let currency_repository = CurrencyRepository::new(db_pool);
     let app_state = AppState {
         config: config.clone(),
-        currency_repository,
+        currency_repository: CurrencyRepository::new(db_pool.clone()),
+        custodian_repository: CustodianRepository::new(db_pool),
     };
 
     let app = Router::new()
@@ -64,6 +67,7 @@ async fn main() {
         .route("/currency/{id}", get(endpoints::currency::single))
         .route("/currency", post(endpoints::currency::create))
         .route("/currency", axum::routing::put(endpoints::currency::update))
+        .route("/custodian", get(endpoints::custodian::list))
         .with_state(app_state);
 
     // read the port from environment variable or use a default
