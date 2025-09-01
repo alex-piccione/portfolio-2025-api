@@ -20,6 +20,8 @@ pub async fn single(_id:Path<i32>) -> impl IntoResponse {
     Json(data)
 }
 
+
+
 pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
 
     match state.currency_repository.list().await {
