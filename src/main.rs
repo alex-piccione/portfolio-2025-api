@@ -8,10 +8,10 @@ use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::configuration::Configuration;
 
+mod configuration;
 mod endpoints;
 mod entities;
-mod configuration;
-//use crate::configuration::Configuration;
+mod repositories;
 
 #[derive(Clone)]
 pub struct AppState {

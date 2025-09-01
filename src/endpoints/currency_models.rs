@@ -10,7 +10,7 @@ pub struct Currency {
     pub name: String,
     pub kind: String,
     pub is_active: bool,
-    pub precision: i8,
+    pub precision: i16,
 }
 
 pub mod list {
@@ -37,7 +37,7 @@ pub struct CreateRequest {
     pub name: String,
     pub kind: String,
     pub is_active: bool,
-    pub precision: i8,
+    pub precision: i16,
 }
 
 impl CreateRequest {

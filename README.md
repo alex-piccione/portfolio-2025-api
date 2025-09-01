@@ -12,10 +12,10 @@ See (/devop/README.md).
 
 ## Run locally
 
-VS Code launch is set to run the app locally.  
+VS Code launch (_launch.json_) is set to run the app locally.  
 
 
 ## Deploy
 
-
+[TODO]
 

@@ -4,9 +4,10 @@
 
 Database is a Postgres docker container running on a Linux VPS.  
 I'm using [SQLx](https://docs.rs/sqlx/latest/sqlx) to manage database interaction.  
+We use SQLx macros that check the SQL over the database, see the SQLx paragraph.  
 
 
-### Setup
+### Setup local database
 
 Instead of a script that call `docker run` I will use a docker-compose.  
 In this way if in the future we need to add some other service it will be easy.  
@@ -14,23 +15,27 @@ In this way if in the future we need to add some other service it will be easy.
 Run ``docker compose up`` from this folder,   
 it will use the _.env_ file (git-ignored) to get the environment variables for secrets.  
 
+### Connection string
 
-### Secrets/Configuration
+The database connection string is set in the Configuration.  
+The Configuration is filled with a _configuration.json_ file.  
+For local development we have a git-ignored file in the solution,  
+for remote environment a **CONFIGURATION_FILE** environment variable should indicates where to read that file.  
 
-Configuration is loadd by a _configuration.json_ file.  
-For local development we have a gitignored file in the solution,  
-for remote environment a **CONFIGURATION_FILE** environment variable should indicates where to read that file.
+## SQLx
+
+SQLx-CLI needs to be installed: ``cargo install sqlx-cli --no-default-features --features "postgres"``
+  
+These commands can be used to manage database creation and changes:
+- ``cargo sqlx prepare``    # Generate query metadata
+- ``cargo sqlx migrate run``    # Run database migrations
+- ``cargo sqlx database create``    # Create database
+- ``cargo sqlx database drop``    # Drop database
+
+See the _.local_sqlx_comamnds.sh_ file with prepared commands.  
 
 
 ### Deploy
 
 
-### Launch
-
-## Local
-
-_launch.js_ of Visual Studio code has a command to launch the app.  
-A local configuration file must exists.  
-
-## Remote
 

@@ -6,6 +6,3 @@ target/
 
 # local environment variables
 .env
-
-#*.exe
-#*.pdb
