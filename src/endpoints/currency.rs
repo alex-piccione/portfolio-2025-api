@@ -44,14 +44,17 @@ pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
     }
 }
 
-pub async fn create (Json(data): Json<models::CreateRequest>) -> impl IntoResponse {
+pub async fn create(State(state): State<AppState>, Json(data): Json<models::CreateRequest>) -> impl IntoResponse {
 
     match data.to_entity() {
         Ok(entity) => {
-            // TODO save the currency to a database
-            // it will generate the ID
-            let response = models::CreateResponse {new_id: entity.id};
-            response_ok(response)
+            match state.currency_repository.create(entity).await {
+                Ok(new_id) => {
+                    let response = models::CreateResponse { new_id };
+                    response_ok(response)
+                },
+                Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str())
+            }
         },
         Err(e) => response_error(StatusCode::BAD_REQUEST,  e.as_str())       
     }
