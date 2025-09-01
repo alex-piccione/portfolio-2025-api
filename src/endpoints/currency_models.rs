@@ -13,6 +13,19 @@ pub struct Currency {
     pub precision: i16,
 }
 
+impl From<entities::Currency> for Currency {
+    fn from(entity: entities::Currency) -> Self {
+        Currency {
+            id: entity.id,
+            symbol: entity.symbol,
+            name: entity.name,
+            kind: entity.kind.into(), // This line works because of `impl From<CurrencyKind> for String` block
+            is_active: entity.is_active,
+            precision: entity.precision,
+        }
+    }
+}
+
 pub mod list {
 
     /*

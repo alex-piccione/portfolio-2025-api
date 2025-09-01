@@ -9,15 +9,15 @@ pub struct CurrencyRepository {
 
 impl CurrencyRepository {
 
-    pub fn new() -> Self {
+    /*pub fn new() -> Self {
         CurrencyRepository {
 
         }
-    }
+    }*/
 
-    pub fn create(currency: Currency) -> Currency {
+    /*pub fn create(currency: Currency) -> Currency {
         currency
-    }
+    }*/
 
     pub async fn list(db_pool: &PgPool) -> Result<Vec<Currency>, String> { //sqlx::Error
         //let currencies = sqlx::query_as!(Currency, "SELECT id, symbol, name, kind as \"kind: _\", is_active, precision FROM currencies")

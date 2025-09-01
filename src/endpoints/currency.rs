@@ -3,9 +3,7 @@ use axum::response::{IntoResponse};
 
 use super::helpers::{response_ok, response_error};
 use crate::AppState;
-//use crate::endpoints::currency_models::Currency;
 use crate::endpoints::{currency_models as models};
-
 use crate::repositories::currency_repository::CurrencyRepository;
 
 
@@ -26,12 +24,20 @@ pub async fn single(_id:Path<i32>) -> impl IntoResponse {
 pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
 
     match CurrencyRepository::list(&state.db_pool).await {
-        Ok(_currencies) => {
+        Ok(entities) => {
 
-            let data: Vec<models::Currency> = Vec::new();
-            //let data = Vec::new();
+            let models = entities.into_iter()
+                .map(|entity| entity.into())
+                .collect::<Vec<models::Currency>>();
 
-            response_ok(data)
+            // more "explicit" version compared to the idiomatic use of .into() above
+            /*
+            let models = entities.into_iter()
+                .map(|e| models::Currency::from(e))
+                .collect::<Vec<models::Currency>>();
+            */
+
+            response_ok(models)
         },
         Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str())
     }
