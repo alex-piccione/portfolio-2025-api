@@ -4,7 +4,6 @@ use axum::response::{IntoResponse};
 use super::helpers::{response_ok, response_error};
 use crate::AppState;
 use crate::endpoints::{currency_models as models};
-use crate::repositories::currency_repository::CurrencyRepository;
 
 
 pub async fn single(_id:Path<i32>) -> impl IntoResponse {
@@ -23,7 +22,7 @@ pub async fn single(_id:Path<i32>) -> impl IntoResponse {
 
 pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
 
-    match CurrencyRepository::list(&state.db_pool).await {
+    match state.currency_repository.list().await {
         Ok(entities) => {
 
             let models = entities.into_iter()

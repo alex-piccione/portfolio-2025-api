@@ -7,6 +7,7 @@ use axum::{
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::configuration::Configuration;
+use crate::repositories::currency_repository::CurrencyRepository;
 
 mod configuration;
 mod endpoints;
@@ -16,7 +17,7 @@ mod repositories;
 #[derive(Clone)]
 pub struct AppState {
     pub config: configuration::Configuration,
-    pub db_pool: PgPool
+    pub currency_repository: CurrencyRepository,
 }
 
 // The tokio::main macro is used to run the async main function
@@ -47,12 +48,14 @@ async fn main() {
     let db_pool = PgPool::connect(&config.database_connection_string)
         .await
         .unwrap_or_else(|e| panic!(
-            "Failed to create database connection pool. Connection string: '{}'. {}", 
-            config.database_connection_string, e));
+            "Failed to create database connection pool. Connection string: '{}'. {}",
+            config.database_connection_string, e
+        ));
 
+    let currency_repository = CurrencyRepository::new(db_pool);
     let app_state = AppState {
         config: config.clone(),
-        db_pool,
+        currency_repository,
     };
 
     let app = Router::new()
@@ -82,7 +85,6 @@ async fn main() {
         .await
         .expect("Failed to start server");
 }
-
 
 // Axum handles the conversion of a simple string to the HTTP response
 //async fn home() -> &'static str {
