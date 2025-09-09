@@ -16,19 +16,22 @@ pub struct Custodian {
 pub enum CustodianKind {
     Bank,
     Exchange,
+    #[sqlx(rename = "Fintech Platform")]
+    FintechPlatform,
     Pension,
-    #[sqlx(rename = "Blockchain Wallet")] // required if we use "BlockchainWallet" (no underscore)
+    #[sqlx(rename = "Blockchain Wallet")]
     BlockchainWallet,
 }
 
 impl CustodianKind {
-    pub fn from_string(s: &str) -> Result<Self, String> {
-        match s.to_lowercase().as_str() {
+    pub fn from_string(kind: &str) -> Result<Self, String> {
+        match kind {
             "Bank" => Ok(CustodianKind::Bank),
             "Exchange" => Ok(CustodianKind::Exchange),
+            "Fintech Platform" => Ok(CustodianKind::FintechPlatform), // Alias
             "Pension" => Ok(CustodianKind::Pension),
             "Blockchain Wallet" => Ok(CustodianKind::BlockchainWallet),
-            _ => Err(format!("Invalid custodian kind: {}", s)),
+            _ => Err(format!("Invalid custodian kind: '{}'", kind)),
         }
     }
 }
@@ -38,6 +41,7 @@ impl From<CustodianKind> for String {
         match kind {
             CustodianKind::Bank => "Bank".to_string(),
             CustodianKind::Exchange => "Exchange".to_string(),
+            CustodianKind::FintechPlatform => "Fintech Platform".to_string(),
             CustodianKind::Pension => "Pension".to_string(),
             CustodianKind::BlockchainWallet => "Blockchain Wallet".to_string(),
         }

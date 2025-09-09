@@ -55,3 +55,29 @@ impl CreateRequest {
         })
     }
 }
+
+#[derive(Deserialize)]
+pub struct UpdateRequest {
+    pub id: i32,
+    pub name: String,
+    pub kind: String,
+    pub description: Option<String>,
+    pub url: Option<String>,
+    pub wallet_address: Option<String>,
+    pub country_code: Option<String>,
+}
+
+impl UpdateRequest {
+    pub fn to_entity(self) -> Result<entities::Custodian, String> {
+        Ok(entities::Custodian {
+            id: self.id,
+            name: self.name,
+            kind: CustodianKind::from_string(&self.kind)?,
+            description: self.description,
+            url: self.url,
+            wallet_address: self.wallet_address,
+            country_code: self.country_code,
+        })
+    }
+}
+

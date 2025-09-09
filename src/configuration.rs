@@ -2,11 +2,14 @@ use std::fs;
 use serde::Deserialize;
 //use serde_json::Result; // alias for `pub type Result<T> = std::result::Result<T, Error>;`
 
+pub const CONFIGURATION_FILE: &'static str = "configuration.json";
+
 #[derive(Deserialize, Clone)]
 pub struct Configuration {
     pub environment: String,
     pub server_port: u16,
     pub database_connection_string: String,
+    pub run_database_migrations: bool,
     //pub admin_email: String
 }
 

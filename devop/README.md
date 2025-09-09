@@ -7,7 +7,7 @@ I'm using [SQLx](https://docs.rs/sqlx/latest/sqlx) to manage database interactio
 We use SQLx macros that check the SQL over the database, see the SQLx paragraph.  
 
 
-### Setup local database
+### Setup Local database
 
 Instead of a script that call `docker run` I will use a docker-compose.  
 In this way if in the future we need to add some other service it will be easy.  
@@ -27,15 +27,27 @@ for remote environment a **CONFIGURATION_FILE** environment variable should indi
 SQLx-CLI needs to be installed: ``cargo install sqlx-cli --no-default-features --features "postgres"``
   
 These commands can be used to manage database creation and changes:
-- ``cargo sqlx prepare``    # Generate query metadata
-- ``cargo sqlx migrate run``    # Run database migrations
-- ``cargo sqlx database create``    # Create database
-- ``cargo sqlx database drop``    # Drop database
+- ``cargo sqlx prepare``         # Generate query metadata (local cache used by static analizer)
+- ``cargo sqlx migrate run``     # Run database migrations
+- ``cargo sqlx database create`` # Create database
+- ``cargo sqlx database drop``   # Drop database
 
 See the *.local_sqlx_comamnds.sh* file with prepared commands.  
 
+The application, at start, will check and execute the migrations if configuration enabled it.  
+ 
 
-### Deploy
+
+### Server database
+
+It is not part of this project.
 
 
+
+## Known Issues
+
+- Debug warning about LLDB not able to debug
+  > The LLDB warnings about missing Rust plugins are normal on Windows and do not affect your app's runtime, but they limit debugging features.
+
+  
 

@@ -1,13 +1,13 @@
-// import the necessary modules
 use axum::{
     routing::get,
     routing::post,
+    routing::put,
     Router,
 };
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
-    configuration::Configuration, 
+    configuration::Configuration, configuration::CONFIGURATION_FILE,
     repositories::currency_repository::CurrencyRepository,
     repositories::custodian_repository::CustodianRepository};
 
@@ -23,22 +23,23 @@ pub struct AppState {
     pub custodian_repository: CustodianRepository,
 }
 
+
 // The tokio::main macro is used to run the async main function
 #[tokio::main]
 async fn main() {
 
     // use a local configuration file if exists (for local debug)
-    let config_file = match std::fs::exists("configuration.json") {
+    let config_file = match std::fs::exists(CONFIGURATION_FILE) {
         Ok(true) => { 
-            println!("Using local configuration file 'configuration.json'"); 
-            String::from("configuration.json")
+            println!("Using local configuration file '{}'.", CONFIGURATION_FILE); 
+            String::from(CONFIGURATION_FILE)
         },
         Ok(false) => { 
-            println!("No local configuration file 'configuration.json' found, using CONFIGURATION_FILE environment variable"); 
+            println!("No local configuration file '{}' found, using CONFIGURATION_FILE environment variable.", CONFIGURATION_FILE); 
             std::env::var("CONFIGURATION_FILE")
-                .expect("CONFIGURATION_FILE environment variable must be set")
+                .expect("CONFIGURATION_FILE environment variable must be set (.env file can be used to set it).")
         },
-        Err(e) => panic!("Failed to check for local configuration file 'configuration.json': {}", e),
+        Err(e) => panic!("Failed to check for local configuration file '{}': {}", CONFIGURATION_FILE, e),
     };
 
     println!("Load configuration from '{}'", config_file);
@@ -55,6 +56,17 @@ async fn main() {
             config.database_connection_string, e
         ));
 
+    // Run database migrations if enabled in configuration
+    if config.run_database_migrations {
+        println!("Running database migrations...");
+        match sqlx::migrate!("./migrations").run(&db_pool).await {
+            Ok(_) => println!("Database migrations applied successfully."),
+            Err(e) => panic!("Failed to apply database migrations: {}", e),
+        }
+    } else {
+        println!("Database migrations are disabled in configuration.");
+    }
+
     let app_state = AppState {
         config: config.clone(),
         currency_repository: CurrencyRepository::new(db_pool.clone()),
@@ -63,11 +75,13 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(endpoints::common::home))
-        .route("/currency", get(endpoints::currency::list))
-        .route("/currency/{id}", get(endpoints::currency::single))
         .route("/currency", post(endpoints::currency::create))
-        .route("/currency", axum::routing::put(endpoints::currency::update))
-        .route("/custodian", get(endpoints::custodian::list))
+        .route("/currency", put(endpoints::currency::update))
+        .route("/currency/{id}", get(endpoints::currency::single))
+        .route("/currency", get(endpoints::currency::list))        
+        .route("/custodian", post(endpoints::custodian::create))
+        .route("/custodian", put(endpoints::custodian::update))
+        .route("/custodian", get(endpoints::custodian::list))        
         .with_state(app_state);
 
     // read the port from environment variable or use a default
@@ -95,3 +109,4 @@ async fn main() {
 //async fn home() -> &'static str {
 //    "Hello, Axum API (learning.Rust)!"
 //}
+

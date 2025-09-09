@@ -1,6 +1,6 @@
 use axum::{extract::Path,  extract::State, http::StatusCode, Json, response::IntoResponse};
 
-use super::helpers::{response_ok, response_error};
+use super::helpers::{response_ok, response_error, response_created};
 use crate::AppState;
 use crate::endpoints::{currency_models as models};
 
@@ -11,7 +11,7 @@ pub async fn create(State(state): State<AppState>, Json(data): Json<models::Crea
             match state.currency_repository.create(entity).await {
                 Ok(new_id) => {
                     let response = models::CreateResponse { new_id };
-                    response_ok(response)
+                    response_created(response)
                 },
                 Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str())
             }

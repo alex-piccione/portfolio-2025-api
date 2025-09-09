@@ -2,5 +2,6 @@
     "environment": "Prod",
     "server_port": 53000,
     "database_connection_string": "postgres://axum_user:axum_password@server_ip:50303/axum-api",
+    "run_database_migrations": false,
     "admin_email": "admin@poc-axum.api"
 }
