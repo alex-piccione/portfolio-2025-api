@@ -28,3 +28,10 @@ cargo sqlx migrate add create_custodian_table
 
 # execute the migration
 cargo sqlx migrate run
+
+
+## Update a table
+cargo sqlx migrate add custodian_currency_updates
+
+# Add hte SQL comnmands there and execute 
+cargo sqlx migrate run

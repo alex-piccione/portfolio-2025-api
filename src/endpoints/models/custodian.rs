@@ -10,7 +10,7 @@ pub struct Custodian {
     pub description: Option<String>,
     pub url: Option<String>,
     pub wallet_address: Option<String>,
-    pub country_code: Option<String>,
+    pub account_country_code: Option<String>,
 }
 
 impl From<entities::Custodian> for Custodian {
@@ -22,7 +22,7 @@ impl From<entities::Custodian> for Custodian {
             description: entity.description,
             url: entity.url,
             wallet_address: entity.wallet_address,
-            country_code: entity.country_code,
+            account_country_code: entity.account_country_code,
         }
     }
 }
@@ -34,7 +34,7 @@ pub struct CreateRequest {
     pub description: Option<String>,
     pub url: Option<String>,
     pub wallet_address: Option<String>,
-    pub country_code: Option<String>,
+    pub account_country_code: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -51,7 +51,7 @@ impl CreateRequest {
             description: self.description,
             url: self.url,
             wallet_address: self.wallet_address,
-            country_code: self.country_code,
+            account_country_code: self.account_country_code,
         })
     }
 }
@@ -64,7 +64,7 @@ pub struct UpdateRequest {
     pub description: Option<String>,
     pub url: Option<String>,
     pub wallet_address: Option<String>,
-    pub country_code: Option<String>,
+    pub account_country_code: Option<String>,
 }
 
 impl UpdateRequest {
@@ -76,8 +76,7 @@ impl UpdateRequest {
             description: self.description,
             url: self.url,
             wallet_address: self.wallet_address,
-            country_code: self.country_code,
+            account_country_code: self.account_country_code,
         })
     }
 }
-

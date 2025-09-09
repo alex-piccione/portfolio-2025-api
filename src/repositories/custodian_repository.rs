@@ -15,7 +15,7 @@ impl CustodianRepository {
     pub async fn create(&self, custodian: Custodian) -> Result<i32, String> {
         let row = sqlx::query!(
             r#"
-                INSERT INTO Custodian (name, kind, description, url, wallet_address, country_code)
+                INSERT INTO Custodian (name, kind, description, url, wallet_address, account_country_code)
                 VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING id
             "#,
@@ -24,7 +24,7 @@ impl CustodianRepository {
             custodian.description,
             custodian.url,
             custodian.wallet_address,
-            custodian.country_code
+            custodian.account_country_code
         )
         .fetch_one(&self.db_pool)
         .await
@@ -37,7 +37,7 @@ impl CustodianRepository {
         sqlx::query!(
             r#"
                 UPDATE Custodian
-                SET name = $2, kind = $3, description = $4, url = $5, wallet_address = $6, country_code = $7
+                SET name = $2, kind = $3, description = $4, url = $5, wallet_address = $6, account_country_code = $7
                 WHERE id = $1
             "#,
             custodian.id,
@@ -46,7 +46,7 @@ impl CustodianRepository {
             custodian.description,
             custodian.url,
             custodian.wallet_address,
-            custodian.country_code
+            custodian.account_country_code
         )
         .execute(&self.db_pool)
         .await
@@ -57,7 +57,7 @@ impl CustodianRepository {
     pub async fn list(&self) -> Result<Vec<Custodian>, String> {
         let custodians = sqlx::query_as!(Custodian,
             r#"
-                SELECT id, name, kind as "kind!: CustodianKind", description, url, wallet_address, country_code
+                SELECT id, name, kind as "kind!: CustodianKind", description, url, wallet_address, account_country_code
                 FROM Custodian
             "#
         )
@@ -68,3 +68,7 @@ impl CustodianRepository {
         Ok(custodians)
     }
 }
+
+
+
+

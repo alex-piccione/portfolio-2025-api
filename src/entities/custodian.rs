@@ -8,7 +8,7 @@ pub struct Custodian {
     pub description: Option<String>,
     pub url: Option<String>,
     pub wallet_address: Option<String>,
-    pub country_code: Option<String>,
+    pub account_country_code: Option<String>,
 }
 
 #[derive(Debug, Clone, Type)]

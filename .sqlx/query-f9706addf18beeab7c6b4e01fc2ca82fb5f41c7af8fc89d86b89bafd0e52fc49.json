@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                SELECT id, name, kind as \"kind!: CustodianKind\", description, url, wallet_address, country_code\n                FROM Custodian\n            ",
+  "query": "\n                SELECT id, name, kind as \"kind!: CustodianKind\", description, url, wallet_address, account_country_code\n                FROM Custodian\n            ",
   "describe": {
     "columns": [
       {
@@ -35,7 +35,7 @@
       },
       {
         "ordinal": 6,
-        "name": "country_code",
+        "name": "account_country_code",
         "type_info": "Bpchar"
       }
     ],
@@ -52,5 +52,5 @@
       true
     ]
   },
-  "hash": "8211c0d72b4d36c35a426e50f96ab9aec0800457e4ace66b355beaf7c015f2fa"
+  "hash": "f9706addf18beeab7c6b4e01fc2ca82fb5f41c7af8fc89d86b89bafd0e52fc49"
 }

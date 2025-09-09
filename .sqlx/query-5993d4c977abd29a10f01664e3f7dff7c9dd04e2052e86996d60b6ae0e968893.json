@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                INSERT INTO Custodian (name, kind, description, url, wallet_address, country_code)\n                VALUES ($1, $2, $3, $4, $5, $6)\n                RETURNING id\n            ",
+  "query": "\n                INSERT INTO Custodian (name, kind, description, url, wallet_address, account_country_code)\n                VALUES ($1, $2, $3, $4, $5, $6)\n                RETURNING id\n            ",
   "describe": {
     "columns": [
       {
@@ -23,5 +23,5 @@
       false
     ]
   },
-  "hash": "3d0eb1739cca0cba18cfce08766f77d05d5f3bd2217cae136e136593ac7387cb"
+  "hash": "5993d4c977abd29a10f01664e3f7dff7c9dd04e2052e86996d60b6ae0e968893"
 }
