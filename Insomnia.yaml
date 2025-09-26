@@ -1,0 +1,265 @@
+type: collection.insomnia.rest/5.0
+name: Main
+meta:
+  id: wrk_e85e575ef83d4eb3b2f07d538efeef8a
+  created: 1755294938718
+  modified: 1757418637533
+  description: ""
+collection:
+  - name: Custodian
+    meta:
+      id: fld_37fba565854c4ed3a3d9c395d066229a
+      created: 1756737042672
+      modified: 1756737042672
+      sortKey: -1756737042672
+      description: ""
+    children:
+      - url: "{{ _.url }}/custodian"
+        name: /custodian (List)
+        meta:
+          id: req_5ebc8c52f4c14235a0337ab687be860e
+          created: 1756737047710
+          modified: 1756737204173
+          isPrivate: false
+          description: ""
+          sortKey: -1756737047710
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.5.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/custodian"
+        name: /custodian (Create)
+        meta:
+          id: req_c374f205da2c4ab6a2f09ae3afb7192e
+          created: 1756764131003
+          modified: 1757418846712
+          isPrivate: false
+          description: ""
+          sortKey: -1756737047810
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"name": "Fineco",
+            	"kind": "Bank",
+            	"description": "Italian bank account",
+            	"url": "https://fineco.it",
+            	"wallet_address": null,
+            	"account_country_code": "IT"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.5.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/custodian"
+        name: /custodian (Update)
+        meta:
+          id: req_fc1e1d4bde324c81ac2701bc56c41f93
+          created: 1757323917993
+          modified: 1757324460216
+          isPrivate: false
+          description: ""
+          sortKey: -1756737047760
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"id": 3,
+            	"name": "Nexo",
+            	"kind": "Fintech Platform",
+            	"description": "Cryptodurrency platform",
+            	"url": "https://nexo.com",
+            	"wallet_address": null,
+            	"country_code": "IT"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.5.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Currency
+    meta:
+      id: fld_7e7d4578e0154c9188ce203dc89f2166
+      created: 1756737093987
+      modified: 1756737093987
+      sortKey: -1756737093987
+      description: ""
+    children:
+      - url: "{{ _.url }}/currency/123"
+        name: /currency/{id} (Single)
+        meta:
+          id: req_a0d8ffc90345461a916aa1bbe24c0d4e
+          created: 1755295289332
+          modified: 1756737175716
+          isPrivate: false
+          description: ""
+          sortKey: -1756737103977
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.4.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/currency"
+        name: /currency (List)
+        meta:
+          id: req_3bb621e55a354831a0d7750084e3e4a9
+          created: 1755296835097
+          modified: 1756737181404
+          isPrivate: false
+          description: ""
+          sortKey: -1756737103877
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.4.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/currency"
+        name: /currency (Create)
+        meta:
+          id: req_fb0aa59debd148bcad48bbcaf489b9aa
+          created: 1755296976015
+          modified: 1756737170889
+          isPrivate: false
+          description: ""
+          sortKey: -1756737104077
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"symbol": "GBP",
+            	"name": "Pound",
+            	"kind": "Fiat",
+            	"is_active": true,
+            	"precision": 2
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.4.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/currency"
+        name: /currency (Update)
+        meta:
+          id: req_e4df2afafa304ebf85b5979f2f81350a
+          created: 1756732326032
+          modified: 1756737187608
+          isPrivate: false
+          description: ""
+          sortKey: -1756737103777
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"id": 1,
+            	"symbol": "XRD",
+            	"name": "Radix",
+            	"kind": "Crypto",
+            	"is_active": true,
+            	"precision": 18
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.4.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - url: "{{ _.url }}"
+    name: home
+    meta:
+      id: req_b9f230d9923f414d9baac3bc51de0215
+      created: 1755294938898
+      modified: 1755295266714
+      isPrivate: false
+      description: ""
+      sortKey: -1755294938898
+    method: GET
+    parameters:
+      - id: pair_06e0ce4df1174e14bd530feaa29e91ab
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/11.4.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_f322ba964e83a6cb0018749707cbaf634cb9e10a
+    created: 1755294938724
+    modified: 1755294938724
+environments:
+  name: Base Environment
+  meta:
+    id: env_f322ba964e83a6cb0018749707cbaf634cb9e10a
+    created: 1755294938721
+    modified: 1755294965716
+    isPrivate: false
+  data:
+    "": ""
