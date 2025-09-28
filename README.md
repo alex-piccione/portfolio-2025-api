@@ -25,6 +25,20 @@ VS Code launch (_launch.json_) is set to run the app locally.
 
 ## Deploy
 
+
+### On Azure
+
+TODO: is this still true ??
+
 API is deployed in Azure, in a Web App Service.  
 [TODO: detail CD on Azure with GitHiub action]  
 Since the database is not part of this deploy, it is not described here.
+
+
+### On private server
+
+"distroless" Dockerfile
+✅ Minimal attack surface (no shell, package manager, etc.)
+✅ Only contains your application and minimal runtime
+✅ Regularly updated by Google
+✅ Industry standard for production containers
