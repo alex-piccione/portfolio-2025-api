@@ -1,9 +1,7 @@
 use axum::{
-    routing::get,
-    routing::post,
-    routing::put,
-    Router,
+    http::{self, HeaderValue}, routing::{get, post, put}, Router
 };
+use tower_http::cors::{CorsLayer, Any};
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
@@ -28,14 +26,15 @@ pub struct AppState {
 #[tokio::main]
 async fn main() {
 
-    // use a local configuration file if exists (for local debug)
+    // production read the configuration file from an environment variable,
+    // for local debug it use a (local) configuration file if exists
     let config_file = match std::fs::exists(CONFIGURATION_FILE) {
         Ok(true) => { 
-            println!("Using local configuration file '{}'.", CONFIGURATION_FILE); 
+            println!("Using configuration file '{}'.", CONFIGURATION_FILE); 
             String::from(CONFIGURATION_FILE)
         },
         Ok(false) => { 
-            println!("No local configuration file '{}' found, using CONFIGURATION_FILE environment variable.", CONFIGURATION_FILE); 
+            println!("Configuration file '{}' not found, using CONFIGURATION_FILE environment variable.", CONFIGURATION_FILE); 
             std::env::var("CONFIGURATION_FILE")
                 .expect("CONFIGURATION_FILE environment variable must be set (.env file can be used to set it).")
         },
@@ -82,7 +81,23 @@ async fn main() {
         .route("/custodian", post(endpoints::custodian::create))
         .route("/custodian", put(endpoints::custodian::update))
         .route("/custodian", get(endpoints::custodian::list))        
-        .with_state(app_state);
+        .with_state(app_state)  // injection
+        .layer(
+            // CORS
+            CorsLayer::new()
+                .allow_origin([
+                    HeaderValue::from_static("http://localhost:5173"), 
+                    HeaderValue::from_static("https://mercurius.work")
+                ])
+                .allow_methods([
+                    http::Method::GET,
+                    http::Method::POST, 
+                    http::Method::PUT, 
+                    http::Method::PATCH, 
+                    http::Method::DELETE
+                ])
+                .allow_headers(Any)
+        );
 
     // read the port from environment variable or use a default
     //let port = std::env::var("PORT")

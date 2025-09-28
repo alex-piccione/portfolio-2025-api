@@ -2,7 +2,7 @@
 
 ## Database
 
-Database is a Postgres docker container running on a Linux VPS.  
+The database is a Postgres docker container running on a Linux VPS.  
 I'm using [SQLx](https://docs.rs/sqlx/latest/sqlx) to manage database interaction.  
 We use SQLx macros that check the SQL over the database, see the SQLx paragraph.  
 
@@ -36,6 +36,8 @@ See the *.local_sqlx_comamnds.sh* file with prepared commands.
 
 The application, at start, will check and execute the migrations if configuration enabled it.  
  
+SQLx use the **DATABASE_URL** environment variable to read the connection string.  
+See the _.env_ file.
 
 
 ### Server database
