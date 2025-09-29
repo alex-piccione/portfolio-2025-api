@@ -1,12 +1,18 @@
-name: Deploy API service
+name: Deploy
 
 on: 
   push:
     branches: [main]
 
+  #permissions:
+  #  contents: read
+  #  packages: write
+
 env:
-  IMAGE: ghcr.io/${{ github.repository_owner }}/api-axum
+  # it MUST contain start with ghcr.io/ and it MUST be lowercase
+  IMAGE: ghcr.io/${{ github.repository_owner }}/portfolio-api
   VERSION: 0.1.${{ github.run_number }}
+  CONFIGURATION_FILE: /Data/projects/
 
 jobs:
   docker_image:
@@ -33,6 +39,8 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ env.VERSION }}
+          build-args: |
+            CONFIGURATION_FILE=/data/configuration_prod.json
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -55,6 +63,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           
           # Call the deploy script on the server (adjust the script name as needed)
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "api-axum_deploy ${{ env.IMAGE }}:${{ env.VERSION }}"
-          
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} project-portfolio_deploy-api
+          STATUS=$?
           rm ~/.ssh/id_rsa
+          if [ $STATUS -ne 0 ]; then
+            echo "ERROR: Remote deploy script failed with exit code $STATUS"
+            exit $STATUS
+          fi

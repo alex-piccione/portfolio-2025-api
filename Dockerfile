@@ -27,5 +27,9 @@ FROM gcr.io/distroless/cc-debian12
 # Copy the binary
 COPY --from=builder /app/target/release/api_axum /usr/local/bin/api_axum
 
+# receive a value as ARG and pass it to the container as ENV
+ARG CONFIGURATION_FILE
+ENV CONFIGURATION_FILE=$CONFIGURATION_FILE
+
 EXPOSE 3000
 ENTRYPOINT ["/usr/local/bin/api_axum"]

@@ -42,3 +42,6 @@ Since the database is not part of this deploy, it is not described here.
 ✅ Only contains your application and minimal runtime
 ✅ Regularly updated by Google
 ✅ Industry standard for production containers
+
+The deploy is executed running a script on a private server.  
+See [devop/README.md](devop/README.md#Deploy) for how to configure the script.

@@ -1,0 +1,24 @@
+# this is an example/old copy
+version: '3.8'
+
+services:
+  web:
+    image: ghcr.io/alex-piccione/portfolio-api:latest
+    #image: ghcr.io/alex-piccione/poc.api-axum:latest
+    ports:
+      # port exposed on server: 50301
+      # the IP is used to allow main NGINX to access the localhost service
+      # - 127.0.0.1:50301:80  Docker Swarm does not allow to change IP, so use 0.0.0.0
+      - 0.0.0.0:50301:3000
+
+    volumes:
+      - /Data/projects/portfolio/logs/api:/logs
+      - /Data/projects/portfolio/docker-volumes/api:/data
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
