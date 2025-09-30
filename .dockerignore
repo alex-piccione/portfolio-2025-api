@@ -1,0 +1,12 @@
+# Large directories that slow build context transfer
+target/
+.git/
+.sqlx/
+devop/
+
+# Sensitive files
+.env
+
+
+# Local configs that shouldn't be in containers
+src/configuration_prod.json

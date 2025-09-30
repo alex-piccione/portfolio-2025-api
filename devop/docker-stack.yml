@@ -2,9 +2,8 @@
 version: '3.8'
 
 services:
-  web:
+  api:
     image: ghcr.io/alex-piccione/portfolio-api:latest
-    #image: ghcr.io/alex-piccione/poc.api-axum:latest
     ports:
       # port exposed on server: 50301
       # the IP is used to allow main NGINX to access the localhost service

@@ -1,0 +1,7 @@
+{
+    "environment": "Local",
+    "server_port": 3000,
+    "database_connection_string": "postgres://axum_user:axum_password@host.docker.internal:50303/axum-api",
+    "run_database_migrations": true,
+    "admin_email": "admin@poc-axum.api"
+}

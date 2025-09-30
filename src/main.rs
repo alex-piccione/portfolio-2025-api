@@ -41,6 +41,8 @@ async fn main() {
         Err(e) => panic!("Failed to check for local configuration file '{}': {}", CONFIGURATION_FILE, e),
     };
 
+    //eprintln!("Current dir: {:?}", std::env::current_dir());
+
     println!("Load configuration from '{}'", config_file);
 
     let config = Configuration::load_from_json_file(&config_file)
@@ -48,12 +50,14 @@ async fn main() {
 
     println!("Configuration loaded for environment '{}'", config.environment);
 
+    println!("Conenct to database...");
     let db_pool = PgPool::connect(&config.database_connection_string)
         .await
         .unwrap_or_else(|e| panic!(
             "Failed to create database connection pool. Connection string: '{}'. {}",
             config.database_connection_string, e
         ));
+    println!("...done");
 
     // Run database migrations if enabled in configuration
     if config.run_database_migrations {

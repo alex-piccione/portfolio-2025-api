@@ -9,7 +9,7 @@ COPY Cargo.toml Cargo.lock ./
 # Create a dummy main to cache dependencies
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
-RUN rm -f target/release/deps/api_axum*
+RUN rm -f target/release/deps/portfolio_api*
 
 # Copy real source and build
 COPY src ./src
@@ -25,11 +25,14 @@ RUN cargo build --release
 FROM gcr.io/distroless/cc-debian12
 
 # Copy the binary
-COPY --from=builder /app/target/release/api_axum /usr/local/bin/api_axum
+COPY --from=builder /app/target/release/portfolio_api /usr/local/bin/portfolio_api
+
+# required for local Docker running
+COPY --from=builder /app/src/configuration_local_docker.json /configuration.json
 
 # receive a value as ARG and pass it to the container as ENV
 ARG CONFIGURATION_FILE
 ENV CONFIGURATION_FILE=$CONFIGURATION_FILE
 
 EXPOSE 3000
-ENTRYPOINT ["/usr/local/bin/api_axum"]
+ENTRYPOINT ["/usr/local/bin/portfolio_api"]
