@@ -1,15 +1,15 @@
-use axum::{
-    http::{self, HeaderValue}, routing::{get, post, put}, Router
-};
-use tower_http::cors::{CorsLayer, Any};
+use axum::{ Router};
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
-    configuration::Configuration, configuration::CONFIGURATION_FILE,
-    repositories::currency_repository::CurrencyRepository,
-    repositories::custodian_repository::CustodianRepository};
-//use utils::routing;
+    configuration::{Configuration, CONFIGURATION_FILE}, 
+    repositories::{
+        currency_repository::CurrencyRepository, 
+        custodian_repository::CustodianRepository},
+    utils::{cors::RouterExtensions as _}};
+
 mod configuration;
+mod utils;
 mod endpoints;
 mod entities;
 mod repositories;
@@ -42,7 +42,6 @@ async fn main() {
     };
 
     //eprintln!("Current dir: {:?}", std::env::current_dir());
-
     println!("Load configuration from '{}'", config_file);
 
     let config = Configuration::load_from_json_file(&config_file)
@@ -74,35 +73,11 @@ async fn main() {
         config: config.clone(),
         currency_repository: CurrencyRepository::new(db_pool.clone()),
         custodian_repository: CustodianRepository::new(db_pool),
-    };
-
-    let app = Router::new()
-        .route("/", get(endpoints::common::home))
-        .route("/login", get(endpoints::auth::login))
-        .route("/currency", post(endpoints::currency::create))
-        .route("/currency", put(endpoints::currency::update))
-        .route("/currency/{id}", get(endpoints::currency::single))
-        .route("/currency", get(endpoints::currency::list))        
-        .route("/custodian", post(endpoints::custodian::create))
-        .route("/custodian", put(endpoints::custodian::update))
-        .route("/custodian", get(endpoints::custodian::list))        
+    };  
+    
+    let app = utils::routing::set_routes(Router::new())
         .with_state(app_state)  // injection
-        .layer(
-            // CORS
-            CorsLayer::new()
-                .allow_origin([
-                    HeaderValue::from_static("http://localhost:5173"), 
-                    HeaderValue::from_static("https://mercurius.work")
-                ])
-                .allow_methods([
-                    http::Method::GET,
-                    http::Method::POST, 
-                    http::Method::PUT, 
-                    http::Method::PATCH, 
-                    http::Method::DELETE
-                ])
-                .allow_headers(Any)
-        );
+        .set_cors(&config.app_domain);
 
     // read the port from environment variable or use a default
     //let port = std::env::var("PORT")

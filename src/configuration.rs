@@ -10,6 +10,7 @@ pub const CONFIGURATION_FILE: &'static str = "configuration.json";
 pub struct Configuration {
     pub environment: String,
     pub server_port: u16,
+    pub app_domain: String, // used to set CORS
     pub database_connection_string: String,
     pub run_database_migrations: bool,
     //pub admin_email: String
