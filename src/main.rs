@@ -8,7 +8,7 @@ use crate::{
     configuration::Configuration, configuration::CONFIGURATION_FILE,
     repositories::currency_repository::CurrencyRepository,
     repositories::custodian_repository::CustodianRepository};
-
+//use utils::routing;
 mod configuration;
 mod endpoints;
 mod entities;
@@ -78,6 +78,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(endpoints::common::home))
+        .route("/login", get(endpoints::auth::login))
         .route("/currency", post(endpoints::currency::create))
         .route("/currency", put(endpoints::currency::update))
         .route("/currency/{id}", get(endpoints::currency::single))

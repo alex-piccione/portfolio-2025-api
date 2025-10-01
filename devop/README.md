@@ -48,7 +48,7 @@ See the *.local_sqlx_comamnds.sh* file with prepared commands.
 The application, at start, will check and execute the migrations if configuration enabled it.  
  
 SQLx use the **DATABASE_URL** environment variable to read the connection string.  
-See the _.env_ file.
+See the _.env_ file in the root.
 
 
 ## Test Docker image locally
