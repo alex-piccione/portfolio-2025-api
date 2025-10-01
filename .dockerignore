@@ -9,3 +9,6 @@ devop/
 
 # Local configs that shouldn't be in containers
 src/configuration_prod.json
+
+# Dockerfile tests
+Dockerfile_*

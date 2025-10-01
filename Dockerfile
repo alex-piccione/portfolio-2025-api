@@ -21,7 +21,6 @@ RUN cargo build --release
 
 
 # Runtime stage - use distroless for minimal attack surface
-#FROM debian:bookworm-slim
 FROM gcr.io/distroless/cc-debian12
 
 # Copy the binary
@@ -33,6 +32,9 @@ COPY --from=builder /app/src/configuration_local_docker.json /configuration.json
 # receive a value as ARG and pass it to the container as ENV
 ARG CONFIGURATION_FILE
 ENV CONFIGURATION_FILE=$CONFIGURATION_FILE
+
+# Create a non-root user (so process don't run as root)
+USER 10001:10001
 
 EXPOSE 3000
 ENTRYPOINT ["/usr/local/bin/portfolio_api"]
