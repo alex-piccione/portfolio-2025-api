@@ -1,5 +1,16 @@
 # Devop
 
+Ports:
+- 50300: website
+- 50301: api
+- 50302: database
+
+## Docker containers for API and Database
+
+`docker compose -f compose.all.yaml up`
+`docker compose -f compose.all.yaml up --build`
+**note:** if you change the _.env_ or the _configuration_ files, use **--buil** ()
+
 ## Database
 
 The database is a Postgres docker container running on a Linux VPS, not part of this project.    
@@ -8,10 +19,11 @@ We use SQLx macros that check the SQL over the database, see the SQLx paragraph.
 
 ### Setup Local database
 
-Instead of a script that call `docker run` I will use a docker-compose.  
+Local database on a Docker container.  
+Instead of `docker run` I will use a _docker-compose_ (it is easier to upfdate).  
 In this way if in the future we need to add some other service it will be easy.  
 
-Run ``docker compose up`` from this folder,   
+Run ``docker compose -f compose.database.yaml up`` from this folder,   
 it will use the _.env_ file (git-ignored) to get the environment variables for secrets.  
 
 ### Connection string

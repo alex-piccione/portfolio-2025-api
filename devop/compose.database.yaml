@@ -8,6 +8,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?missed}
       POSTGRES_DB: portfolio
     ports:
-      - "50403:5432"
+      - "50302:5432"
     volumes:
       - ${VOLUMES_ROOT:?missed}/postgres:/var/lib/postgresql/data

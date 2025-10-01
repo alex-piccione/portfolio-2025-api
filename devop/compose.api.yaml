@@ -1,0 +1,16 @@
+name: portfolio
+
+services:
+  api:
+    image: portfolio-api:local-1
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    environment:
+      CONFIGURATION_FILE: ${CONFIGURATION_FILE:?missed}
+      VERSION: ${VERSION:?local-1}
+    ports:
+      - "50301:3000"
+    volumes:
+      - ${VOLUMES_ROOT:?missed}/api:/data
+

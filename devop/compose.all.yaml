@@ -1,0 +1,32 @@
+name: portfolio
+
+networks:
+  portfolio:
+    name: portfolio
+
+services:
+  api:
+    image: portfolio-api:local-1
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    environment:
+      CONFIGURATION_FILE: ${CONFIGURATION_FILE:?missed}
+      VERSION: ${VERSION:?local-1}
+    ports:
+      - "50301:3000"
+    volumes:
+      - ${VOLUMES_ROOT:?missed}/api:/data  
+    networks: [portfolio]
+
+  database:
+    image: postgres:17.6
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?missed}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?missed}
+      POSTGRES_DB: portfolio
+    ports:
+      - "50302:5432"
+    volumes:
+      - ${VOLUMES_ROOT:?missed}/postgres:/var/lib/postgresql/data
+    networks: [portfolio]
