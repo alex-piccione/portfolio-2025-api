@@ -41,21 +41,7 @@ See the _.env_ file.
 
 ## Test Docker image locally
 
-1. Build the image (run from the root folder (where is _Dockerfile_):  
-``docker build -t api-axum:test .``
-
-2. Start a container with the image:  
-
-** not solved **:  
-Connection stirng pointing to localhost database fails !!!
-
-```sh
-# Mount your local configuration file into the container
-MSYS_NO_PATHCONV=1 docker run -p 3001:3000 \
-  -v $(pwd)/src/configuration.json:/app/configuration.json \
-  -e CONFIGURATION_FILE=/app/configuration.json \
-  api-axum:test
-```
+See _local_Dockerfile.sh_.
 
 
 ## Deploy

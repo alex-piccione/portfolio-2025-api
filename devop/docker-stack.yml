@@ -21,3 +21,6 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+    ## host.docker.internal is required to allow Docker Swarm services to reach other container on the same server
+    #extra_hosts:
+    #  - "host.docker.internal:host-gateway" 

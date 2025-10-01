@@ -13,3 +13,9 @@ docker build \
 docker run -p 8082:3000 --name portfolio-api portfolio-api:$VERSION
 
 # open http://localhost:8082
+
+## Alternative way
+#MSYS_NO_PATHCONV=1 docker run -p 3001:3000 \
+#  -v $(pwd)/src/configuration.json:/app/configuration.json \
+#  -e CONFIGURATION_FILE=/app/configuration.json \
+#  portfolio-api:test
