@@ -1,8 +1,3 @@
-# SQLx commands MUST be run from the root folder
-
-# we use the .env file in the root folder 
-#export DATABASE_URL="postgresql://username:password@localhost/database_name"
-
 ## Create the tables
 
 cargo sqlx migrate add create_currency_table
@@ -35,3 +30,7 @@ cargo sqlx migrate add custodian_currency_updates
 
 # Add hte SQL comnmands there and execute 
 cargo sqlx migrate run
+
+
+## Add User entity
+cargo sqlx migrate add create_user_table

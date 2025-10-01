@@ -8,14 +8,14 @@ Web API with Rust.
 
 ## Setup e SQLx
 
-See [devop/README.md](devop/README.md).
+See [repositories/SQLx](repositories/SQLx.md).
 
 
 ## Development
 
-_rust-analyzer_ continuosly check the code, but `cargo build` will compile the project.  
+_rust-analyzer_ continuosly check the code, but `cargo build` will compile the project with a final list of errors.    
 SQLx is set to verify the database entity and need to be able to access the database.  
-
+It uses the **DATABASE_URL** variable in the _.env_ file, it points t oa local Docker contyaginer with Postgres.  
 `cargo sqlx prepare`
 
 
@@ -25,7 +25,6 @@ VS Code launch (_launch.json_) is set to run the app locally.
 
 
 ## Deploy
-
 
 ### On Azure
 

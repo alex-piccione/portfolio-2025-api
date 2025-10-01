@@ -14,8 +14,8 @@ Ports:
 ## Database
 
 The database is a Postgres docker container running on a Linux VPS, not part of this project.    
-I'm using [SQLx](https://docs.rs/sqlx/latest/sqlx) to manage database interaction.  
-We use SQLx macros that check the SQL over the database, see the SQLx paragraph.  
+We use [SQLx](https://docs.rs/sqlx/latest/sqlx) to manage database interaction.  
+We use SQLx macros that check the SQL over the database, see the [doc about SQLx](../src/repositories/SQLx.md).  
 
 ### Setup Local database
 
@@ -32,23 +32,6 @@ The database connection string is set in the Configuration.
 The Configuration is filled with a _configuration.json_ file.  
 For local development we have a git-ignored file in the solution,  
 for remote environment a **CONFIGURATION_FILE** environment variable should indicates where to read that file.  
-
-## SQLx
-
-SQLx-CLI needs to be installed: ``cargo install sqlx-cli --no-default-features --features "postgres"``
-  
-These commands can be used to manage database creation and changes:
-- ``cargo sqlx prepare``         # Generate query metadata (local cache used by static analizer)
-- ``cargo sqlx migrate run``     # Run database migrations
-- ``cargo sqlx database create`` # Create database
-- ``cargo sqlx database drop``   # Drop database
-
-See the *.local_sqlx_comamnds.sh* file with prepared commands.  
-
-The application, at start, will check and execute the migrations if configuration enabled it.  
- 
-SQLx use the **DATABASE_URL** environment variable to read the connection string.  
-See the _.env_ file in the root.
 
 
 ## Test Docker image locally
@@ -84,6 +67,3 @@ docker logs $container_id
 
 - Debug warning about LLDB not able to debug
   > The LLDB warnings about missing Rust plugins are normal on Windows and do not affect your app's runtime, but they limit debugging features.
-
-  
-
