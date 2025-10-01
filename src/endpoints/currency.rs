@@ -2,7 +2,7 @@ use axum::{extract::Path,  extract::State, http::StatusCode, Json, response::Int
 
 use super::helpers::{response_ok, response_error, response_created};
 use crate::AppState;
-use crate::endpoints::{currency_models as models};
+use crate::endpoints::models::currency as models;
 
 pub async fn create(State(state): State<AppState>, Json(data): Json<models::CreateRequest>) -> impl IntoResponse {
 
