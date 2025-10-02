@@ -17,7 +17,11 @@ _rust-analyzer_ continuosly check the code, but `cargo build` will compile the p
 SQLx is set to verify the database entity and need to be able to access the database.  
 It uses the **DATABASE_URL** variable in the _.env_ file, it points t oa local Docker contyaginer with Postgres.  
 `cargo sqlx prepare`
-
+  
+Rust standard library does not have Date or Datetime types (!).  
+A modern approach is to use _chrono_ but also _sqlx_ offer it.  
+To keep it simple, I'll use sqlx types. 
+I'll use _OffsetDateTime_ but always as UTC.  
 
 ## Run locally
 

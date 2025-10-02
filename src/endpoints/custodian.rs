@@ -1,6 +1,6 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::State, Json};
 use axum::response::IntoResponse;
-use crate::endpoints::helpers::{response_ok, response_error, response_created};
+use crate::endpoints::helpers::*;
 use crate::AppState;
 use crate::endpoints::models::custodian as models;
 
@@ -12,10 +12,10 @@ pub async fn create(State(state): State<AppState>, Json(data): Json<models::Crea
                     let response = models::CreateResponse { new_id };
                     response_created(response)
                 },
-                Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str()),
+                Err(e) => response_error(e.as_str()),
             }
         },
-        Err(e) => response_error(StatusCode::BAD_REQUEST, e.as_str()),
+        Err(e) => response_bad_request(&e),
     }
 }
 
@@ -24,10 +24,10 @@ pub async fn update(State(state): State<AppState>, Json(data): Json<models::Upda
         Ok(entity) => {
             match state.custodian_repository.update(entity).await {
                 Ok(()) => response_ok("Custodian updated successfully"),
-                Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str()),
+                Err(e) => response_error(e.as_str()),
             }
         },
-        Err(e) => response_error(StatusCode::BAD_REQUEST, e.as_str()),
+        Err(e) => response_bad_request(&e),
     }
 }
 
@@ -39,7 +39,7 @@ pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
                 .collect::<Vec<models::Custodian>>();
             response_ok(models)
         },
-        Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str()),
+        Err(e) => response_error(e.as_str()),
     }
 }
 

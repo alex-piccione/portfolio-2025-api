@@ -3,20 +3,24 @@ use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
     configuration::{Configuration, CONFIGURATION_FILE}, 
+    logic::{currency_provider::CurrencyProvider},
     repositories::{
-        currency_repository::CurrencyRepository, 
+        user_repository::UserRepository, 
+        currency_repository::CurrencyRepository,
         custodian_repository::CustodianRepository},
-    utils::{cors::RouterExtensions as _}};
+    utils::cors::RouterExtensions as _};
 
 mod configuration;
 mod utils;
 mod endpoints;
 mod entities;
+mod logic;
 mod repositories;
 
 #[derive(Clone)]
 pub struct AppState {
     pub config: configuration::Configuration,
+    pub users_repository: UserRepository,
     pub currency_repository: CurrencyRepository,
     pub custodian_repository: CustodianRepository,
 }
@@ -69,9 +73,16 @@ async fn main() {
         println!("Database migrations are disabled in configuration.");
     }
 
+    let currency_repository = CurrencyRepository::new(db_pool.clone());
+    if let Err(e) = CurrencyProvider::load(&currency_repository).await {
+        eprintln!("Failed to load currencies: {}", e);
+        std::process::exit(1);
+    }
+
     let app_state = AppState {
         config: config.clone(),
-        currency_repository: CurrencyRepository::new(db_pool.clone()),
+        users_repository: UserRepository::new(db_pool.clone()),
+        currency_repository: currency_repository.clone(),
         custodian_repository: CustodianRepository::new(db_pool),
     };  
     

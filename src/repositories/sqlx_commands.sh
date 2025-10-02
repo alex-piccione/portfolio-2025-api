@@ -34,3 +34,4 @@ cargo sqlx migrate run
 
 ## Add User entity
 cargo sqlx migrate add create_user_table
+cargo sqlx migrate run

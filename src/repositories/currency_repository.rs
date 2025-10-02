@@ -10,6 +10,8 @@ pub struct CurrencyRepository {
 
 impl CurrencyRepository {
     pub async fn update(&self, currency: Currency) -> Result<(), String> {
+
+        //let _test = sqlx::query!("SELECT COUNT(*) FROM Currency").fetch_one(&self.db_pool).await;
         let result = sqlx::query!(
             r#"
                 UPDATE Currency 

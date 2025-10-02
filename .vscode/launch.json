@@ -9,8 +9,8 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=api_axum",
-                    "--package=api_axum"
+                    "--bin=portfolio_api",
+                    "--package=portfolio_api"
                 ],
             },
             "cwd": "${workspaceFolder}\\src", // this path is required to find the configuration file
@@ -26,11 +26,11 @@
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=api_axum",
-                    "--package=poc-axum"
+                    "--bin=portfolio_api",
+                    "--package=portfolio_api"
                 ],
                 "filter": {
-                    "name": "poc-axum",
+                    "name": "portfolio_api",
                     "kind": "bin"
                 }
             },
