@@ -10,7 +10,7 @@ use crate::{
     models::auth::{OkErrorResponse, signup, login}}
 };
 
-pub async fn _signup(
+pub async fn signup(
     State(state): State<AppState>,
     Json(request): Json<signup::Request>
  ) -> impl IntoResponse {
@@ -27,7 +27,8 @@ pub async fn _signup(
         username: request.username,
         hashed_password: hashed_password,
         creation_date:UtcDateTime::now(),
-        currency
+        currency,
+        role: String::from("User"), // default
     };
 
     match state.users_repository.create(user).await {

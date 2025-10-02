@@ -3,10 +3,10 @@ use crate::{endpoints, AppState};
 
 pub fn set_routes(router:Router<AppState>) -> Router<AppState> {
     router
-        // auth
-        .route("/", get(endpoints::common::home))
+        .route("/", get(endpoints::common::home))        
         // auth
         .route("/login", get(endpoints::auth::login))
+        .route("/signup", post(endpoints::auth::signup))
         // currency
         .route("/currency", post(endpoints::currency::create))
         .route("/currency", put(endpoints::currency::update))

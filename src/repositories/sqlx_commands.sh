@@ -35,3 +35,9 @@ cargo sqlx migrate run
 ## Add User entity
 cargo sqlx migrate add create_user_table
 cargo sqlx migrate run
+
+cargo sqlx migrate add user_add_role
+cargo sqlx migrate run
+
+cargo sqlx migrate add user_add_unique_constraint_for_username
+cargo sqlx migrate run
