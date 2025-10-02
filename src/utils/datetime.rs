@@ -27,7 +27,7 @@ impl UtcDateTime {
         self.0
     }
 
-    pub fn from_timestamptz(&self, value:OffsetDateTime) -> UtcDateTime {
+    pub fn from_timestamptz(value:OffsetDateTime) -> UtcDateTime {
         UtcDateTime(value)
     }
 }

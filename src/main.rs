@@ -2,25 +2,20 @@ use axum::{ Router};
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
-    configuration::{Configuration, CONFIGURATION_FILE}, 
-    logic::{currency_provider::CurrencyProvider},
-    repositories::{
-        user_repository::UserRepository, 
-        currency_repository::CurrencyRepository,
-        custodian_repository::CustodianRepository},
-    utils::cors::RouterExtensions as _};
+    configuration::{Configuration, CONFIGURATION_FILE}, repositories::{
+        currency_repository::CurrencyRepository, custodian_repository::CustodianRepository, user_repository::UserRepository}, services::{currency_provider::CurrencyProvider, user_service::UserService}, utils::{cors::RouterExtensions as _, dependency_injection}};
 
 mod configuration;
 mod utils;
 mod endpoints;
 mod entities;
-mod logic;
+mod services;
 mod repositories;
 
 #[derive(Clone)]
 pub struct AppState {
     pub config: configuration::Configuration,
-    pub user_repository: UserRepository,
+    pub user_service: UserService,
     pub currency_repository: CurrencyRepository,
     pub custodian_repository: CustodianRepository,
 }
@@ -79,9 +74,12 @@ async fn main() {
         std::process::exit(1);
     }
 
+    //dependency_injection::
+    let user_repository = UserRepository::new(db_pool.clone());
+
     let app_state = AppState {
         config: config.clone(),
-        user_repository: UserRepository::new(db_pool.clone()),
+        user_service: UserService::new(user_repository.clone()),
         currency_repository: currency_repository.clone(),
         custodian_repository: CustodianRepository::new(db_pool),
     };  

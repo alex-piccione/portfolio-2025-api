@@ -23,4 +23,17 @@ impl CurrencyProvider {
         let cache = CURRENCIES.read().unwrap();
         cache.clone()
     }
+
+    pub fn _try_get(id: i32) -> Option<Currency> {
+        let cache = CURRENCIES.read().unwrap();
+        cache.iter().find(|c| c.id == id).cloned()
+    }
+
+    pub fn get(id: i32) -> Currency {
+        let cache = CURRENCIES.read().unwrap();
+        cache.iter()
+            .find(|c| c.id == id)
+            .cloned()  // ✅ Clone before returning
+            .unwrap()  // Panic if not found
+    }
 }

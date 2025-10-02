@@ -9,6 +9,10 @@ pub struct CurrencyRepository {
 }
 
 impl CurrencyRepository {
+    pub fn new(db_pool: PgPool) -> Self {
+        Self { db_pool }
+    }
+
     pub async fn update(&self, currency: Currency) -> Result<(), String> {
 
         //let _test = sqlx::query!("SELECT COUNT(*) FROM Currency").fetch_one(&self.db_pool).await;
@@ -33,10 +37,6 @@ impl CurrencyRepository {
             return Err("No currency updated".to_string());
         }
         Ok(())
-    }
-
-    pub fn new(db_pool: PgPool) -> Self {
-        Self { db_pool }
     }
 
     pub async fn create(&self, currency: Currency) -> Result<i32, String> {
