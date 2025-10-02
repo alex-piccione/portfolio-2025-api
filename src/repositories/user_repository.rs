@@ -1,5 +1,6 @@
 use sqlx::PgPool;
 use crate::entities::user::User;
+use crate::repositories::schemas::user_record::UserRecord;
 
 #[derive(Clone)]
 pub struct UserRepository {
@@ -30,5 +31,15 @@ impl UserRepository {
         .map_err(|e| e.to_string())?;
 
         Ok(())
+    }
+
+    pub async fn get_by_username(&self, username: String) -> Result<Option<UserRecord>, String> {
+        sqlx::query_as!(
+            UserRecord,
+            "SELECT id, username, hashed_password, creation_date, currency_id, role FROM users WHERE username = $1", 
+            username)
+                .fetch_optional(&self.db_pool)
+                .await
+                .map_err(|e| format!("Failed to get User by username. {}", e))
     }
 }

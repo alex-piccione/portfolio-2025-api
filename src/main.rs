@@ -20,7 +20,7 @@ mod repositories;
 #[derive(Clone)]
 pub struct AppState {
     pub config: configuration::Configuration,
-    pub users_repository: UserRepository,
+    pub user_repository: UserRepository,
     pub currency_repository: CurrencyRepository,
     pub custodian_repository: CustodianRepository,
 }
@@ -81,7 +81,7 @@ async fn main() {
 
     let app_state = AppState {
         config: config.clone(),
-        users_repository: UserRepository::new(db_pool.clone()),
+        user_repository: UserRepository::new(db_pool.clone()),
         currency_repository: currency_repository.clone(),
         custodian_repository: CustodianRepository::new(db_pool),
     };  

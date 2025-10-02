@@ -1,5 +1,5 @@
 use axum::{extract::State, response::IntoResponse, Json};
-use crate::endpoints::password_hashing::hash_password;
+use crate::endpoints::password_hashing::{hash_password, verify_password};
 use crate::entities::user::User;
 use crate::logic::currency_provider::CurrencyProvider;
 
@@ -15,7 +15,6 @@ pub async fn signup(
     Json(request): Json<signup::Request>
  ) -> impl IntoResponse {
 
-    // OkErrorResponse
     let id = uuid::Uuid::new_v4().to_string();
 
     let hashed_password = hash_password(&request.password);
@@ -31,33 +30,29 @@ pub async fn signup(
         role: String::from("User"), // default
     };
 
-    match state.users_repository.create(user).await {
+    match state.user_repository.create(user).await {
         Ok(_) => response_ok(OkErrorResponse { is_success: true, error: None}),
         Err(e) => response_error(&e)
     }  
 }
 
 pub async fn login(
-    State(_state): State<AppState>, 
+    State(state): State<AppState>, 
     Json(request): Json<login::Request>
 ) -> impl IntoResponse {
 
-    let is_ok = request.username == "demo" && request.password == "demo";
-
-    // TODO
-    response_ok(login::Response {is_success: is_ok, error: None})
-}
-
-// repeated template in all endpoints calls
-/* 
-
-    match state.currency_repository.list().await {
-        Ok(entities) => {
-
-           // some work here
-
-            response_ok(models)
+    match state.user_repository.get_by_username(request.username).await {
+        Ok(option) => {
+            match option {
+                Some(record) => {
+                    match verify_password(&request.password, &record.hashed_password) {
+                        true => response_ok(OkErrorResponse {is_success: true, error: None}),
+                        false => response_ok(OkErrorResponse {is_success: false, error: None}),
+                    }                    
+                },
+                None => response_ok(OkErrorResponse {is_success: false, error: None}),
+            }
         },
-        Err(e) => response_error(StatusCode::INTERNAL_SERVER_ERROR, e.as_str())
-
-*/
+        Err(e) => response_error(e.as_str())
+    }    
+}
