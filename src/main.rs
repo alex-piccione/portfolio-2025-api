@@ -85,3 +85,19 @@ async fn main() {
 //    "Hello, Axum API (learning.Rust)!"
 //}
 
+/* TODO: handle errors to write log */
+/* 
+    // Handle the error case
+    axum::response::Response::builder()
+        .status(400)
+        .body(axum::body::Body::from(e))
+        .unwrap()        
+*/
+
+/* .map_err(|e| {
+    axum::response::Response::builder()
+        .status(400)
+        .body(axum::body::Body::from(e))
+        .unwrap()
+})?;*/
+

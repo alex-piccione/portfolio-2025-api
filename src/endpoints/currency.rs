@@ -9,7 +9,7 @@ pub async fn create(State(state): State<AppState>, Json(data): Json<models::Crea
 
     match data.to_entity() {
         Ok(entity) => {
-            match state.currency_repository.create(entity).await {
+            match state.currency_service.create(entity).await {
                 Ok(new_id) => {
                     let response = models::CreateResponse { new_id };
                     response_created(response)
@@ -24,7 +24,7 @@ pub async fn create(State(state): State<AppState>, Json(data): Json<models::Crea
 pub async fn update(State(state): State<AppState>, Json(data): Json<models::UpdateRequest>) -> impl IntoResponse {
     match data.to_entity() {
         Ok(entity) => {
-            match state.currency_repository.update(entity).await {
+            match state.currency_service.update(entity).await {
                 Ok(()) => response_ok("Currency updated successfully"),
                 Err(e) => response_error(e.as_str()),
             }
@@ -50,7 +50,7 @@ pub async fn single(_id:Path<i32>) -> impl IntoResponse {
 
 pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
 
-    match state.currency_repository.list().await {
+    match state.currency_service.list().await {
         Ok(entities) => {
 
             let models = entities.into_iter()
@@ -69,21 +69,3 @@ pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
         Err(e) => response_error(e.as_str())
     }
 }
-
-
-
-/* 
-        // Handle the error case
-        axum::response::Response::builder()
-            .status(400)
-            .body(axum::body::Body::from(e))
-            .unwrap()        
-    */
-
-
-/* .map_err(|e| {
-    axum::response::Response::builder()
-        .status(400)
-        .body(axum::body::Body::from(e))
-        .unwrap()
-})?;*/
