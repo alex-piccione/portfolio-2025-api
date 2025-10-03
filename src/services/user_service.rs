@@ -18,7 +18,7 @@ impl UserService {
     }
 
     pub async fn try_get_by_username(&self, username: String) -> Result<Option<User>, String> {
-        match &self.user_repository.try_get_by_username(username).await {
+        match self.user_repository.try_get_by_username(username).await {
             Ok(option) => {
                 match option {
                     Some(record) => {

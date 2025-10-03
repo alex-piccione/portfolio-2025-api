@@ -1,5 +1,5 @@
 use axum::{routing::{get, post, put}, Router};
-use crate::{endpoints, AppState};
+use crate::{endpoints, dependency_injection::AppState};
 
 pub fn set_routes(router:Router<AppState>) -> Router<AppState> {
     router

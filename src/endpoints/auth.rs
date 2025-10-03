@@ -5,7 +5,7 @@ use crate::services::currency_provider::CurrencyProvider;
 
 use crate::utils::datetime::UtcDateTime;
 use crate::{
-    AppState,
+    dependency_injection::AppState,
     endpoints::{helpers::*,
     models::auth::{OkErrorResponse, signup, login}}
 };

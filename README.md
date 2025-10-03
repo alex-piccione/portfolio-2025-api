@@ -49,3 +49,18 @@ Since the database is not part of this deploy, it is not described here.
 
 The deploy is executed running a script on a private server.  
 See [devop/README.md](devop/README.md#Deploy) for how to configure the script.
+
+
+
+
+## Tips
+
+### Read environment variable
+
+```rust
+// read the port from environment variable or use a default
+let port = std::env::var("PORT")
+    .unwrap_or_else(|_| "3000".to_string())
+    .parse::<u16>()
+    .expect("Failed to parse PORT environment variable as a number");
+```

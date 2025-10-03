@@ -2,8 +2,8 @@ use axum::{ Router};
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
-    configuration::{Configuration, CONFIGURATION_FILE}, repositories::{
-        currency_repository::CurrencyRepository, custodian_repository::CustodianRepository, user_repository::UserRepository}, services::{currency_provider::CurrencyProvider, user_service::UserService}, utils::{cors::RouterExtensions as _, dependency_injection}};
+    configuration::{Configuration, CONFIGURATION_FILE}, 
+    utils::{cors::RouterExtensions as _, dependency_injection}};
 
 mod configuration;
 mod utils;
@@ -12,21 +12,12 @@ mod entities;
 mod services;
 mod repositories;
 
-#[derive(Clone)]
-pub struct AppState {
-    pub config: configuration::Configuration,
-    pub user_service: UserService,
-    pub currency_repository: CurrencyRepository,
-    pub custodian_repository: CustodianRepository,
-}
-
-
 // The tokio::main macro is used to run the async main function
 #[tokio::main]
 async fn main() {
 
-    // production read the configuration file from an environment variable,
-    // for local debug it use a (local) configuration file if exists
+    // Production read the configuration file from an environment variable,
+    // for local debug it use a (local) configuration file, if exists.
     let config_file = match std::fs::exists(CONFIGURATION_FILE) {
         Ok(true) => { 
             println!("Using configuration file '{}'.", CONFIGURATION_FILE); 
@@ -68,35 +59,15 @@ async fn main() {
         println!("Database migrations are disabled in configuration.");
     }
 
-    let currency_repository = CurrencyRepository::new(db_pool.clone());
-    if let Err(e) = CurrencyProvider::load(&currency_repository).await {
-        eprintln!("Failed to load currencies: {}", e);
-        std::process::exit(1);
-    }
-
-    //dependency_injection::
-    let user_repository = UserRepository::new(db_pool.clone());
-
-    let app_state = AppState {
-        config: config.clone(),
-        user_service: UserService::new(user_repository.clone()),
-        currency_repository: currency_repository.clone(),
-        custodian_repository: CustodianRepository::new(db_pool),
-    };  
+    let app_state = dependency_injection::inject_services(&config, db_pool).await;
     
     let app = utils::routing::set_routes(Router::new())
-        .with_state(app_state)  // injection
+        .with_state(app_state)
         .set_cors(&config.app_domain);
-
-    // read the port from environment variable or use a default
-    //let port = std::env::var("PORT")
-    //    .unwrap_or_else(|_| "3000".to_string())
-    //    .parse::<u16>()
-    //    .expect("Failed to parse PORT environment variable as a number");
-    
-    // Bind on server (Azure or private linux Docker container) requires 0.0.0.0
-    // it will bind 127.0.0.1 and localhost locally 
-    let address = format!("0.0.0.0:{}", config.server_port);
+   
+    // Bind on server (Azure or Docker container) requires 0.0.0.0 
+    // LOcally it will bind 127.0.0.1 and localhost.
+    let address = format!("0.0.0.0:{}", &config.server_port);
 
     let listener = TcpListener::bind(&address)
         .await
