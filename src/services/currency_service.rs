@@ -1,26 +1,24 @@
-use crate::{
-    entities::currency::Currency, 
-    repositories::currency_repository::CurrencyRepository};
+use crate::{entities::currency::Currency, repositories::currency_repository::CurrencyRepository};
 
 #[derive(Clone)]
 pub struct CurrencyService {
-    currency_repository: CurrencyRepository
+    repository: CurrencyRepository
 }
 
 impl CurrencyService {
-    pub fn new(currency_repository: CurrencyRepository) -> Self {
-        Self { currency_repository }
+    pub fn new(repository: CurrencyRepository) -> Self {
+        Self { repository }
     }
 
-    pub async fn create(&self, currency:Currency) -> Result<i32, String> {
-        self.currency_repository.create(currency).await
+    pub async fn create(&self, item:Currency) -> Result<i32, String> {
+        self.repository.create(item).await
     }
 
-    pub async fn update(&self, currency: Currency) -> Result<(), String> {
-        self.currency_repository.update(currency).await
+    pub async fn update(&self, item: Currency) -> Result<(), String> {
+        self.repository.update(item).await
     }
 
     pub async fn list(&self) -> Result<Vec<Currency>, String> {
-        self.currency_repository.list().await
+        self.repository.list().await
     }
 }

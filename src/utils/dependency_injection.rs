@@ -3,19 +3,20 @@ use sqlx::PgPool;
 use crate::{configuration::Configuration, 
     repositories::{
         currency_repository::CurrencyRepository, 
-        custodian_repository::CustodianRepository, 
+        custodian_repository::{CustodianRepository}, 
         user_repository::UserRepository}, 
     services::{
         currency_provider::CurrencyProvider, 
         currency_service::CurrencyService, 
-        user_service::UserService}};
+        user_service::UserService,
+        custodian_service::CustodianService}};
 
 #[derive(Clone)]
 pub struct AppState {
     //pub config: Configuration,
     pub user_service: UserService,
     pub currency_service: CurrencyService,
-    pub custodian_repository: CustodianRepository,
+    pub custodian_service: CustodianService,
 }
 
 pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppState {
@@ -30,12 +31,13 @@ pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppStat
     }
 
     let user_repository = UserRepository::new(db_pool.clone());
+    let custodian_repository = CustodianRepository::new(db_pool.clone());
 
     AppState {
         //config: config.clone(),
         user_service: UserService::new(user_repository.clone()),
         currency_service: CurrencyService::new(currency_repository.clone()),
-        custodian_repository: CustodianRepository::new(db_pool),
+        custodian_service: CustodianService::new(custodian_repository.clone()),
     }    
 }
 
