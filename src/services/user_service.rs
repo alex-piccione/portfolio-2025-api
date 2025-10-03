@@ -1,16 +1,19 @@
 use crate::{
     entities::user::User, 
-    repositories::user_repository::UserRepository, services::currency_provider::CurrencyProvider, utils::datetime::{UtcDateTime}};
+    repositories::user_repository::UserRepository, 
+    services::{
+        currency_service::{CurrencyService}}, 
+    utils::datetime::UtcDateTime};
 
 #[derive(Clone)]
 pub struct UserService {
     user_repository: UserRepository, 
-    //currency_provider: CurrencyProvider
+    currency_service: CurrencyService
 }
 
 impl UserService {
-    pub fn new(user_repository: UserRepository) -> Self {
-        Self { user_repository}
+    pub fn new(user_repository: UserRepository, currency_service: CurrencyService) -> Self {
+        Self { user_repository, currency_service}
     }
 
     pub async fn create(&self, user:User) -> Result<(), String> {
@@ -27,7 +30,7 @@ impl UserService {
                             username: record.username.clone(),
                             hashed_password: record.hashed_password.clone(),
                             creation_date: UtcDateTime::from_timestamptz(record.creation_date),
-                            currency: CurrencyProvider::get(record.currency_id),
+                            currency: self.currency_service.get(record.currency_id),
                             role: record.role.clone()
                         };
 

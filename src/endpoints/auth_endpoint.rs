@@ -1,7 +1,6 @@
 use axum::{extract::State, response::IntoResponse, Json};
 use crate::endpoints::password_hashing::{hash_password, verify_password};
 use crate::entities::user::User;
-use crate::services::currency_provider::CurrencyProvider;
 
 use crate::utils::datetime::UtcDateTime;
 use crate::{
@@ -18,21 +17,24 @@ pub async fn signup(
     let id = uuid::Uuid::new_v4().to_string();
     let hashed_password = hash_password(&request.password);
 
-    let currency = CurrencyProvider::all().iter().find(|item| item.id == request.currency_id).unwrap().clone();
+    match state.currency_service.try_get(request.currency_id) {
+        Some(currency   ) => {
+            let user:User = User {
+                id: id,
+                username: request.username,
+                hashed_password: hashed_password,
+                creation_date:UtcDateTime::now(),
+                currency,
+                role: String::from("User"), // default
+            };
 
-    let user:User = User {
-        id: id,
-        username: request.username,
-        hashed_password: hashed_password,
-        creation_date:UtcDateTime::now(),
-        currency,
-        role: String::from("User"), // default
-    };
-
-    match state.user_service.create(user).await {
-        Ok(_) => response_ok(OkErrorResponse { is_success: true, error: None}),
-        Err(e) => response_error(&e)
-    }  
+            match state.user_service.create(user).await {
+                Ok(_) => response_ok(OkErrorResponse { is_success: true, error: None}),
+                Err(e) => response_error(&e)
+            } 
+        },
+        None => response_bad_request(&format!("Currency not found with ID = {}", request.currency_id))
+    } 
 }
 
 pub async fn login(

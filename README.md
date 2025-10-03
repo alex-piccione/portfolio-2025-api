@@ -52,7 +52,6 @@ See [devop/README.md](devop/README.md#Deploy) for how to configure the script.
 
 
 
-
 ## Tips
 
 ### Read environment variable
@@ -64,3 +63,10 @@ let port = std::env::var("PORT")
     .parse::<u16>()
     .expect("Failed to parse PORT environment variable as a number");
 ```
+
+### static mut
+_static mut_ is Rust is ... not possible.  
+Not without _unsafe_.  
+In other languages you have thread-safe colelctions, but not in Rust standard library.  
+You can paly around and write cumbersome code with LazyLock, RwLock and Mutex... that's it.  
+Otherwise, third party library. I coose "Dashmap". 
