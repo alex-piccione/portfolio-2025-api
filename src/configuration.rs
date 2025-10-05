@@ -1,11 +1,6 @@
 use std::fs;
 use serde::Deserialize;
 
-pub const CONFIGURATION_FILE: &'static str = "configuration.json"; 
-// for development you can use a custon configuration file, for example to point to production database
-//pub const CONFIGURATION_FILE: &'static str = "D:/Programming/devop/projects/portfolio/api/configuration_prod.json"; 
-
-
 #[derive(Deserialize, Clone)]
 pub struct Configuration {
     pub environment: String,

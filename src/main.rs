@@ -2,7 +2,7 @@ use axum::{ Router};
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
-    configuration::{Configuration, CONFIGURATION_FILE}, 
+    configuration::{Configuration}, 
     utils::{cors::RouterExtensions as _, dependency_injection}};
 
 mod configuration;
@@ -16,30 +16,18 @@ mod repositories;
 #[tokio::main]
 async fn main() {
 
-    // Production read the configuration file from an environment variable,
-    // for local debug it use a (local) configuration file, if exists.
-    let config_file = match std::fs::exists(CONFIGURATION_FILE) {
-        Ok(true) => { 
-            println!("Using configuration file '{}'.", CONFIGURATION_FILE); 
-            String::from(CONFIGURATION_FILE)
-        },
-        Ok(false) => { 
-            println!("Configuration file '{}' not found, using CONFIGURATION_FILE environment variable.", CONFIGURATION_FILE); 
-            std::env::var("CONFIGURATION_FILE")
-                .expect("CONFIGURATION_FILE environment variable must be set (.env file can be used to set it).")
-        },
-        Err(e) => panic!("Failed to check for local configuration file '{}': {}", CONFIGURATION_FILE, e),
-    };
+    let config_file = std::env::var("CONFIGURATION_FILE")
+        .expect("CONFIGURATION_FILE environment variable must be set (.env file can be used to set it).");
 
     //eprintln!("Current dir: {:?}", std::env::current_dir());
-    println!("Load configuration from '{}'", config_file);
+    println!("CONFIGURATION_FILE: '{}'", config_file);
 
     let config = Configuration::load_from_json_file(&config_file)
         .expect("Failed to create Configuration");
 
     println!("Configuration loaded for environment '{}'", config.environment);
 
-    println!("Conenct to database...");
+    println!("Connect to database...");
     let db_pool = PgPool::connect(&config.database_connection_string)
         .await
         .unwrap_or_else(|e| panic!(

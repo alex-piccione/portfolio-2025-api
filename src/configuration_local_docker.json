@@ -1,9 +1,0 @@
-{
-    "environment": "Local",
-    "server_port": 3000,
-    "app_domain": "my-app.com",
-    "database_connection_string_": "postgres://portfolio_user:portfolio_password@host.docker.internal:50302/portfolio",
-    "database_connection_string": "postgres://portfolio_user:portfolio_password@database:5432/portfolio",
-    "run_database_migrations": true,
-    "admin_email": "admin@portfolio.com"
-}

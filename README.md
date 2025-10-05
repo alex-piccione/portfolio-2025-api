@@ -70,3 +70,19 @@ Not without _unsafe_.
 In other languages you have thread-safe colelctions, but not in Rust standard library.  
 You can paly around and write cumbersome code with LazyLock, RwLock and Mutex... that's it.  
 Otherwise, third party library. I coose "Dashmap". 
+
+### Read local file
+
+```rust
+let config_file = match std::fs::exists(CONFIGURATION_FILE) {
+    Ok(true) => { 
+        println!("Using configuration file '{}'.", CONFIGURATION_FILE); 
+        String::from(CONFIGURATION_FILE)
+    },
+    Ok(false) => { 
+        println!("Configuration file '{}' not found, using CONFIGURATION_FILE environment variable.", CONFIGURATION_FILE); 
+
+    },
+    Err(e) => panic!("Failed to check for local configuration file '{}': {}", CONFIGURATION_FILE, e),
+};
+```

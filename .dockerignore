@@ -2,13 +2,12 @@
 target/
 .git/
 devop/
+.vscode/
+.github/
+.continue/
 
 # Sensitive files
 .env
 
-
 # Local configs that shouldn't be in containers
-src/configuration_prod.json
-
-# Dockerfile tests
-Dockerfile_*
+src/configuration_local_docker.json

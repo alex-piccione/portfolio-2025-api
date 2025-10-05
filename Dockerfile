@@ -26,9 +26,6 @@ FROM gcr.io/distroless/cc-debian12
 # Copy the binary
 COPY --from=builder /app/target/release/portfolio_api /usr/local/bin/portfolio_api
 
-# required for local Docker running
-COPY --from=builder /app/src/configuration_local_docker.json /configuration.json
-
 # receive a value as ARG and pass it to the container as ENV
 ARG CONFIGURATION_FILE
 ENV CONFIGURATION_FILE=$CONFIGURATION_FILE

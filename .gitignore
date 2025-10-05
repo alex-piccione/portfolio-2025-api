@@ -1,6 +1,5 @@
 # configuration file for local debug
 src/configuration.json
-src/configuration_prod.json
 
 # Cargo build output
 target/
