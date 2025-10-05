@@ -8,7 +8,7 @@ Web API with Rust.
 
 ## Setup e SQLx
 
-See [repositories/SQLx](repositories/SQLx.md).
+See [SQLx](src/repositories/SQLx.md).
 
 
 ## Development
