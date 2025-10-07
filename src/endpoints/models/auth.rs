@@ -1,13 +1,7 @@
-// TODO: use a common structure
-use serde::{Serialize};
-
-#[derive(Serialize)]
-pub struct OkErrorResponse {
-    pub is_success: bool,
-    pub error: Option<String>,
-}
 
 pub mod signup {
+    use crate::endpoints::models::common;
+
     #[derive(serde::Deserialize)]
     pub struct Request {
         pub username: String,
@@ -15,14 +9,11 @@ pub mod signup {
         pub currency_id: i32
     }
 
-   /* #[derive(Serialize)]
-    pub struct Response {
-        pub is_success: bool,
-        pub error: Option<String>,
-    }*/
+    pub type Response = common::SuccessErrorResponse;
 }
 
 pub mod login {
+    use crate::{endpoints::models::common::DataResponse, utils::datetime::UtcDateTime};
 
     #[derive(serde::Deserialize)]
     pub struct Request {
@@ -30,9 +21,13 @@ pub mod login {
         pub password: String,
     }
 
-    /*#[derive(Serialize)]
-    pub struct Response {
-        pub is_success: bool,
-        pub error: Option<String>,
-    }*/
+    pub type Response = DataResponse<Session>;
+
+    #[derive(serde::Serialize)]
+    pub struct Session {
+        pub access_token: String,
+        pub access_token_expires_at: UtcDateTime,
+        pub refresh_token: String,
+        pub refresh_token_expires_at: UtcDateTime
+    }
 }

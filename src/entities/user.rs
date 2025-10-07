@@ -1,5 +1,6 @@
 use crate::{entities::currency::Currency, utils::datetime::UtcDateTime};
 
+#[derive(Clone)]
 pub struct User {
     pub id: String,
     pub username: String,

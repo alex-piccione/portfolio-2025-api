@@ -28,14 +28,14 @@ impl SessionService {
         Self { repository, user_service }
     }
 
-    pub async fn create(&self, user_id: String, ip_address: String, user_agent: String) -> Result<i32, String> {
+    pub async fn create(&self, user: User, ip_address: String, user_agent: String) -> Result<Session, String> {
 
         let now = datetime::now();
         let access_expires_at = now + constants::ACCESS_TOKEN_LIFETIME;
         let refresh_expires_at = now + constants::REFRESH_TOKEN_LIFETIME;
 
-        /*let session = Session {
-            id: 0,
+        let session = Session {
+            id: 0, // to be updated
             user: user,
             access_token: generate_token(),
             access_token_expires_at: access_expires_at,
@@ -46,25 +46,18 @@ impl SessionService {
             creation_user_agent: user_agent
         };
         
-        let item = SessionRecord::from(session);
-        */
-
-        let record = SessionRecord {
-            id: 0, // to be replaced
-            user_id: user_id,
-            access_token: generate_token(),
-            access_token_expires_at: access_expires_at,
-            refresh_token: generate_token(),
-            refresh_token_expires_at: refresh_expires_at,
-            created_at: now,
-            creation_ip_address: ip_address,
-            creation_user_agent: user_agent
-        };
+        let record = SessionRecord::from(session.clone());
 
         match self.repository.create(record).await {
-            Ok(id) => {
+            Ok(new_id) => {
                 // TODO: log
-                Ok(id)
+
+                // update id
+                let final_session = Session {id: new_id, ..session};                
+                Ok(final_session)
+
+                //session.update_id(new_id);
+                //Ok(session)
             },
             Err(e) => {
                 // TODO: log

@@ -3,6 +3,8 @@ use chrono::{DateTime, Utc};
 use crate::{entities::user::User, utils::datetime::{now}};
 
 //#[derive(Serialize, Deserialize)]
+//#[derive(Copy)]
+#[derive(Clone)]
 pub struct Session {
     pub id: i32,
     pub user: User,
@@ -16,6 +18,10 @@ pub struct Session {
 }
 
 impl Session {
+    pub fn update_id(&mut self, id:i32) { 
+        self.id = id
+    }
+
     pub fn is_access_token_active(&self) -> bool {
         self.access_token_expires_at > now()
     }

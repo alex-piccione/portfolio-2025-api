@@ -1,12 +1,11 @@
 use axum::{extract::State, response::IntoResponse, Json};
-use crate::endpoints::password_hashing::{hash_password, verify_password};
-use crate::entities::user::User;
+use crate::services::auth_service::LoginRequest;
 
-use crate::utils::datetime::now;
+use crate::services::user_service::CreateError;
 use crate::{
     dependency_injection::AppState,
     endpoints::{helpers::*,
-    models::auth::{OkErrorResponse, signup, login}}
+    models::auth::{signup, login}}
 };
 
 pub async fn signup(
@@ -14,28 +13,25 @@ pub async fn signup(
     Json(request): Json<signup::Request>
  ) -> impl IntoResponse {
 
-    // TODO: move all this logic in the service
-    let id = uuid::Uuid::new_v4().to_string();
-    let hashed_password = hash_password(&request.password);
+    // TODO: validate request, use response_bad_request to return the 400 error with proper message
 
-    match state.currency_service.try_get(request.currency_id) {
-        Some(currency   ) => {
-            let user:User = User {
-                id: id,
-                username: request.username,
-                hashed_password: hashed_password,
-                creation_date: now(),
-                currency,
-                role: String::from("User"), // default
-            };
+    let Some(currency) = state.currency_service.try_get(request.currency_id) else {
+        return response_bad_request(&format!("Currency not found with ID={}", request.currency_id));
+    };
 
-            match state.user_service.create(user).await {
-                Ok(_) => response_ok(OkErrorResponse { is_success: true, error: None}),
-                Err(e) => response_error(&e)
-            } 
-        },
-        None => response_bad_request(&format!("Currency not found with ID = {}", request.currency_id))
-    } 
+    /* let currency = match state.currency_service.try_get(request.currency_id) {
+        Some(c) => c,
+        None => return response_bad_request(&format!("Currency not found with ID={}", request.currency_id))
+    }; */
+
+    match state.auth_service.signup(request.username, request.password, currency).await {
+        Ok(_) => response_ok(signup::Response::success()),
+        Err(CreateError::UsernameAlreadyInUse) => response_ok(signup::Response::error( "Username already taken")),
+        Err(CreateError::DatabaseError(e)) => {
+            // TODO: log error
+            response_error(&e)
+        }
+    }
 }
 
 pub async fn login(
@@ -43,6 +39,29 @@ pub async fn login(
     Json(request): Json<login::Request>
 ) -> impl IntoResponse {
 
+    // TODO: validate request
+
+    let username = request.username.trim().to_string();
+    let password = request.password.trim().to_string();
+
+    let ip_address:String = String::from("");
+    let user_agent:String = String::from("");
+
+    let service_request = LoginRequest { username:username, password:password, ip_address:ip_address, user_agent:user_agent} ;
+
+    match state.auth_service.login(service_request).await {
+        Ok(session) =>  response_ok(
+            login::Response::success(
+                login::Session {
+                        access_token: session.access_token,
+                        access_token_expires_at: session.access_token_expires_at,
+                        refresh_token: session.refresh_token,
+                        refresh_token_expires_at: session.refresh_token_expires_at
+            })),
+        Err(e) => response_ok(login::Response::error(&e))
+        //Err(e) => response_error(&e) 
+    }
+/* 
     match state.user_service.try_get_by_username(request.username).await {
         Ok(option) => {
             match option {
@@ -56,5 +75,5 @@ pub async fn login(
             }
         },
         Err(e) => response_error(e.as_str())
-    }    
+    }    */
 }
