@@ -7,6 +7,11 @@ pub struct AuthService {
     session_service: SessionService
 }
 
+pub enum LoginError {
+    DatabaseError(String),
+    FailedLogin
+}
+
 impl AuthService {
     pub fn new (user_service: UserService, session_service: SessionService) -> Self {
         AuthService { user_service, session_service}
@@ -29,36 +34,28 @@ impl AuthService {
         self.user_service.create(user).await 
     }
 
-    pub async fn login(&self, request:LoginRequest) -> Result<Session, String> {
+    pub async fn login(&self, request:LoginRequest) -> Result<Session, LoginError> {
+/*
+        let user = self.user_service.find_by_username(request.username).await else {
+            return login::Response::error()
+        };
+        */
 
-        match self.user_service.find_by_username(request.username).await {
-            Ok(option) => {
-                match option {
-                    Some(user) => {
-                        match verify_password(&request.password, &user.hashed_password) {
-                            true =>  {
-                                // create session
-                                match self.session_service.create(user, request.ip_address, request.user_agent).await {
-                                    Ok(session) => {
-                                        Ok(session)
-                                    },
-                                    Err(e) => {
-                                        // log
-                                        Err(format!("Some error occurred. Please retry."))
-                                    }
-                                }                                
-                            }, 
-                            false => Err(format!("Username or password are wrong"))
-                        }                    
-                    },
-                    None => Err(format!("Username or password are wrong"))
-                }
-            },
-            Err(e) => {
-                // log
-                Err(format!("Some error occurred. Please retry."))
-            }
-        }  
+        let Some(user) =
+            self.user_service.find_by_username(request.username).await 
+                .map_err(|e| LoginError::DatabaseError(e))?
+        else {
+            return Err(LoginError::FailedLogin);
+        };
+
+        match verify_password(&request.password, &user.hashed_password) {
+            true =>  {
+                // create session
+                self.session_service.create(user, request.ip_address, request.user_agent).await 
+                    .map_err(|e| LoginError::DatabaseError(e))
+            }, 
+            false => Err(LoginError::FailedLogin)
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 use axum::{extract::State, response::IntoResponse, Json};
-use crate::services::auth_service::LoginRequest;
+use crate::services::auth_service::{LoginError, LoginRequest};
 
 use crate::services::user_service::CreateError;
 use crate::{
@@ -58,22 +58,7 @@ pub async fn login(
                         refresh_token: session.refresh_token,
                         refresh_token_expires_at: session.refresh_token_expires_at
             })),
-        Err(e) => response_ok(login::Response::error(&e))
-        //Err(e) => response_error(&e) 
+        Err(LoginError::FailedLogin) => response_ok(login::Response::error("Wrong username or password")),
+        Err(LoginError::DatabaseError(e)) => response_error(&e)
     }
-/* 
-    match state.user_service.try_get_by_username(request.username).await {
-        Ok(option) => {
-            match option {
-                Some(record) => {
-                    match verify_password(&request.password, &record.hashed_password) {
-                        true => response_ok(OkErrorResponse {is_success: true, error: None}),
-                        false => response_ok(OkErrorResponse {is_success: false, error: None}),
-                    }                    
-                },
-                None => response_ok(OkErrorResponse {is_success: false, error: None}),
-            }
-        },
-        Err(e) => response_error(e.as_str())
-    }    */
 }
