@@ -2,7 +2,7 @@ use axum::{extract::State, response::IntoResponse, Json};
 use crate::endpoints::password_hashing::{hash_password, verify_password};
 use crate::entities::user::User;
 
-use crate::utils::datetime::UtcDateTime;
+use crate::utils::datetime::now;
 use crate::{
     dependency_injection::AppState,
     endpoints::{helpers::*,
@@ -14,6 +14,7 @@ pub async fn signup(
     Json(request): Json<signup::Request>
  ) -> impl IntoResponse {
 
+    // TODO: move all this logic in the service
     let id = uuid::Uuid::new_v4().to_string();
     let hashed_password = hash_password(&request.password);
 
@@ -23,7 +24,7 @@ pub async fn signup(
                 id: id,
                 username: request.username,
                 hashed_password: hashed_password,
-                creation_date:UtcDateTime::now(),
+                creation_date: now(),
                 currency,
                 role: String::from("User"), // default
             };

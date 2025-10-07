@@ -14,6 +14,7 @@ impl CurrencyRepository {
     }
 
     pub async fn create(&self, currency: Currency) -> Result<i32, String> {
+        //let _ = sqlx::query_as!(Currency, "SELECT id, symbol, name, kind as \"kind: _\", is_active, precision FROM Currency");
         let row = sqlx::query!(
             r#"
                 INSERT INTO Currency (symbol, name, kind, is_active, precision)
@@ -34,7 +35,6 @@ impl CurrencyRepository {
     }
 
     pub async fn update(&self, currency: Currency) -> Result<(), String> {
-
         //let _test = sqlx::query!("SELECT COUNT(*) FROM Currency").fetch_one(&self.db_pool).await;
         let result = sqlx::query!(
             r#"
@@ -59,8 +59,7 @@ impl CurrencyRepository {
         Ok(())
     }
 
-    pub async fn list(&self) -> Result<Vec<Currency>, String> { //sqlx::Error
-        //let _ = sqlx::query_as!(Currency, "SELECT id, symbol, name, kind as \"kind: _\", is_active, precision FROM currencies");
+    pub async fn list(&self) -> Result<Vec<Currency>, String> {        
         let currencies = sqlx::query_as!(Currency, 
             r#"
             SELECT id, symbol, name, kind as "kind!: CurrencyKind", is_active, precision 

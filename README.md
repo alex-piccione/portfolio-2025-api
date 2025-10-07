@@ -21,7 +21,9 @@ It uses the **DATABASE_URL** variable in the _.env_ file, it points t oa local D
 Rust standard library does not have Date or Datetime types (!).  
 A modern approach is to use _chrono_ but also _sqlx_ offer it.  
 To keep it simple, I'll use sqlx types. 
-I'll use _OffsetDateTime_ but always as UTC.  
+I'll use _OffsetDateTime_ of SQLx (always as UTC).  
+I created UtcDateTime custom type... I tried to use only std types like Duration... rubbish!  
+In the end only _chrono_ has a clear and short "Utc::now()" function and allows "<", ">" and "=" operators.  
 
 ## Run locally
 

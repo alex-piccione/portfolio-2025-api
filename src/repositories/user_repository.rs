@@ -22,7 +22,7 @@ impl UserRepository {
             user.id,
             user.username,
             user.hashed_password,
-            user.creation_date.as_timestamptz(),
+            user.creation_date,
             user.currency.id,
             user.role            
         )

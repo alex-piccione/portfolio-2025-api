@@ -2,8 +2,8 @@ use crate::{
     entities::user::User, 
     repositories::user_repository::UserRepository, 
     services::{
-        currency_service::{CurrencyService}}, 
-    utils::datetime::UtcDateTime};
+        currency_service::{CurrencyService}
+    }};
 
 #[derive(Clone)]
 pub struct UserService {
@@ -29,7 +29,7 @@ impl UserService {
                             id: record.id.clone(),
                             username: record.username.clone(),
                             hashed_password: record.hashed_password.clone(),
-                            creation_date: UtcDateTime::from_timestamptz(record.creation_date),
+                            creation_date: record.creation_date,
                             currency: self.currency_service.get(record.currency_id),
                             role: record.role.clone()
                         };

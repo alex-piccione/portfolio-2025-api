@@ -3,7 +3,9 @@
 //
 // usage: UtcDateTime::now() ✅ 
 
-use sqlx::types::time::OffsetDateTime;
+use chrono::{DateTime, Utc};
+//use serde::{Deserialize, Serialize};
+//use sqlx::types::time::OffsetDateTime;
 
 //pub use sqlx::types::time::OffsetDateTime as UtcDateTime;
 
@@ -13,6 +15,8 @@ pub fn utc_now() -> OffsetDateTime {
 }*/
 
 //#[derive(Debug, Clone, Copy)]
+//#[derive(Serialize, Deserialize)]
+/*
 pub struct UtcDateTime(OffsetDateTime);
 
 impl UtcDateTime {
@@ -30,4 +34,12 @@ impl UtcDateTime {
     pub fn from_timestamptz(value:OffsetDateTime) -> UtcDateTime {
         UtcDateTime(value)
     }
+}
+*/
+
+// type alias
+pub type UtcDateTime = DateTime<Utc>;
+
+pub fn now() -> DateTime<Utc> {
+    chrono::Utc::now()
 }

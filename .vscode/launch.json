@@ -15,7 +15,6 @@
             },
             "cwd": "${workspaceFolder}\\src", // this path is required to find the configuration file
             "env": {
-                "CONFIGURATION_FILE_": "/d/Programming/devop/projects/portfolio/api/configuration_local.json",
                 "CONFIGURATION_FILE": "./configuration_local.json"
             }   
         },

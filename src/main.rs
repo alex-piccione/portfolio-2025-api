@@ -6,6 +6,7 @@ use crate::{
     utils::{cors::RouterExtensions as _, dependency_injection}};
 
 mod configuration;
+mod constants;
 mod utils;
 mod endpoints;
 mod entities;
