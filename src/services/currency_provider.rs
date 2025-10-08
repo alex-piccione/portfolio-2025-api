@@ -5,8 +5,10 @@ use crate::{
     entities::currency::Currency
 };
 
+#[allow(dead_code)]
 static CURRENCIES: Lazy<RwLock<Vec<Currency>>> = Lazy::new(|| RwLock::new(vec![]));
 
+#[allow(dead_code)]
 pub struct CurrencyProvider;
 
 impl CurrencyProvider {    

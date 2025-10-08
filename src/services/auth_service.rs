@@ -1,4 +1,6 @@
-use crate::{ entities::{currency::Currency, session::Session, user::User}, services::{password_hashing::{hash_password, verify_password}, session_service::SessionService, user_service::{CreateError, UserService}}, utils::datetime::{now, UtcDateTime}};
+use crate::{ entities::{currency::Currency, session::Session, user::User}, 
+services::{password_hashing::{hash_password, verify_password}, 
+session_service::SessionService, user_service::{CreateError, UserService}}, utils::datetime::now};
 
 
 #[derive(Clone)]
@@ -64,13 +66,4 @@ pub struct LoginRequest {
     pub password: String,
     pub ip_address: String,
     pub user_agent:String
-}
-
-pub struct LoginResponse {
-    pub is_success: bool,
-    pub session: Option<Session>
-    //pub access_token: String,
-    //pub access_token_expires_at: UtcDateTime,
-    //pub refresh_token: String,
-    //pub refresh_token_expires_at: UtcDateTime
 }

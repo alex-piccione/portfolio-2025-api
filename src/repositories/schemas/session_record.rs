@@ -7,6 +7,7 @@ use crate::entities::session::Session;
 
 #[derive(sqlx::FromRow)]
 pub struct SessionRecord {
+    #[allow(dead_code)]
     pub id: i32,
     pub user_id: String,
     pub access_token: String,

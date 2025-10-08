@@ -1,8 +1,5 @@
-use chrono::{DateTime, Utc};
-//use rand::rngs::OsRng;
 use rand::RngCore;
 use base64::{engine::general_purpose, Engine as _};
-//use sqlx::types::time::OffsetDateTime;
 
 use crate::{constants, 
     entities::{session::Session, user::User},
@@ -13,6 +10,7 @@ use crate::{constants,
 #[derive(Clone)]
 pub struct SessionService {
     repository: SessionRepository,
+    #[allow(dead_code)]
     user_service: UserService
 }
 
