@@ -1,6 +1,7 @@
 use serde::{Serialize};
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")] 
 pub struct SuccessErrorResponse {
     is_success: bool,
     error: Option<String>
@@ -17,6 +18,7 @@ impl SuccessErrorResponse {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")] 
 pub struct _DataResponse<T> {
     #[serde(flatten)]
     pub base: SuccessErrorResponse,

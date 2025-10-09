@@ -3,6 +3,7 @@ use crate::entities::custodian as entities;
 use crate::entities::custodian::CustodianKind;
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")] 
 pub struct Custodian {
     pub id: i32,
     pub name: String,
@@ -28,6 +29,7 @@ impl From<entities::Custodian> for Custodian {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")] 
 pub struct CreateRequest {
     pub name: String,
     pub kind: String,
@@ -38,6 +40,7 @@ pub struct CreateRequest {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")] 
 pub struct CreateResponse {
     pub new_id: i32,
 }
@@ -57,6 +60,7 @@ impl CreateRequest {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")] 
 pub struct UpdateRequest {
     pub id: i32,
     pub name: String,

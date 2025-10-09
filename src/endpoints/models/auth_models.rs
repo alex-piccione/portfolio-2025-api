@@ -1,8 +1,8 @@
-
 pub mod signup {
     use crate::endpoints::models::common;
 
     #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")] 
     pub struct Request {
         pub username: String,
         pub password: String,
@@ -16,12 +16,14 @@ pub mod login {
     use crate::{entities::session::Session, utils::datetime::UtcDateTime};
 
     #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")] 
     pub struct Request {
         pub username: String,
         pub password: String,
     }
     
-    #[derive(serde::Serialize)]
+    #[derive(serde::Serialize)] 
+    #[serde(rename_all = "camelCase")] 
     pub struct Response {
         pub access_token: String,
         pub access_token_expires_at: UtcDateTime,

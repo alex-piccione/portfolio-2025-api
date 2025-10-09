@@ -41,16 +41,6 @@ pub async fn login(
     payload: Result<Json<login::Request>, JsonRejection>
 ) -> impl IntoResponse {
 
-    /*
-    status codes for /login:
-    StatusUse Case
-    200Successful login
-    401Wrong credentials
-    400Missing/invalid request format
-    429Too many login attempts (rate limiting)
-    500Server error
-     */
-
     let Json(request) = match payload {
         Ok(json) => json,
         Err(rejection) => {
