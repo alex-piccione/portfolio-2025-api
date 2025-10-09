@@ -1,9 +1,4 @@
-//use serde::{Deserialize, Serialize};
-
-use chrono::{DateTime, Utc};
-//use crate::utils::datetime::UtcDateTime;
-//use sqlx::types::time::OffsetDateTime;
-use crate::entities::session::Session;
+use crate::{entities::session::Session, utils::datetime::UtcDateTime};
 
 #[derive(sqlx::FromRow)]
 pub struct SessionRecord {
@@ -11,11 +6,10 @@ pub struct SessionRecord {
     pub id: i32,
     pub user_id: String,
     pub access_token: String,
-    //pub access_token_expires_at: UtcDateTime,
-    pub access_token_expires_at: DateTime<Utc>,
+    pub access_token_expires_at: UtcDateTime,
     pub refresh_token: String,
-    pub refresh_token_expires_at: DateTime<Utc>,
-    pub created_at: DateTime<Utc>,
+    pub refresh_token_expires_at: UtcDateTime,
+    pub created_at: UtcDateTime,
     pub creation_ip_address: String,
     pub creation_user_agent: String
 }
