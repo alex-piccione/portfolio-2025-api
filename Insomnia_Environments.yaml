@@ -1,0 +1,33 @@
+type: environment.insomnia.rest/5.0
+name: API
+meta:
+  id: wrk_36bd9b95f6104677bab6c69215cfed69
+  created: 1757418710961
+  modified: 1760018498495
+  description: ""
+environments:
+  name: Local Environment
+  meta:
+    id: env_09275f848bda70bb94a5b0752dd9a9ac95e94cdc
+    created: 1757418710985
+    modified: 1760029934431
+    isPrivate: false
+  subEnvironments:
+    - name: Docker
+      meta:
+        id: env_5a8cf1799b9448d4a5081a31a104dbe4
+        created: 1760018556292
+        modified: 1760018672984
+        isPrivate: false
+        sortKey: 1760018593404.5
+      data:
+        url: http://localhost:50301
+    - name: Localhost
+      meta:
+        id: env_7a1325ee412b467095bc71e95543a0a2
+        created: 1760018587269
+        modified: 1760029934430
+        isPrivate: false
+        sortKey: 1760018587269
+      data:
+        url: http://127.0.0.1:3000
