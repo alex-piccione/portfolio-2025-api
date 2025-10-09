@@ -39,26 +39,30 @@ pub async fn login(
     Json(request): Json<login::Request>
 ) -> impl IntoResponse {
 
+    /*
+    status codes for /login:
+    StatusUse Case
+    200Successful login
+    401Wrong credentials
+    400Missing/invalid request format
+    429Too many login attempts (rate limiting)
+    500Server error
+     */
+
     // TODO: validate request
 
     let username = request.username.trim().to_string();
     let password = request.password.trim().to_string();
 
+    // TODO: use HTTP headers
     let ip_address:String = String::from("");
     let user_agent:String = String::from("");
 
     let service_request = LoginRequest { username:username, password:password, ip_address:ip_address, user_agent:user_agent} ;
 
     match state.auth_service.login(service_request).await {
-        Ok(session) =>  response_ok(
-            login::Response::success(
-                login::Session {
-                        access_token: session.access_token,
-                        access_token_expires_at: session.access_token_expires_at,
-                        refresh_token: session.refresh_token,
-                        refresh_token_expires_at: session.refresh_token_expires_at
-            })),
-        Err(LoginError::FailedLogin) => response_ok(login::Response::error("Wrong username or password")),
+        Ok(session) => response_ok( login::Response::from(session)),
+        Err(LoginError::FailedLogin) => response_unhautorized("Wrong username or password"),
         Err(LoginError::DatabaseError(e)) => response_error(&e)
     }
 }
