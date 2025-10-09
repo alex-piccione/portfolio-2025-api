@@ -1,3 +1,4 @@
+use axum::extract::rejection::JsonRejection;
 use axum::{extract::State, response::IntoResponse, Json};
 use crate::services::auth_service::{LoginError, LoginRequest};
 
@@ -5,7 +6,7 @@ use crate::services::user_service::CreateError;
 use crate::{
     dependency_injection::AppState,
     endpoints::{response_utils::*,
-    models::auth::{signup, login}}
+    models::auth_models::{signup, login}}
 };
 
 pub async fn signup(
@@ -36,7 +37,8 @@ pub async fn signup(
 
 pub async fn login(
     State(state): State<AppState>, 
-    Json(request): Json<login::Request>
+    //Json(request): Json<login::Request>
+    payload: Result<Json<login::Request>, JsonRejection>
 ) -> impl IntoResponse {
 
     /*
@@ -49,7 +51,12 @@ pub async fn login(
     500Server error
      */
 
-    // TODO: validate request
+    let Json(request) = match payload {
+        Ok(json) => json,
+        Err(rejection) => {
+            return response_bad_request(&format!("Invalid request. {}", rejection));
+        }
+    };
 
     let username = request.username.trim().to_string();
     let password = request.password.trim().to_string();

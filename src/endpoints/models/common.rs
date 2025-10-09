@@ -17,21 +17,35 @@ impl SuccessErrorResponse {
 }
 
 #[derive(Serialize)]
-pub struct DataResponse<T> {
+pub struct _DataResponse<T> {
     #[serde(flatten)]
     pub base: SuccessErrorResponse,
     pub data: Option<T>
 }
 
-impl<T> DataResponse<T> {
-    pub fn success(data:T) -> Self {
-        DataResponse {
+impl<T> _DataResponse<T> {
+    pub fn _success(data:T) -> Self {
+        _DataResponse {
             base: SuccessErrorResponse::success(),
             data: Some(data)
         }
     }
 
-    pub fn error(message:&str) -> Self {
-        DataResponse { base: SuccessErrorResponse::error(message), data: None }
+    pub fn _error(message:&str) -> Self {
+        _DataResponse { base: SuccessErrorResponse::error(message), data: None }
     }
 }
+
+/* Usage
+
+    /*pub type Response = DataResponse<Session>;
+
+    #[derive(serde::Serialize)]
+    pub struct Session {
+        pub access_token: String,
+        pub access_token_expires_at: UtcDateTime,
+        pub refresh_token: String,
+        pub refresh_token_expires_at: UtcDateTime
+    }*/
+*/
+

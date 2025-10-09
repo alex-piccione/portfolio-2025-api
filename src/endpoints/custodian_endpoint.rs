@@ -2,7 +2,7 @@ use axum::{extract::State, Json};
 use axum::response::IntoResponse;
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
-use crate::endpoints::models::custodian as models;
+use crate::endpoints::models::custodian_models as models;
 
 pub async fn create(State(state): State<AppState>, Json(data): Json<models::CreateRequest>) -> impl IntoResponse {
     match data.to_entity() {

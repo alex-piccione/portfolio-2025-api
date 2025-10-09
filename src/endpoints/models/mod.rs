@@ -1,5 +1,5 @@
-pub mod auth;
-pub mod custodian;
-pub mod currency;
+pub mod auth_models;
+pub mod custodian_models;
+pub mod currency_models;
 
 pub mod common;
