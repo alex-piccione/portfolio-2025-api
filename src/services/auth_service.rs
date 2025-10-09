@@ -1,12 +1,11 @@
-use crate::{ entities::{currency::Currency, session::Session, user::User}, 
-services::{password_hashing::{hash_password, verify_password}, 
-session_service::SessionService, user_service::{CreateError, UserService}}, utils::datetime::now};
-
+use crate::{ entities::{currency::Currency, session::Session, user::User}, repositories::{schemas::session_record::SessionRecord, session_repository::SessionRepository}, services::{password_hashing::{hash_password, verify_password}, 
+session_service::{SessionService}, user_service::{CreateError, UserService}}, utils::datetime::now};
 
 #[derive(Clone)]
 pub struct AuthService {
     user_service: UserService,
-    session_service: SessionService
+    session_service: SessionService,
+    session_repository: SessionRepository
 }
 
 pub enum LoginError {
@@ -14,9 +13,16 @@ pub enum LoginError {
     FailedLogin
 }
 
+#[derive(Debug)]
+pub enum AuthError {
+    DatabaseError(String),
+    InvalidToken,
+    ExpiredToken,
+}
+
 impl AuthService {
-    pub fn new (user_service: UserService, session_service: SessionService) -> Self {
-        AuthService { user_service, session_service}
+    pub fn new (user_service: UserService, session_service: SessionService, session_repository: SessionRepository) -> Self {
+        AuthService { user_service, session_service, session_repository}
     }
 
     pub async fn signup(&self, username:String, password:String, currency:Currency) -> Result<(), CreateError> {
@@ -37,11 +43,10 @@ impl AuthService {
     }
 
     pub async fn login(&self, request:LoginRequest) -> Result<Session, LoginError> {
-/*
-        let user = self.user_service.find_by_username(request.username).await else {
-            return login::Response::error()
-        };
-        */
+        
+        //let user = self.user_service.find_by_username(request.username).await else {
+        //    return login::Response::error()
+        //};
 
         let Some(user) =
             self.user_service.find_by_username(request.username).await 
@@ -59,6 +64,22 @@ impl AuthService {
             false => Err(LoginError::FailedLogin)
         }
     }
+
+    pub async fn validate_access_token(&self, access_token: &str) -> Result<SessionRecord, AuthError> {
+        
+        let Some(session_record) = 
+            self.session_repository.find_by_access_token(access_token.to_string()).await
+            .map_err(| e| AuthError::DatabaseError(e))? else {
+                return Err(AuthError::InvalidToken); 
+            };
+
+        if now() > session_record.access_token_expires_at {
+            return Err(AuthError::ExpiredToken);
+        };
+
+        Ok(session_record)
+    }
+
 }
 
 pub struct LoginRequest {

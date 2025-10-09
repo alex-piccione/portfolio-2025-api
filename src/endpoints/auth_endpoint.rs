@@ -4,7 +4,7 @@ use crate::services::auth_service::{LoginError, LoginRequest};
 use crate::services::user_service::CreateError;
 use crate::{
     dependency_injection::AppState,
-    endpoints::{helpers::*,
+    endpoints::{response_utils::*,
     models::auth::{signup, login}}
 };
 

@@ -1,4 +1,5 @@
-pub(in crate::endpoints) mod helpers; // only visible in endpoints module and its submodules
+//pub(in crate::endpoints) mod response_utils; // only visible in endpoints module and its submodules
+pub mod response_utils;
 pub mod common_endpoint;
 pub mod auth_endpoint;
 pub mod currency_endpoint;

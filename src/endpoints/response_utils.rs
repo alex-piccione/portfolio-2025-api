@@ -25,3 +25,7 @@ pub fn response_not_found(message: &str) -> Response {
 pub fn response_created<T: serde::Serialize>(data: T) -> Response {
     (StatusCode::CREATED, Json(data)).into_response()
 }
+
+pub fn response_unhautorized(message: &str) -> Response {
+    response_error_code(StatusCode::UNAUTHORIZED, message)
+}

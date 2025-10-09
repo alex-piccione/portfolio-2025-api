@@ -1,4 +1,3 @@
-use axum::{ Router};
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
@@ -50,7 +49,7 @@ async fn main() {
 
     let app_state = dependency_injection::inject_services(&config, db_pool).await;
     
-    let app = utils::routing::set_routes(Router::new())
+    let app = utils::routing::set_routes(app_state.clone())
         .with_state(app_state)
         .set_cors(&config.app_domain);
    

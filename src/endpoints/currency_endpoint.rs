@@ -1,7 +1,7 @@
 use axum::{extract::Path,  extract::State, http::StatusCode, Json, response::IntoResponse};
 
-use super::helpers::{response_ok, response_error, response_created};
-use crate::endpoints::helpers::{response_error_code, response_not_found};
+use super::response_utils::{response_ok, response_error, response_created};
+use crate::endpoints::response_utils::{response_error_code, response_not_found};
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::currency as models;
 

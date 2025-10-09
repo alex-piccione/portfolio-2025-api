@@ -33,7 +33,7 @@ pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppStat
 
     let user_service = UserService::new(user_repository.clone(), currency_service.clone());
     let session_service = SessionService::new(session_repository.clone(), user_service.clone());
-    let auth_service = AuthService::new(user_service.clone(), session_service.clone());
+    let auth_service = AuthService::new(user_service.clone(), session_service.clone(), session_repository.clone());
 
     AppState {
         //config: config.clone(),

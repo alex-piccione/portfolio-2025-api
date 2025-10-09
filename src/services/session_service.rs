@@ -64,6 +64,20 @@ impl SessionService {
         }
     }
 
+    /*
+    pub async fn _find_by_token(&self, token: String) -> Result<Option<SessionRecord>, String> {
+        let record_result = self.session_repository.find_by_token(token).await?;
+        Ok(record_result.map(|record| 
+            Session {
+                id: record.id,
+                access_token: record.acc,
+                hashed_password: record.hashed_password.clone(),
+                creation_date: record.creation_date,
+                currency: self.currency_service.get(record.currency_id),
+                role: record.role
+        }))
+    } */
+
     //pub async fn update(&self, item: Session) -> Result<(), String> {
     //    self.repository.update(item).await
     //}
