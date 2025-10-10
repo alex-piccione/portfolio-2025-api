@@ -1,4 +1,17 @@
-use serde::{Serialize};
+use serde::Serialize;
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")] 
+pub struct ErrorResponse {
+    pub error: String,
+    pub code: Option<String>
+}
+
+impl ErrorResponse  {
+    pub fn error(message: &str) -> Self {
+        ErrorResponse { error: message.to_string(), code: None }
+    } 
+}
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")] 

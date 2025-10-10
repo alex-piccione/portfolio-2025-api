@@ -1,8 +1,8 @@
-use axum::{extract::Path,  extract::State, http::StatusCode, response::IntoResponse};
+use axum::{extract::Path,  extract::State, response::IntoResponse};
 
 use super::response_utils::{response_ok, response_error, response_created};
 use crate::endpoints::request_json_validator::ValidJson;
-use crate::endpoints::response_utils::{response_error_code, response_not_found};
+use crate::endpoints::response_utils::{response_bad_request, response_not_found};
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::currency_models as models;
 
@@ -14,10 +14,10 @@ pub async fn create(State(state): State<AppState>, ValidJson(data): ValidJson<mo
                     let response = models::CreateResponse { new_id };
                     response_created(response)
                 },
-                Err(e) => response_error(e.as_str())
+                Err(e) => response_error(&e)
             }
         },
-        Err(e) => response_error_code(StatusCode::BAD_REQUEST,  e.as_str())       
+        Err(e) => response_bad_request(&e)
     }
 }
 
@@ -26,10 +26,10 @@ pub async fn update(State(state): State<AppState>, ValidJson(data): ValidJson<mo
         Ok(entity) => {
             match state.currency_service.update(entity).await {
                 Ok(()) => response_ok("Currency updated successfully"),
-                Err(e) => response_error(e.as_str()),
+                Err(e) => response_error(&e),
             }
         },
-        Err(e) => response_error_code(StatusCode::BAD_REQUEST, e.as_str()),
+        Err(e) => response_bad_request(&e)
     }
 }
 

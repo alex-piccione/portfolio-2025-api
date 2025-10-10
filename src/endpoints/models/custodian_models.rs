@@ -1,38 +1,3 @@
-use serde::{Deserialize, Serialize};
-use crate::entities::custodian::Custodian;
-use crate::entities::custodian::CustodianKind;
-
-/* 
-No need for a Model until it is 1 t o1 with the Entity
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")] 
-pub struct Custodian {
-    pub id: i32,
-    pub name: String,
-    pub kind: String,
-    pub description: Option<String>,
-    pub url: Option<String>,
-    pub wallet_address: Option<String>,
-    pub account_country_code: Option<String>,
-}
-*/
-
-/* 
-impl From<Custodian> for Custodian {
-    fn from(entity: Custodian) -> Self {
-        Custodian {
-            id: entity.id,
-            name: entity.name,
-            kind: entity.kind.into(),
-            description: entity.description,
-            url: entity.url,
-            wallet_address: entity.wallet_address,
-            account_country_code: entity.account_country_code,
-        }
-    }
-}*/
-
 pub mod create {
     use crate::{endpoints::models::common::NewIdResponse, entities::custodian::{Custodian, CustodianKind}};
 

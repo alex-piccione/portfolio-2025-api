@@ -27,8 +27,9 @@ impl HoldingService {
         self.repository.update(item).await
     }*/
 
-    pub async fn list_for_user(&self, user:User) -> Result<Vec<Holding>, String> {
-        let records = self.repository.list(&user.id).await?;
+    pub async fn list_for_user(&self, user:User) -> Result<Vec<HoldingRecord>, String> {
+        self.repository.list(&user.id).await
+        /*let records = self.repository.list(&user.id).await?;        
         let custodians = self.custodian_repository.list().await?;
 
         records.into_iter().map(|record| -> Result<Holding, String> {
@@ -44,6 +45,7 @@ impl HoldingService {
             })
         })        
         .to_vec()  // instead of .collect::<Result<Vec<_>, _>>()
+        */
     }    
 
     async fn list_records(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {

@@ -32,16 +32,17 @@ pub async fn update(State(state): State<AppState>, Json(data): Json<models::Upda
         Err(e) => response_bad_request(&e),
     }
 }
+    */
 
-pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
-    match state.custodian_service.list().await {
-        Ok(entities) => {
+pub async fn list(State(state): State<AppState>, Extension(user): Extension<User>,) -> impl IntoResponse {
+    match state.holding_service.list_for_user(user).await {
+        Ok(entities) => response_ok(entities),
+        /*{
             let models = entities.into_iter()
                 .map(|entity| entity.into())
-                .collect::<Vec<models::Custodian>>();
-            response_ok(models)
-        },
+                .collect::<Vec<models::Custodian>>();            
+        },*/
         Err(e) => response_error(e.as_str()),
     }
 }
-*/
+
