@@ -1,8 +1,7 @@
 use axum::{extract::Path,  extract::State, response::IntoResponse};
 
-use super::response_utils::{response_ok, response_error, response_created};
+use super::response_utils::{response_ok, response_error, response_created_new_id, response_bad_request, response_not_found};
 use crate::endpoints::request_json_validator::ValidJson;
-use crate::endpoints::response_utils::{response_bad_request, response_not_found};
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::currency_models as models;
 
@@ -10,10 +9,7 @@ pub async fn create(State(state): State<AppState>, ValidJson(data): ValidJson<mo
     match data.to_entity() {
         Ok(entity) => {
             match state.currency_service.create(entity).await {
-                Ok(new_id) => {
-                    let response = models::CreateResponse { new_id };
-                    response_created(response)
-                },
+                Ok(new_id) => response_created_new_id(new_id),
                 Err(e) => response_error(&e)
             }
         },

@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 
-use crate::endpoints::models::common::ErrorResponse;
+use crate::endpoints::models::common::{ErrorResponse, NewIdResponse};
 
 pub fn _response_ok_no_data() -> Response {
     (StatusCode::OK).into_response()
@@ -14,6 +14,10 @@ pub fn response_ok<T: serde::Serialize>(data: T) -> Response {
 
 pub fn response_created<T: serde::Serialize>(data: T) -> Response {
     (StatusCode::CREATED, Json(data)).into_response()
+}
+
+pub fn response_created_new_id(new_id: i32) -> Response {
+    (StatusCode::CREATED, Json(NewIdResponse { new_id})).into_response()
 }
 
 // Errors

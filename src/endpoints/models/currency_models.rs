@@ -51,13 +51,6 @@ impl CreateRequest {
 }
 
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")] 
-pub struct CreateResponse {
-    pub new_id: i32,
-}
-
-
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")] 
 pub struct UpdateRequest {

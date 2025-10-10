@@ -15,7 +15,7 @@ pub async fn create(
     // TODO: validation
 
     match state.holding_service.create(&user.id, request).await {
-        Ok(new_id) => response_ok(new_id),
+        Ok(new_id) => response_created_new_id(new_id),
         Err(e) => response_error(&e)
     }
 }
