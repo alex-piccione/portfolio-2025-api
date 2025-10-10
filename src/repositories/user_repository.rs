@@ -33,6 +33,16 @@ impl UserRepository {
         Ok(())
     }
 
+    pub async fn get(&self, id: &str) -> Result<Option<UserRecord>, String> {
+        sqlx::query_as!(
+            UserRecord,
+            "SELECT id, username, hashed_password, creation_date, currency_id, role FROM users WHERE id = $1", 
+            id)
+                .fetch_optional(&self.db_pool)
+                .await
+                .map_err(|e| format!("Failed to get User by id. {}", e))
+    }
+
     pub async fn find_by_username(&self, username: String) -> Result<Option<UserRecord>, String> {
         sqlx::query_as!(
             UserRecord,

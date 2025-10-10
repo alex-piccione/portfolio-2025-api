@@ -35,7 +35,7 @@ impl HoldingRepository {
         Ok(row.id)
     }
 
-    pub async fn list(&self, user_id: String) -> Result<Vec<HoldingRecord>, String> {
+    pub async fn list(&self, user_id: &str) -> Result<Vec<HoldingRecord>, String> {
         /* SQLx uses its BigDecimal type... instead of rust_decimal::Decimal, so a manual mapping is required */
         /*
         sqlx::query_as!(

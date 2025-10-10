@@ -65,19 +65,25 @@ impl AuthService {
         }
     }
 
-    pub async fn validate_access_token(&self, access_token: &str) -> Result<SessionRecord, AuthError> {
+    pub async fn validate_access_token(&self, access_token: &str) -> Result<Session, AuthError> {
         
-        let Some(session_record) = 
-            self.session_repository.find_by_access_token(access_token.to_string()).await
+        let Some(session) = 
+            self.session_service.find_by_access_token(access_token).await
             .map_err(| e| AuthError::DatabaseError(e))? else {
                 return Err(AuthError::InvalidToken); 
             };
 
-        if now() > session_record.access_token_expires_at {
+        /* let Some(session_record) = 
+            self.session_repository.find_by_access_token(access_token).await
+            .map_err(| e| AuthError::DatabaseError(e))? else {
+                return Err(AuthError::InvalidToken); 
+            };*/
+
+        if now() > session.access_token_expires_at {
             return Err(AuthError::ExpiredToken);
         };
 
-        Ok(session_record)
+        Ok(session)
     }
 
 }

@@ -22,6 +22,7 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/custodian", put(endpoints::custodian_endpoint::update))
         .route("/custodian", get(endpoints::custodian_endpoint::list))    
         // holdings (todo)
+        .route("/holding", post(endpoints::holding_endpoint::create))    
             .requires_user(app_state.clone());
 
     Router::new()

@@ -1,6 +1,8 @@
+use std::process::id;
+
 use chrono::{DateTime, Utc};
 
-use crate::{entities::user::User};
+use crate::{entities::user::User, repositories::schemas::session_record::SessionRecord};
 
 //#[derive(Serialize, Deserialize)]
 //#[derive(Copy)]
@@ -15,6 +17,22 @@ pub struct Session {
     pub created_at: DateTime<Utc>,
     pub creation_ip_address: String,
     pub creation_user_agent: String,
+}
+
+impl From<(SessionRecord, User)> for Session {
+    fn from((record, user): (SessionRecord, User)) -> Self {
+        Session {
+            id: record.id,
+            user: user,        
+            access_token: record.access_token,
+            access_token_expires_at: record.access_token_expires_at,
+            refresh_token: record.refresh_token,
+            refresh_token_expires_at: record.refresh_token_expires_at,
+            created_at: record.created_at,
+            creation_ip_address: record.creation_ip_address,
+            creation_user_agent: record.creation_user_agent
+        }
+    }
 }
 
 impl Session {

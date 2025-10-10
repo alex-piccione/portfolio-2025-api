@@ -35,7 +35,7 @@ impl SessionRepository {
         Ok(row.id)
     }
 
-    pub async fn find_by_access_token(&self, access_token: String) -> Result<Option<SessionRecord>, String> {
+    pub async fn find_by_access_token(&self, access_token: &str) -> Result<Option<SessionRecord>, String> {
         //let _ = sqlx::query_as!(SessionRecord, "SELECT id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at  FROM Sessions");
         sqlx::query_as!(
             SessionRecord,

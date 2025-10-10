@@ -1,5 +1,3 @@
-use std::panic;
-
 use dashmap::DashMap;
 //e std::sync::{LazyLock, RwLock}; // Rust doesn't allow "static mut" :-(
 use crate::{entities::currency::Currency, repositories::currency_repository::CurrencyRepository};

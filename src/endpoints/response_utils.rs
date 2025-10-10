@@ -2,6 +2,10 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 
+pub fn response_ok_no_data() -> Response {
+    (StatusCode::OK).into_response()
+}
+
 pub fn response_ok<T: serde::Serialize>(data: T) -> Response {
     (StatusCode::OK, Json(data)).into_response()
 }

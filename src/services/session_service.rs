@@ -9,7 +9,7 @@ use crate::{constants,
 
 #[derive(Clone)]
 pub struct SessionService {
-    repository: SessionRepository,
+    repository: SessionRepository,    
     #[allow(dead_code)]
     user_service: UserService
 }
@@ -64,19 +64,22 @@ impl SessionService {
         }
     }
 
-    /*
-    pub async fn _find_by_token(&self, token: String) -> Result<Option<SessionRecord>, String> {
-        let record_result = self.session_repository.find_by_token(token).await?;
-        Ok(record_result.map(|record| 
-            Session {
-                id: record.id,
-                access_token: record.acc,
-                hashed_password: record.hashed_password.clone(),
-                creation_date: record.creation_date,
-                currency: self.currency_service.get(record.currency_id),
-                role: record.role
-        }))
-    } */
+
+    pub async fn find_by_access_token(&self, access_token: &str) -> Result<Option<Session>, String> {
+        
+        // TODO: optimize with a single query
+        
+        let Some(record) = self.repository.find_by_access_token(access_token).await? else {
+            return Ok(None); //(format!("Session not found with access token: '{}'", access_token));
+        };
+
+        let Some(user ) = self.user_service.get(&record.user_id).await? else {
+            return Err(format!("User not found with id: '{}'", &record.user_id));
+        };
+
+        let session: Session = (record, user).into();
+        Ok(Some(session))
+    } 
 
     //pub async fn update(&self, item: Session) -> Result<(), String> {
     //    self.repository.update(item).await

@@ -2,10 +2,10 @@ use sqlx::PgPool;
 
 use crate::{configuration::Configuration, 
     repositories::{
-        currency_repository::CurrencyRepository, custodian_repository::CustodianRepository, session_repository::SessionRepository, user_repository::UserRepository 
+        currency_repository::CurrencyRepository, custodian_repository::CustodianRepository, holding_repository::HoldingRepository, session_repository::SessionRepository, user_repository::UserRepository 
         }, 
     services::{
-        auth_service::AuthService, currency_service::CurrencyService, custodian_service::CustodianService, session_service::SessionService, user_service::UserService}};
+        auth_service::AuthService, currency_service::CurrencyService, custodian_service::CustodianService, holding_service::HoldingService, session_service::SessionService, user_service::UserService}};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -15,6 +15,7 @@ pub struct AppState {
     pub auth_service: AuthService,
     pub currency_service: CurrencyService,
     pub custodian_service: CustodianService,
+    pub holding_service: HoldingService,
 }
 
 pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppState {
@@ -23,6 +24,7 @@ pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppStat
     let session_repository = SessionRepository::new(db_pool.clone());
     let currency_repository = CurrencyRepository::new(db_pool.clone());
     let custodian_repository = CustodianRepository::new(db_pool.clone());
+    let holding_repository = HoldingRepository::new(db_pool.clone());
 
     let currency_service = CurrencyService::new(currency_repository.clone());
     // **LOAD THE CACHE ONLY ONCE**
@@ -34,6 +36,7 @@ pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppStat
     let user_service = UserService::new(user_repository.clone(), currency_service.clone());
     let session_service = SessionService::new(session_repository.clone(), user_service.clone());
     let auth_service = AuthService::new(user_service.clone(), session_service.clone(), session_repository.clone());
+    let holding_service = HoldingService::new(holding_repository, currency_service.clone(), custodian_repository.clone());
 
     AppState {
         //config: config.clone(),
@@ -42,6 +45,7 @@ pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppStat
         auth_service: auth_service.clone(),
         currency_service: currency_service.clone(),
         custodian_service: CustodianService::new(custodian_repository.clone()),
+        holding_service: holding_service.clone(),
     }    
 }
 

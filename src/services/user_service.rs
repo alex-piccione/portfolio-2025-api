@@ -37,10 +37,25 @@ impl UserService {
             }
             */
 
-        self.user_repository.create(user).await.map_err(|e| CreateError::DatabaseError(e.to_string()))?;
+        self.user_repository
+            .create(user).await
+            .map_err(|e| CreateError::DatabaseError(e.to_string()))?;
 
         Ok(())
     }
+
+    pub async fn get(&self, id: &str) -> Result<Option<User>, String> {
+        let user_result = self.user_repository.get(id).await?;
+        Ok(user_result.map(|record| 
+            User {
+                id: record.id,
+                username: record.username,
+                hashed_password: record.hashed_password.clone(),
+                creation_date: record.creation_date,
+                currency: self.currency_service.get(record.currency_id),
+                role: record.role
+        }))
+    }   
 
     pub async fn find_by_username(&self, username: String) -> Result<Option<User>, String> {
         let user_result = self.user_repository.find_by_username(username).await?;
