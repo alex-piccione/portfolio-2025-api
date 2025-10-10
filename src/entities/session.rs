@@ -1,5 +1,3 @@
-use std::process::id;
-
 use chrono::{DateTime, Utc};
 
 use crate::{entities::user::User, repositories::schemas::session_record::SessionRecord};

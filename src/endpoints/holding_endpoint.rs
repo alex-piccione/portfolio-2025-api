@@ -1,6 +1,7 @@
 use axum::Extension;
-use axum::{extract::State, Json};
+use axum::{extract::State};
 use axum::response::IntoResponse;
+use crate::endpoints::request_json_validator::ValidJson;
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::holding_models as models;
@@ -9,7 +10,7 @@ use crate::entities::user::User;
 pub async fn create(
     State(state): State<AppState>, 
     Extension(user): Extension<User>,
-    Json(request): Json<models::create::Request>) -> impl IntoResponse {
+    ValidJson(request): ValidJson<models::create::Request>) -> impl IntoResponse {
 
     // TODO: validation
 

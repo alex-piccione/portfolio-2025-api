@@ -3,7 +3,7 @@ use crate::utils::helpers::ResultVecExt;
 use crate::endpoints::models::holding_models::create::Request as CreateRequest;
 
 #[derive(Clone)]
-pub struct  HoldingService {
+pub struct HoldingService {
     repository: HoldingRepository, 
     currency_service: CurrencyService,
     custodian_repository: CustodianRepository

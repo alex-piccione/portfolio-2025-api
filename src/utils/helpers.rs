@@ -1,5 +1,6 @@
 use std::any::type_name;
 
+
 pub trait VecFindExt<T> {
     fn find<F>(&self, predicate: F, predicate_text: &str) -> Result<T, String>
     where

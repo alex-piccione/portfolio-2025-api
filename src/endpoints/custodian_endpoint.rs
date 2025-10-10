@@ -1,10 +1,11 @@
-use axum::{extract::State, Json};
+use axum::extract::State;
 use axum::response::IntoResponse;
+use crate::endpoints::request_json_validator::ValidJson;
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::custodian_models as models;
 
-pub async fn create(State(state): State<AppState>, Json(reqeust): Json<models::create::Request>) -> impl IntoResponse {
+pub async fn create(State(state): State<AppState>, ValidJson(reqeust): ValidJson<models::create::Request>) -> impl IntoResponse {
     match reqeust.to_entity() {
         Ok(entity) => {
             match state.custodian_service.create(entity).await {
@@ -19,7 +20,7 @@ pub async fn create(State(state): State<AppState>, Json(reqeust): Json<models::c
     }
 }
 
-pub async fn update(State(state): State<AppState>, Json(request): Json<models::update::Request>) -> impl IntoResponse {
+pub async fn update(State(state): State<AppState>, ValidJson(request): ValidJson<models::update::Request>) -> impl IntoResponse {
     match request.to_entity() {
         Ok(entity) => {
             match state.custodian_service.update(entity).await {

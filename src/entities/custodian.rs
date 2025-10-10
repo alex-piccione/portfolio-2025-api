@@ -21,6 +21,8 @@ pub enum CustodianKind {
     Pension,
     #[sqlx(rename = "Blockchain Wallet")]
     BlockchainWallet,
+    // Broker
+    Other
 }
 
 impl CustodianKind {
@@ -44,6 +46,7 @@ impl From<CustodianKind> for String {
             CustodianKind::FintechPlatform => "Fintech Platform".to_string(),
             CustodianKind::Pension => "Pension".to_string(),
             CustodianKind::BlockchainWallet => "Blockchain Wallet".to_string(),
+            CustodianKind::Other => "Other".to_string(),
         }
     }
 }

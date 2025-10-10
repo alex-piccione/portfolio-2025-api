@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 
-pub fn response_ok_no_data() -> Response {
+pub fn _response_ok_no_data() -> Response {
     (StatusCode::OK).into_response()
 }
 

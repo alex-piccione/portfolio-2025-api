@@ -1,4 +1,4 @@
-use crate::{ entities::{currency::Currency, session::Session, user::User}, repositories::{schemas::session_record::SessionRecord, session_repository::SessionRepository}, services::{password_hashing::{hash_password, verify_password}, 
+use crate::{ entities::{currency::Currency, session::Session, user::User}, repositories::{session_repository::SessionRepository}, services::{password_hashing::{hash_password, verify_password}, 
 session_service::{SessionService}, user_service::{CreateError, UserService}}, utils::datetime::now};
 
 #[derive(Clone)]

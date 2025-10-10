@@ -1,11 +1,12 @@
-use axum::{extract::Path,  extract::State, http::StatusCode, Json, response::IntoResponse};
+use axum::{extract::Path,  extract::State, http::StatusCode, response::IntoResponse};
 
 use super::response_utils::{response_ok, response_error, response_created};
+use crate::endpoints::request_json_validator::ValidJson;
 use crate::endpoints::response_utils::{response_error_code, response_not_found};
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::currency_models as models;
 
-pub async fn create(State(state): State<AppState>, Json(data): Json<models::CreateRequest>) -> impl IntoResponse {
+pub async fn create(State(state): State<AppState>, ValidJson(data): ValidJson<models::CreateRequest>) -> impl IntoResponse {
     match data.to_entity() {
         Ok(entity) => {
             match state.currency_service.create(entity).await {
@@ -20,7 +21,7 @@ pub async fn create(State(state): State<AppState>, Json(data): Json<models::Crea
     }
 }
 
-pub async fn update(State(state): State<AppState>, Json(data): Json<models::UpdateRequest>) -> impl IntoResponse {
+pub async fn update(State(state): State<AppState>, ValidJson(data): ValidJson<models::UpdateRequest>) -> impl IntoResponse {
     match data.to_entity() {
         Ok(entity) => {
             match state.currency_service.update(entity).await {
