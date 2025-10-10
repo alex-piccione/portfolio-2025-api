@@ -2,6 +2,12 @@ use serde::{Serialize};
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")] 
+pub struct NewIdResponse {
+    pub new_id: i32
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")] 
 pub struct SuccessErrorResponse {
     is_success: bool,
     error: Option<String>

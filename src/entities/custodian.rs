@@ -1,6 +1,6 @@
 use sqlx::{FromRow, Type};
 
-#[derive(FromRow, Debug, Clone)]
+#[derive(FromRow, Debug, Clone, serde::Serialize)]
 pub struct Custodian {
     pub id: i32,
     pub name: String,
@@ -11,7 +11,7 @@ pub struct Custodian {
     pub account_country_code: Option<String>,
 }
 
-#[derive(Debug, Clone, Type)]
+#[derive(Debug, Clone, Type, serde::Serialize)]
 #[sqlx(type_name = "VARCHAR")]
 pub enum CustodianKind {
     Bank,

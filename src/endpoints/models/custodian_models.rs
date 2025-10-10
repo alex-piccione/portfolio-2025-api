@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
-use crate::entities::custodian as entities;
+use crate::entities::custodian::Custodian;
 use crate::entities::custodian::CustodianKind;
+
+/* 
+No need for a Model until it is 1 t o1 with the Entity
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")] 
@@ -13,9 +16,11 @@ pub struct Custodian {
     pub wallet_address: Option<String>,
     pub account_country_code: Option<String>,
 }
+*/
 
-impl From<entities::Custodian> for Custodian {
-    fn from(entity: entities::Custodian) -> Self {
+/* 
+impl From<Custodian> for Custodian {
+    fn from(entity: Custodian) -> Self {
         Custodian {
             id: entity.id,
             name: entity.name,
@@ -26,61 +31,68 @@ impl From<entities::Custodian> for Custodian {
             account_country_code: entity.account_country_code,
         }
     }
-}
+}*/
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")] 
-pub struct CreateRequest {
-    pub name: String,
-    pub kind: String,
-    pub description: Option<String>,
-    pub url: Option<String>,
-    pub wallet_address: Option<String>,
-    pub account_country_code: Option<String>,
-}
+pub mod create {
+    use crate::{endpoints::models::common::NewIdResponse, entities::custodian::{Custodian, CustodianKind}};
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")] 
-pub struct CreateResponse {
-    pub new_id: i32,
-}
-
-impl CreateRequest {
-    pub fn to_entity(self) -> Result<entities::Custodian, String> {
-        Ok(entities::Custodian {
-            id: 0,
-            name: self.name,
-            kind: CustodianKind::from_string(&self.kind)?,
-            description: self.description,
-            url: self.url,
-            wallet_address: self.wallet_address,
-            account_country_code: self.account_country_code,
-        })
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")] 
+    pub struct Request {
+        pub name: String,
+        pub kind: String,
+        pub description: Option<String>,
+        pub url: Option<String>,
+        pub wallet_address: Option<String>,
+        pub account_country_code: Option<String>,
     }
-}
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")] 
-pub struct UpdateRequest {
-    pub id: i32,
-    pub name: String,
-    pub kind: String,
-    pub description: Option<String>,
-    pub url: Option<String>,
-    pub wallet_address: Option<String>,
-    pub account_country_code: Option<String>,
-}
-
-impl UpdateRequest {
-    pub fn to_entity(self) -> Result<entities::Custodian, String> {
-        Ok(entities::Custodian {
-            id: self.id,
-            name: self.name,
-            kind: CustodianKind::from_string(&self.kind)?,
-            description: self.description,
-            url: self.url,
-            wallet_address: self.wallet_address,
-            account_country_code: self.account_country_code,
-        })
+    impl Request {
+        pub fn to_entity(self) -> Result<Custodian, String> {
+            Ok(Custodian {
+                id: 0,
+                name: self.name,
+                kind: CustodianKind::from_string(&self.kind)?,
+                description: self.description,
+                url: self.url,
+                wallet_address: self.wallet_address,
+                account_country_code: self.account_country_code,
+            })
+        }
     }
+
+    pub type Response = NewIdResponse;
+}
+
+pub mod update {
+    use serde::Deserialize;
+
+    use crate::entities::custodian::{Custodian, CustodianKind};
+
+    #[derive(Deserialize)]
+    #[serde(rename_all = "camelCase")] 
+    pub struct Request {
+        pub id: i32,
+        pub name: String,
+        pub kind: String,
+        pub description: Option<String>,
+        pub url: Option<String>,
+        pub wallet_address: Option<String>,
+        pub account_country_code: Option<String>,
+    }
+
+    impl Request {
+        pub fn to_entity(self) -> Result<Custodian, String> {
+            Ok(Custodian {
+                id: self.id,
+                name: self.name,
+                kind: CustodianKind::from_string(&self.kind)?,
+                description: self.description,
+                url: self.url,
+                wallet_address: self.wallet_address,
+                account_country_code: self.account_country_code,
+            })
+        }
+    }
+
 }
