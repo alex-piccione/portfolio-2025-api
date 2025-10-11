@@ -10,7 +10,7 @@ collection:
     meta:
       id: fld_75a8735663df4c6c9164cc49996a1a21
       created: 1760017656052
-      modified: 1760029934433
+      modified: 1760212003785
       sortKey: -1760017656052
       description: ""
     children:
@@ -18,7 +18,7 @@ collection:
         meta:
           id: fld_37fba565854c4ed3a3d9c395d066229a
           created: 1756737042672
-          modified: 1760017675555
+          modified: 1760212003785
           sortKey: -1760017663221
           description: ""
         children:
@@ -48,7 +48,7 @@ collection:
             meta:
               id: req_c374f205da2c4ab6a2f09ae3afb7192e
               created: 1756764131003
-              modified: 1757418846712
+              modified: 1760097933779
               isPrivate: false
               description: ""
               sortKey: -1756737047810
@@ -116,7 +116,7 @@ collection:
         meta:
           id: fld_7e7d4578e0154c9188ce203dc89f2166
           created: 1756737093987
-          modified: 1760029934433
+          modified: 1760125523616
           sortKey: -1760017663321
           description: ""
         children:
@@ -229,6 +229,82 @@ collection:
                 send: true
                 store: true
               rebuildPath: true
+      - name: Holding
+        meta:
+          id: fld_c672938919c4403b8211ce1ad419300b
+          created: 1760091275513
+          modified: 1760181323687
+          sortKey: -1760091275513
+          description: ""
+        children:
+          - url: "{{ _.url }}/holding"
+            name: /holding (Create)
+            meta:
+              id: req_395fda27612046d093fd8047e3522ebf
+              created: 1760091285419
+              modified: 1760131509960
+              isPrivate: false
+              description: ""
+              sortKey: -1760091285419
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"custodianId": 1,
+                	"currencyId": 1,
+                	"date": "2025-09-02T10:30:00Z",
+                	"action": "Balance At",
+                	"amount": "100",
+                	"note": "Verified on website"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+                id: pair_57fa628187e54857afa92269b1e69bd2
+              - name: User-Agent
+                value: insomnia/11.6.1
+                id: pair_754464f5340945f5b15ac1a409d7d113
+              - id: pair_58227a66b2694bd088b08ba5b3382151
+                name: X-Auth-Token
+                value: "{{ _.accessToken }}"
+                description: ""
+                disabled: true
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.url }}/holding"
+            name: /holding (List)
+            meta:
+              id: req_746df01997714aa4864bcad83361d3a3
+              created: 1760124782528
+              modified: 1760124829105
+              isPrivate: false
+              description: ""
+              sortKey: -1760124782528
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+        headers:
+          - id: pair_c23bbdd1a88c40939b4e1e7414422dae
+            name: ""
+            value: ""
+            description: ""
+            disabled: false
     scripts:
       preRequest: "// Update the access_token in the Bae Environment (Collection
         environment)
@@ -248,15 +324,26 @@ collection:
         const refreshToken = insomnia.baseEnvironment.get(\"refreshToken\")
 
         const accessTokenExpiresAtString =
-        insomnia.baseEnvironment.get(\"accessTokenExpiresAt\")
+        insomnia.baseEnvironment.get(\"accessTokenExpiresAt\") // can be
+        undefined
 
         const refreshTokenExpiresAtString =
-        insomnia.baseEnvironment.get(\"refreshTokenExpiresAt\")
+        insomnia.baseEnvironment.get(\"refreshTokenExpiresAt\") // can be
+        undefined
+
+
+        //logInfo(`accessTokenExpiresAtString: ${accessTokenExpiresAtString}`)
+
+        //logInfo(`new Date(accessTokenExpiresAtString): ${new
+        Date(accessTokenExpiresAtString)}`)
+
+        //logInfo(`Date.now()): ${Date.now()}`)
 
 
         //if (moment(authTokenExpiresAt) < moment()) {
 
-        if (new Date(accessTokenExpiresAtString) < Date.now()) {
+        if (!accessTokenExpiresAtString || new Date(accessTokenExpiresAtString)
+        < Date.now()) {
 
         \tlogInfo(`Access Token is expired ${accessTokenExpiresAtString}.`)
 
@@ -271,25 +358,38 @@ collection:
 
         \t\treturn;
 
-        \t}
+        \t}\t
+
+
+        \t// *** here (folder script) there is no access to the (selected)
+        sub-environment, but only to the Base Environment
+
+        \  // insomnia.environment.get(\"url\")\tis undefined
+
+        \t// insomnia.request.url.urlObject  is undefined
 
         \t
 
-        \tlogInfo(\"Call /refresh-token\")
+        \t// try use the internal insomnia.variables.globalVars
+
+        \tif(!insomnia.variables.globalVars.has(\"url\"))\ 
+
+        \t\tthrow new Error(\"Variable 'url' not found in folder script\")\ 
+
+        \t\t
+
+        \tconst apiUrl = insomnia.variables.globalVars.get(\"url\")\t// override
+        a local variable with a ctual value from sub-level environment
+
+        \  const url = apiUrl + \"/auth/refresh\"
+
+        \tlogInfo(`Call refresh token endpoint: ${url}`)
 
         \t
 
-        \tconst apiUrl = insomnia.environment.get(\"url\")\t
+        \tconst response = await insomnia.sendRequest(
 
-        \  const url = apiUrl + \"/refresh-token\"
-
-        \tlogInfo(`url: ${url}`)
-
-        \t
-
-        \tawait insomnia.sendRequest(
-
-        \t\t{
+        \t{
 
         \t\t\turl: url,
 
@@ -305,66 +405,56 @@ collection:
 
         \t\t\t}
 
-        \t\t},
-
-        \t\t(error, response) => {
-
-        \t\t\tif (error) { logError(`Refresh token failed. ${error}`) }
-
-        \t\t\telse {\ 
-
-        \t\t\t\t
-
-        \t\t\t\tif (response.code == 200) {
-
-        \t\t\t\t\tconst jsonBody = response.json();
-
-        \t\t\t\t\tconst new_accessToken = jsonBody.accessToken
-
-        \t\t\t\t\tconst new_refreshToken = jsonBody.refreshToken
-
-        \t\t\t\t\tconst new_accessTokenExpiresAtString =
-        jsonBody.accessTokenExpiresAt
-
-        \t\t\t\t\tconst new_refreshTokenExpiresAtString =
-        jsonBody.refreshTokenExpiresAt
+        \t})
 
         \t
 
-        \t\t\t\t\tif (new_accessToken && new_refreshToken &&
+        \tif (response.status !== 200)\ 
+
+        \t\t throw new Error(`Refresh token call failed with status
+        ${response.status}. ${response.body}`);
+
+        \t\t
+
+
+        \tconst jsonBody = response.json();
+
+        \tconst new_accessToken = jsonBody.accessToken
+
+        \tconst new_refreshToken = jsonBody.refreshToken
+
+        \tconst new_accessTokenExpiresAtString = jsonBody.accessTokenExpiresAt
+
+        \tconst new_refreshTokenExpiresAtString = jsonBody.refreshTokenExpiresAt
+
+        \t
+
+        \tif (new_accessToken && new_refreshToken &&
         new_accessTokenExpiresAtString && new_refreshTokenExpiresAtString) {
 
-        \t\t\t\t\t\tlogInfo(`Set Base Environment Access and Refresh tokens with
-        new values: ${new_accessToken} and ${new_refreshToken}`)
+        \t\tlogInfo(`Set Base Environment Access and Refresh tokens with new
+        values: ${new_accessToken} and ${new_refreshToken}`)
 
-        \t\t\t\t\t\tinsomnia.baseEnvironment.set(\"accessToken\",
+        \t\tinsomnia.baseEnvironment.set(\"accessToken\",
         new_accessToken)\t\t\t\t\t\t
 
-        \t\t\t\t\t\tinsomnia.baseEnvironment.set(\"refreshToken\",
+        \t\tinsomnia.baseEnvironment.set(\"refreshToken\",
         new_refreshToken)\t\t\t\t\t\t
 
-        \t\t\t\t\t\tinsomnia.baseEnvironment.set(\"accessTokenExpiresAt\",
+        \t\tinsomnia.baseEnvironment.set(\"accessTokenExpiresAt\",
         new_accessTokenExpiresAtString)
 
-        \t\t\t\t\t\tinsomnia.baseEnvironment.set(\"refreshTokenExpiresAt\",
+        \t\tinsomnia.baseEnvironment.set(\"refreshTokenExpiresAt\",
         new_refreshTokenExpiresAtString)
 
-        \t\t\t\t\t}\telse {
+        \t}\telse {
 
-        \t\t\t\t\t\tlogError(\"Some property is undefined or not found in the
-        JSON response\")
+        \t\tlogError(\"Some property is undefined or not found in the JSON
+        response\")
 
-        \t\t\t\t\t\tlogInfo(`response: ${response}`)
+        \t\tlogInfo(`Response content: ${response.body}`)
 
-        \t\t\t\t\t}
-
-        \t\t\t\t}\t\t\t
-
-        \t\t\t\t
-
-        \t\t\t}
-
-        \t\t})\t\t
+        \t}\t
 
         }
 
@@ -377,6 +467,13 @@ collection:
         \t"
     authentication:
       type: none
+    environment:
+      __url: "{{ _.url }}"
+      aaa: test
+    environmentPropertyOrder:
+      "&":
+        - __url
+        - aaa
     headers:
       - id: pair_f4cc659ca68c42459817afdc9b2f55a1
         name: X-Auth-Token
@@ -387,7 +484,7 @@ collection:
     meta:
       id: fld_2e9b0fe89d7a49db8fcf58030fd8ae95
       created: 1760017700058
-      modified: 1760028467780
+      modified: 1760211962698
       sortKey: -1760017700058
       description: ""
     children:
@@ -422,7 +519,7 @@ collection:
         meta:
           id: fld_84fc3822e5ef45c19bb481187a6460c6
           created: 1759332730257
-          modified: 1760028467781
+          modified: 1760211962698
           sortKey: -1760017712390
           description: ""
         children:
@@ -431,7 +528,7 @@ collection:
             meta:
               id: req_f299cc90d90943e482c866079202d60a
               created: 1759332736647
-              modified: 1760028366650
+              modified: 1760180043448
               isPrivate: false
               description: ""
               sortKey: -1759332736647
@@ -476,8 +573,8 @@ collection:
                 		logInfo(`Set Base Environment variables with new token: ${accessToken} and ${refreshToken}`)
                 		insomnia.baseEnvironment.set("accessToken", accessToken)		
                 		insomnia.baseEnvironment.set("refreshToken", refreshToken)
-                		insomnia.baseEnvironment.set("accessTokenTxpiresAt", accessTokenExpiresAtString)
-                		insomnia.baseEnvironment.set("refreshTokenTxpiresAt", refreshTokenExpiresAtString)
+                		insomnia.baseEnvironment.set("accessTokenExpiresAt", accessTokenExpiresAtString)
+                		insomnia.baseEnvironment.set("refreshTokenExpiresAt", refreshTokenExpiresAtString)
                 	}	else {
                 		logError("some properties are undefined in the JSON response")
                 		logInfo(`response: ${insomnia.response}`)
@@ -522,21 +619,50 @@ collection:
                 send: true
                 store: true
               rebuildPath: true
+          - url: "{{ _.url }}/auth/refresh"
+            name: /auth/refresh
+            meta:
+              id: req_adc14fc9dfe743ef8c60e892cea6fd8a
+              created: 1760180563533
+              modified: 1760180912174
+              isPrivate: false
+              description: ""
+              sortKey: -1760180563533
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"refreshToken": "{{ _.refreshToken }}"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
 cookieJar:
   name: Default Jar
   meta:
     id: jar_f322ba964e83a6cb0018749707cbaf634cb9e10a
     created: 1755294938724
-    modified: 1760029934423
+    modified: 1760212003778
 environments:
   name: Base Environment
   meta:
     id: env_f322ba964e83a6cb0018749707cbaf634cb9e10a
     created: 1755294938721
-    modified: 1760029934428
+    modified: 1760212003780
     isPrivate: false
   data:
-    accessToken: armG2RgdFEGvDrBiBXn2nRo27AlHllgDa1QIhydWlpLWQiTFqJ6iOZFxTIQn8yiy
-    refreshToken: iCzC8ZxVDVWOtgAn4eTYtpzoAdECTwbsaIPZYY6JOAFoke4O6Qjq0IdX6Smj4rSc
-    accessTokenTxpiresAt: 2025-10-09T17:17:47.729239900Z
-    refreshTokenTxpiresAt: 2025-11-08T16:47:47.729239900Z
+    accessToken: HKEurmhMn_dRwdpUrMbwVai9njYPFJdL1Q1tPF6E81r11uDXtmbl2udSeG7hdRPh
+    refreshToken: gJPEr0_RHfu1W3cQq-tB1ixvBT04k_AIVKBiYUTijqiOV0pWnScw5HEx7y5PM32P
+    accessTokenExpiresAt: 2025-10-11T20:16:02.623776800Z
+    refreshTokenExpiresAt: 2025-11-10T19:46:02.623776800Z
