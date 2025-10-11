@@ -2,12 +2,12 @@
 
 SQLx-CLI needs to be installed: ``cargo install sqlx-cli --no-default-features --features "postgres"``
 
-SQLx use the **DATABASE_URL** environment variable to read the connection string. 
-There is an _.env_ file in the root folder, so SQLx commands **MUST be run from the root folder**,
-or: `export DATABASE_URL="postgresql://username:password@localhost/database_name"`
-
-The application, at start, will check and execute the migrations if configuration enabled it.  
-
+SQLx use the **DATABASE_URL** environment variable to read the connection string.  
+There is an _.env_ file in the root folder, so SQLx commands **MUST be run from the root folder**  
+(or use this: `export DATABASE_URL="postgresql://username:password@localhost/database_name"`).  
+  
+The application, at start, will check and execute the migrations (inside _/migrations_ folder) if the configuration enabled it.  
+  
 These commands can be used to manage database creation and changes:
 - ``cargo sqlx prepare``         # Generate query metadata (local cache used by static analizer)
 - ``cargo sqlx migrate run``     # Run database migrations
