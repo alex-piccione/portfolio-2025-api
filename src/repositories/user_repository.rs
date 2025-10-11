@@ -33,7 +33,7 @@ impl UserRepository {
         Ok(())
     }
 
-    pub async fn get(&self, id: &str) -> Result<Option<UserRecord>, String> {
+    pub async fn _get(&self, id: &str) -> Result<Option<UserRecord>, String> {
         sqlx::query_as!(
             UserRecord,
             "SELECT id, username, hashed_password, creation_date, currency_id, role FROM users WHERE id = $1", 

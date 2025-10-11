@@ -51,10 +51,6 @@ impl AuthService {
     }
 
     pub async fn login(&self, request:LoginRequest) -> Result<Session, LoginError> {
-        
-        //let user = self.user_service.find_by_username(request.username).await else {
-        //    return login::Response::error()
-        //};
 
         let Some(user) =
             self.user_service.find_by_username(request.username).await 
@@ -72,27 +68,6 @@ impl AuthService {
             false => Err(LoginError::FailedLogin)
         }
     }
-    /*
-    pub async fn _validate_access_token(&self, access_token: &str) -> Result<Session, AuthError> {
-        
-        let Some(session) = 
-            self.session_service.find_by_access_token(access_token).await
-            .map_err(| e| AuthError::DatabaseError(e))? else {
-                return Err(AuthError::InvalidOrExpiredToken); 
-            };
-
-        /* let Some(session_record) = 
-            self.session_repository.find_by_access_token(access_token).await
-            .map_err(| e| AuthError::DatabaseError(e))? else {
-                return Err(AuthError::InvalidToken); 
-            };*/
-
-        if now() > session.access_token_expires_at {
-            return Err(AuthError::InvalidOrExpiredToken);
-        };
-
-        Ok(session)
-    }*/
 
     /// Prolonge the access and refresh token validity and return the session with user id
     pub async fn validate_access(&self, access_token: String) -> Result<SessionWithUser, AuthError> {
@@ -100,7 +75,8 @@ impl AuthService {
         match self.session_repository.update_for_access(UpdateForAccess {
             access_token,
             access_token_expires_at: now + constants::auth::ACCESS_TOKEN_LIFETIME,
-            refresh_token_expires_at: now + constants::auth::REFRESH_TOKEN_LIFETIME
+            refresh_token_expires_at: now + constants::auth::REFRESH_TOKEN_LIFETIME,
+            last_access_at: now
         }).await
             .map_err(|e| AuthError::DatabaseError(e))? {
                 Some(record) => Ok(record),
@@ -109,11 +85,6 @@ impl AuthService {
     }
 
     pub async fn refresh_session(&self, refresh_token: String) -> Result<SessionRecord, AuthError> {
-        /* 
-        let Some(session_record) = self.session_repository.find_by_refresh_token(refresh_token).await
-            .map_err(|e| AuthError::DatabaseError((e)))? else {
-                return Err(AuthError::InvalidToken);
-            };*/
 
         let now = datetime::now();
         match self.session_repository.update_for_refresh(UpdateForRefresh {
@@ -121,18 +92,13 @@ impl AuthService {
             access_token: generate_token(),
             refresh_token: generate_token(),
             access_token_expires_at: now + constants::auth::ACCESS_TOKEN_LIFETIME,
-            refresh_token_expires_at: now + constants::auth::REFRESH_TOKEN_LIFETIME
+            refresh_token_expires_at: now + constants::auth::REFRESH_TOKEN_LIFETIME,
+            last_refresh_at: now
         }).await
             .map_err(|e| AuthError::DatabaseError(e))? {
                 Some(record) => Ok(record),
                 None => Err(AuthError::InvalidOrExpiredToken) // session not found
         }
-
-       /* let Some(session) = 
-            self.session_service.find_by_refresh_token(refresh_token).await
-            .map_err(| e| AuthError::DatabaseError(e))? else {
-                return Err(AuthError::InvalidToken); 
-            };*/
     }
 
 }

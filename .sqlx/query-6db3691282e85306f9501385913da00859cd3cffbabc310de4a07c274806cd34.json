@@ -1,0 +1,47 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE Sessions\n            SET \n                access_token_expires_at = $2,\n                refresh_token_expires_at = $3\n            FROM Users\n            WHERE Sessions.access_token = $1\n            AND Sessions.access_token_expires_at > now()\n            AND Users.id = Sessions.user_id\n            RETURNING\n                Sessions.user_id,\n                Users.username,\n                Sessions.access_token_expires_at,\n                Sessions.refresh_token_expires_at\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id",
+        "type_info": "Bpchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "username",
+        "type_info": {
+          "Custom": {
+            "name": "citext",
+            "kind": "Simple"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "access_token_expires_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 3,
+        "name": "refresh_token_expires_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Timestamptz",
+        "Timestamptz"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "6db3691282e85306f9501385913da00859cd3cffbabc310de4a07c274806cd34"
+}

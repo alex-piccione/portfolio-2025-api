@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, creation_ip_address, creation_user_agent\n            FROM Sessions WHERE access_token = $1\n            ",
+  "query": "\n            Update Sessions SET \n                access_token = $2,\n                access_token_expires_at = $3,\n                refresh_token = $4, \n                refresh_token_expires_at = $5\n            WHERE refresh_token = $1 \n                AND refresh_token_expires_at > now()\n            RETURNING id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, creation_ip_address, creation_user_agent\n            ",
   "describe": {
     "columns": [
       {
@@ -51,7 +51,11 @@
     ],
     "parameters": {
       "Left": [
-        "Text"
+        "Text",
+        "Varchar",
+        "Timestamptz",
+        "Varchar",
+        "Timestamptz"
       ]
     },
     "nullable": [
@@ -66,5 +70,5 @@
       false
     ]
   },
-  "hash": "59a9cea918b12b3558c635d13cc3ec91b8b774b3b17d28b391521b2424b2cdb9"
+  "hash": "ea76e352841aa30ad672f301de4763637c9173ca06047bd3711b09ed4fe3ef98"
 }

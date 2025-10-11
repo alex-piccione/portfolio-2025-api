@@ -44,8 +44,8 @@ impl UserService {
         Ok(())
     }
 
-    pub async fn get(&self, id: &str) -> Result<Option<User>, String> {
-        let user_result = self.user_repository.get(id).await?;
+    pub async fn _get(&self, id: &str) -> Result<Option<User>, String> {
+        let user_result = self.user_repository._get(id).await?;
         Ok(user_result.map(|record| 
             User {
                 id: record.id,

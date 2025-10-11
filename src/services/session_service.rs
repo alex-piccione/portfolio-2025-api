@@ -40,6 +40,8 @@ impl SessionService {
             refresh_token: generate_token(),
             refresh_token_expires_at: refresh_expires_at,
             created_at: now,
+            last_access_at: None,
+            last_refresh_at: None,
             creation_ip_address: ip_address,
             creation_user_agent: user_agent
         };

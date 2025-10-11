@@ -1,0 +1,3 @@
+ALTER TABLE Sessions
+ADD COLUMN last_access_at TIMESTAMPTZ NULL,
+ADD COLUMN last_refresh_at TIMESTAMPTZ NULL;

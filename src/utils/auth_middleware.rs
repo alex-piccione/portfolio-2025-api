@@ -30,7 +30,7 @@ pub async fn requires_user(
         Err(AuthError::InvalidOrExpiredToken) => response_invalid_token("Access Token is invalid or expired"),
         Err(AuthError::DatabaseError(e)) => {
             // log
-            eprint!("Something went wrong in the authentication process. {}", e);
+            crate::error!("Something went wrong in the authentication process. {}", e);
             response_error("Something went wrong on authentication process")
         }
     }

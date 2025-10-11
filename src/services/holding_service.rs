@@ -4,13 +4,13 @@ use crate::endpoints::models::holding_models::create::Request as CreateRequest;
 #[derive(Clone)]
 pub struct HoldingService {
     repository: HoldingRepository, 
-    currency_service: CurrencyService,
-    custodian_repository: CustodianRepository
+    _currency_service: CurrencyService,
+    _custodian_repository: CustodianRepository
 }
 
 impl HoldingService {
-    pub fn new(repository: HoldingRepository, currency_service: CurrencyService, custodian_repository: CustodianRepository) -> Self {
-        Self {repository, currency_service, custodian_repository}
+    pub fn new(repository: HoldingRepository, _currency_service: CurrencyService, _custodian_repository: CustodianRepository) -> Self {
+        Self {repository, _currency_service, _custodian_repository}
     }
 
     pub async fn create(
@@ -46,8 +46,4 @@ impl HoldingService {
         .to_vec()  // instead of .collect::<Result<Vec<_>, _>>()
         */
     }    
-
-    async fn list_records(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
-        self.repository.list(user_id).await
-    }   
 }

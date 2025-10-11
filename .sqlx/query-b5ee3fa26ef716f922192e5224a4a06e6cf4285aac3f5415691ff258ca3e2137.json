@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                INSERT INTO Holdings (user_id, custodian_id, currency_id, date, action, amount, note)\n                VALUES ($1, $2, $3, $4, $5, $6, $7)\n                RETURNING id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Bpchar",
+        "Int4",
+        "Int4",
+        "Timestamptz",
+        "Varchar",
+        "Numeric",
+        "Varchar"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "b5ee3fa26ef716f922192e5224a4a06e6cf4285aac3f5415691ff258ca3e2137"
+}

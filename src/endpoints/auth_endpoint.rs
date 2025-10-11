@@ -1,4 +1,4 @@
-use crate::{debug, info};
+use crate::{info};
 
 use axum::{extract::State, response::IntoResponse};
 use crate::{endpoints::{models::auth_models::refresh_token, request_json_validator::ValidJson}, services::auth_service::{AuthError, LoginError, LoginRequest}};

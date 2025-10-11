@@ -36,6 +36,7 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         
 }
 
+/* 
 pub trait RequireUserExt {
     fn requires_user(self, state: AppState) -> Self;
 }
@@ -45,3 +46,4 @@ impl RequireUserExt for Router<AppState> {
         self.layer(middleware::from_fn_with_state(state, crate::utils::auth_middleware::requires_user))
     }
 }
+*/

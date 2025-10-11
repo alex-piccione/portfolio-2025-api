@@ -42,7 +42,8 @@ impl SessionRepository {
             UPDATE Sessions
             SET 
                 access_token_expires_at = $2,
-                refresh_token_expires_at = $3
+                refresh_token_expires_at = $3,
+                last_access_at = $4
             FROM Users
             WHERE Sessions.access_token = $1
             AND Sessions.access_token_expires_at > now()
@@ -56,6 +57,7 @@ impl SessionRepository {
             update.access_token,
             update.access_token_expires_at,
             update.refresh_token_expires_at,
+            update.last_access_at
         )
         .fetch_optional(&self.db_pool)
         .await
@@ -71,16 +73,18 @@ impl SessionRepository {
                 access_token = $2,
                 access_token_expires_at = $3,
                 refresh_token = $4, 
-                refresh_token_expires_at = $5
+                refresh_token_expires_at = $5, 
+                last_refresh_at = $6
             WHERE refresh_token = $1 
                 AND refresh_token_expires_at > now()
-            RETURNING id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, creation_ip_address, creation_user_agent
+            RETURNING id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, last_access_at, last_refresh_at, creation_ip_address, creation_user_agent
             "#,
             update.old_refresh_token,
             update.access_token,
             update.access_token_expires_at,
             update.refresh_token,
             update.refresh_token_expires_at,
+            update.last_refresh_at
         )
         .fetch_optional(&self.db_pool)
         .await
