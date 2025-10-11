@@ -1,4 +1,4 @@
-# SQLKx
+# SQLx
 
 SQLx-CLI needs to be installed: ``cargo install sqlx-cli --no-default-features --features "postgres"``
 
