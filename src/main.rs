@@ -67,25 +67,3 @@ async fn main() {
         .await
         .expect("Failed to start server");
 }
-
-// Axum handles the conversion of a simple string to the HTTP response
-//async fn home() -> &'static str {
-//    "Hello, Axum API (learning.Rust)!"
-//}
-
-/* TODO: handle errors to write log */
-/* 
-    // Handle the error case
-    axum::response::Response::builder()
-        .status(400)
-        .body(axum::body::Body::from(e))
-        .unwrap()        
-*/
-
-/* .map_err(|e| {
-    axum::response::Response::builder()
-        .status(400)
-        .body(axum::body::Body::from(e))
-        .unwrap()
-})?;*/
-

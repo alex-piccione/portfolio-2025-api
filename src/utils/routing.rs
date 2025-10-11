@@ -8,7 +8,8 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/", get(endpoints::common_endpoint::home))        
         // auth
         .route("/login", post(endpoints::auth_endpoint::login))
-        .route("/signup", post(endpoints::auth_endpoint::signup));
+        .route("/signup", post(endpoints::auth_endpoint::signup))
+        .route("/auth/refresh", post(endpoints::auth_endpoint::refresh_token));
 
     // User required routes
     let user_routes = Router::new()
