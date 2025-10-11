@@ -13,16 +13,14 @@ pub async fn signup(
     ValidJson(request): ValidJson<signup::Request>
  ) -> impl IntoResponse {
 
-    // TODO: validate request, use response_bad_request to return the 400 error with proper message
+    // TODO: create a validator helper
+    if request.username.trim().is_empty() || request.password.trim().is_empty() {
+        return response_bad_request("Username and password cannot be empty");
+    }
 
     let Some(currency) = state.currency_service.try_get(request.currency_id) else {
         return response_bad_request(&format!("Currency not found with ID={}", request.currency_id));
     };
-
-    /* let currency = match state.currency_service.try_get(request.currency_id) {
-        Some(c) => c,
-        None => return response_bad_request(&format!("Currency not found with ID={}", request.currency_id))
-    }; */
 
     match state.auth_service.signup(request.username, request.password, currency).await {
         Ok(_) => response_ok(signup::Response::success()),
@@ -59,7 +57,7 @@ pub async fn refresh_token(
     State(state): State<AppState>,
     ValidJson(request): ValidJson<refresh_token::Request>
 ) -> impl IntoResponse {
-    match state.auth_service.refresh_session(request.token).await {
+    match state.auth_service.refresh_session(request.refresh_token).await {
         Ok(session) => response_ok(refresh_token::Response::from(session)),
         Err(AuthError::InvalidOrExpiredToken) => response_invalid_token("Refresh token is invalid or expired."),
         Err(AuthError::DatabaseError(e)) => response_error(&e)

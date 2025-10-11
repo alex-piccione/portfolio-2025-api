@@ -33,6 +33,7 @@ pub mod login {
     }
 
         #[derive(serde::Serialize)]
+        #[serde(rename_all = "camelCase")] 
         pub struct ResponseUser {
             pub id: String,
             pub username: String
@@ -59,11 +60,13 @@ pub mod refresh_token {
     use crate::{repositories::schemas::session_record::SessionRecord, utils::datetime::UtcDateTime};
 
     #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")] 
     pub struct Request {
-        pub token: String
+        pub refresh_token: String
     }
 
     #[derive(serde::Serialize)]
+    #[serde(rename_all = "camelCase")] 
     pub struct Response {
         pub access_token: String,
         pub access_token_expires_at: UtcDateTime,

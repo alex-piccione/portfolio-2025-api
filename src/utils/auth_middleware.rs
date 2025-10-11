@@ -7,10 +7,10 @@ pub async fn requires_user(
     next: Next) -> impl IntoResponse {
     let Some(access_token) = req
         .headers()
-        .get("X-AUTH-TOKEN")
+        .get("X-Auth-Token")
         .and_then(|v| v.to_str().ok())
         else {
-            return response_missing_auth_header("X-Auth-Token HTTP header is missed in hte request.");
+            return response_missing_auth_header("X-Auth-Token HTTP header is missed in the request.");
         };
 
     /*
