@@ -1,10 +1,10 @@
 # Learning Rust - Axum
 
+[![Deploy](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml/badge.svg)](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml)
+
 Web API with Rust.  
 **Axum** library for API service.  
 **Sqlx** library as database helper.  
-
-[![Deploy](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml/badge.svg)](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml)
 
 ## Setup e SQLx
 
