@@ -7,7 +7,7 @@ Ports:
 
 ## Docker containers for API and Database
 
-From devoip folter:  
+From the "devop" folder:  
 `docker compose -f compose.all.yaml up`
 `docker compose -f compose.all.yaml up --build`
 **note:** if you change the _.env_ or the _configuration_ files, use **--buil** ()

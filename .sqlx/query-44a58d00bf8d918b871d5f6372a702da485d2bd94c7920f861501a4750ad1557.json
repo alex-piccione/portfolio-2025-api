@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            Update Sessions SET \n                access_token = $2,\n                access_token_expires_at = $3,\n                refresh_token = $4, \n                refresh_token_expires_at = $5\n            WHERE refresh_token = $1 \n                AND refresh_token_expires_at > now()\n            RETURNING id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, creation_ip_address, creation_user_agent\n            ",
+  "query": "\n            Update Sessions SET \n                access_token = $2,\n                access_token_expires_at = $3,\n                refresh_token = $4, \n                refresh_token_expires_at = $5, \n                last_refresh_at = $6\n            WHERE refresh_token = $1 \n                AND refresh_token_expires_at > now()\n            RETURNING id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, last_access_at, last_refresh_at, creation_ip_address, creation_user_agent\n            ",
   "describe": {
     "columns": [
       {
@@ -40,11 +40,21 @@
       },
       {
         "ordinal": 7,
+        "name": "last_access_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 8,
+        "name": "last_refresh_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
         "name": "creation_ip_address",
         "type_info": "Varchar"
       },
       {
-        "ordinal": 8,
+        "ordinal": 10,
         "name": "creation_user_agent",
         "type_info": "Text"
       }
@@ -55,6 +65,7 @@
         "Varchar",
         "Timestamptz",
         "Varchar",
+        "Timestamptz",
         "Timestamptz"
       ]
     },
@@ -66,9 +77,11 @@
       false,
       false,
       false,
+      true,
+      true,
       false,
       false
     ]
   },
-  "hash": "ea76e352841aa30ad672f301de4763637c9173ca06047bd3711b09ed4fe3ef98"
+  "hash": "44a58d00bf8d918b871d5f6372a702da485d2bd94c7920f861501a4750ad1557"
 }

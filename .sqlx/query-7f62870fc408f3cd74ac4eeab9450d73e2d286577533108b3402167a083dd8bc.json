@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            UPDATE Sessions\n            SET \n                access_token_expires_at = $2,\n                refresh_token_expires_at = $3\n            FROM Users\n            WHERE Sessions.access_token = $1\n            AND Sessions.access_token_expires_at > now()\n            AND Users.id = Sessions.user_id\n            RETURNING\n                Sessions.user_id,\n                Users.username,\n                Sessions.access_token_expires_at,\n                Sessions.refresh_token_expires_at\n            ",
+  "query": "\n            UPDATE Sessions\n            SET \n                access_token_expires_at = $2,\n                refresh_token_expires_at = $3,\n                last_access_at = $4\n            FROM Users\n            WHERE Sessions.access_token = $1\n            AND Sessions.access_token_expires_at > now()\n            AND Users.id = Sessions.user_id\n            RETURNING\n                Sessions.user_id,\n                Users.username,\n                Sessions.access_token_expires_at,\n                Sessions.refresh_token_expires_at\n            ",
   "describe": {
     "columns": [
       {
@@ -33,6 +33,7 @@
       "Left": [
         "Text",
         "Timestamptz",
+        "Timestamptz",
         "Timestamptz"
       ]
     },
@@ -43,5 +44,5 @@
       false
     ]
   },
-  "hash": "6db3691282e85306f9501385913da00859cd3cffbabc310de4a07c274806cd34"
+  "hash": "7f62870fc408f3cd74ac4eeab9450d73e2d286577533108b3402167a083dd8bc"
 }
