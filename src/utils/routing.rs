@@ -11,7 +11,7 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/signup", post(endpoints::auth_endpoint::signup))
         .route("/auth/refresh", post(endpoints::auth_endpoint::refresh_token));
 
-    // User required routes
+        // User required routes (without middleware applied yet)
     let user_routes = Router::new()
         // currency
         .route("/currency", post(endpoints::currency_endpoint::create))
@@ -24,12 +24,14 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/custodian", get(endpoints::custodian_endpoint::list))    
         // holdings (todo)
         .route("/holding", post(endpoints::holding_endpoint::create))  
-        .route("/holding", get(endpoints::holding_endpoint::list))    
-            .requires_user(app_state.clone());
+        .route("/holding", get(endpoints::holding_endpoint::list));
 
     Router::new()
         .merge(public_routes)
-        .merge(user_routes)
+        .merge(user_routes.layer(middleware::from_fn_with_state(
+            app_state.clone(),
+            crate::utils::auth_middleware::requires_user
+        )))
         .with_state(app_state)
         
 }

@@ -1,7 +1,6 @@
 use sqlx::PgPool;
-
 use crate::repositories::schemas::session_record::{SessionRecord, SessionWithUser, UpdateForAccess, UpdateForRefresh};
-
+use crate::{warn};
 #[derive(Clone)]
 pub struct SessionRepository {
     db_pool: PgPool,
@@ -36,16 +35,14 @@ impl SessionRepository {
     }
 
     pub async fn update_for_access(&self, update: UpdateForAccess,) -> Result<Option<SessionWithUser>, String> {
-        print!("update_for_access");
+        warn!("update_for_access");
         Ok(sqlx::query_as!(
             SessionWithUser,
             r#"
             UPDATE Sessions
             SET 
-                access_token = $2,
-                access_token_expires_at = $3,
-                refresh_token = $4,
-                refresh_token_expires_at = $5
+                access_token_expires_at = $2,
+                refresh_token_expires_at = $3
             FROM Users
             WHERE Sessions.access_token = $1
             AND Sessions.access_token_expires_at > now()
@@ -53,15 +50,11 @@ impl SessionRepository {
             RETURNING
                 Sessions.user_id,
                 Users.username,
-                Sessions.access_token,
                 Sessions.access_token_expires_at,
-                Sessions.refresh_token,
                 Sessions.refresh_token_expires_at
             "#,
-            update.old_access_token,
             update.access_token,
             update.access_token_expires_at,
-            update.refresh_token,
             update.refresh_token_expires_at,
         )
         .fetch_optional(&self.db_pool)
@@ -70,7 +63,7 @@ impl SessionRepository {
     }
 
     pub async fn update_for_refresh(&self, update: UpdateForRefresh) -> Result<Option<SessionRecord>, String> {
-        print!("update_for_refresh");
+        warn!("update_for_refresh");
         Ok(sqlx::query_as!(
             SessionRecord,
             r#"

@@ -6,7 +6,7 @@ pub async fn requires_user(
     mut req: Request<Body>, 
     next: Next) -> impl IntoResponse {
 
-    crate::warn!("requires_user");
+    crate::warn!("requires_user for {}", req.uri());
 
     let Some(access_token) = req
         .headers()
