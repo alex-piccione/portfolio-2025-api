@@ -72,7 +72,7 @@ impl AuthService {
             false => Err(LoginError::FailedLogin)
         }
     }
-
+    /*
     pub async fn _validate_access_token(&self, access_token: &str) -> Result<Session, AuthError> {
         
         let Some(session) = 
@@ -92,7 +92,7 @@ impl AuthService {
         };
 
         Ok(session)
-    }
+    }*/
 
     pub async fn validate_access(&self, access_token: String) -> Result<SessionWithUser, AuthError> {
         let now = datetime::now();

@@ -5,6 +5,9 @@ pub async fn requires_user(
     State(app_state):State<AppState>,
     mut req: Request<Body>, 
     next: Next) -> impl IntoResponse {
+
+    crate::warn!("requires_user");
+
     let Some(access_token) = req
         .headers()
         .get("X-Auth-Token")
@@ -13,11 +16,9 @@ pub async fn requires_user(
             return response_missing_auth_header("X-Auth-Token HTTP header is missed in the request.");
         };
 
-    /*
-    .and_then()  transform the inner value ONLY if it is Some
-    .to_str()  return Result<&str, ToStrError>
-    .ok()  converts Result to Option
-    */
+    // .and_then()  transform the inner value ONLY if it is Some
+    // .to_str()  return Result<&str, ToStrError>
+    // .ok()  converts Result to Option
 
     match app_state.auth_service.validate_access(access_token.to_string()).await {
         Ok(session) => {

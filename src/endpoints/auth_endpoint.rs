@@ -1,3 +1,5 @@
+use crate::{debug, info};
+
 use axum::{extract::State, response::IntoResponse};
 use crate::{endpoints::{models::auth_models::refresh_token, request_json_validator::ValidJson}, services::auth_service::{AuthError, LoginError, LoginRequest}};
 
@@ -37,6 +39,8 @@ pub async fn login(
     ValidJson(request): ValidJson<login::Request>
 ) -> impl IntoResponse {
 
+    info!("login");
+
     let username = request.username.trim().to_string();
     let password = request.password.trim().to_string();
 
@@ -57,6 +61,7 @@ pub async fn refresh_token(
     State(state): State<AppState>,
     ValidJson(request): ValidJson<refresh_token::Request>
 ) -> impl IntoResponse {
+    info!("refresh_token");
     match state.auth_service.refresh_session(request.refresh_token).await {
         Ok(session) => response_ok(refresh_token::Response::from(session)),
         Err(AuthError::InvalidOrExpiredToken) => response_invalid_token("Refresh token is invalid or expired."),

@@ -64,6 +64,7 @@ impl SessionService {
         }
     }
 
+    /*
     pub async fn find_by_access_token(&self, access_token: &str) -> Result<Option<Session>, String> {
         
         // TODO: optimize with a single query
@@ -95,7 +96,7 @@ impl SessionService {
         let session: Session = (record, user).into();
         Ok(Some(session))
     } 
-
+    */
 
     //pub async fn update(&self, item: Session) -> Result<(), String> {
     //    self.repository.update(item).await

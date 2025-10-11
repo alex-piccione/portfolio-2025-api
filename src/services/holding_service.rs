@@ -1,5 +1,4 @@
-use crate::{entities::{holding::Holding, user::User}, find_by, repositories::{custodian_repository::CustodianRepository, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
-use crate::utils::helpers::ResultVecExt;
+use crate::{entities::{user::User}, repositories::{custodian_repository::CustodianRepository, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
 use crate::endpoints::models::holding_models::create::Request as CreateRequest;
 
 #[derive(Clone)]

@@ -40,12 +40,6 @@ impl From<Holding> for HoldingRecord {
     }
 }
 
-impl std::fmt::Display for HoldingAction {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        todo!()
-    }
-}
-
 impl HoldingAction {
     /* 
     pub fn from_string(action: &str) -> Result<Self, String> {

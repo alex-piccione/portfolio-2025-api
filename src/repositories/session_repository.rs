@@ -36,6 +36,7 @@ impl SessionRepository {
     }
 
     pub async fn update_for_access(&self, update: UpdateForAccess,) -> Result<Option<SessionWithUser>, String> {
+        print!("update_for_access");
         Ok(sqlx::query_as!(
             SessionWithUser,
             r#"
@@ -69,6 +70,7 @@ impl SessionRepository {
     }
 
     pub async fn update_for_refresh(&self, update: UpdateForRefresh) -> Result<Option<SessionRecord>, String> {
+        print!("update_for_refresh");
         Ok(sqlx::query_as!(
             SessionRecord,
             r#"
@@ -91,7 +93,7 @@ impl SessionRepository {
         .await
         .map_err(|e| e.to_string())?)
     }
-
+    /*
     pub async fn find_by_access_token(&self, access_token: &str) -> Result<Option<SessionRecord>, String> {
         //let _ = sqlx::query_as!(SessionRecord, "SELECT id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at  FROM Sessions");
         sqlx::query_as!(
@@ -118,4 +120,5 @@ impl SessionRepository {
                 .await
                 .map_err(|e| format!("Failed to get Session by refresh token. {}", e))
     }
+    */
 }

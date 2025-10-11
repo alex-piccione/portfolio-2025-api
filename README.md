@@ -29,6 +29,16 @@ In the end only _chrono_ has a clear and short "Utc::now()" function and allows 
 
 VS Code launch (_launch.json_) is set to run the app locally.  
 
+Sometime the process is still running despite terminal and debug areclosed.  
+Run this to find teh process PID (<process>.exe):  
+```sh
+tasklist | findstr portfolio`
+```
+Run this to delete it:  
+```powershell or CMD
+taskkill /PID <PID> /F
+```
+
 
 ## Deploy
 
