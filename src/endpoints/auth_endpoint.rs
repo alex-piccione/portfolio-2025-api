@@ -1,5 +1,5 @@
 use axum::{extract::State, response::IntoResponse};
-use crate::{endpoints::request_json_validator::ValidJson, services::auth_service::{LoginError, LoginRequest}};
+use crate::{endpoints::{models::auth_models::refresh_token, request_json_validator::ValidJson}, services::auth_service::{AuthError, LoginError, LoginRequest}};
 
 use crate::services::user_service::CreateError;
 use crate::{
@@ -52,5 +52,16 @@ pub async fn login(
         Ok(session) => response_ok( login::Response::from(session)),
         Err(LoginError::FailedLogin) => response_unhautorized("Wrong username or password"),
         Err(LoginError::DatabaseError(e)) => response_error(&e)
+    }
+}
+
+pub async fn refresh_token(
+    State(state): State<AppState>,
+    ValidJson(request): ValidJson<refresh_token::Request>
+) -> impl IntoResponse {
+    match state.auth_service.refresh_session(request.token).await {
+        Ok(session) => response_ok(refresh_token::Response::from(session)),
+        Err(AuthError::InvalidOrExpiredToken) => response_invalid_token("Refresh token is invalid or expired."),
+        Err(AuthError::DatabaseError(e)) => response_error(&e)
     }
 }

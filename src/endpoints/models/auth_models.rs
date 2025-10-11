@@ -54,3 +54,31 @@ pub mod login {
     }    
 
 }
+
+pub mod refresh_token {
+    use crate::{repositories::schemas::session_record::SessionRecord, utils::datetime::UtcDateTime};
+
+    #[derive(serde::Deserialize)]
+    pub struct Request {
+        pub token: String
+    }
+
+    #[derive(serde::Serialize)]
+    pub struct Response {
+        pub access_token: String,
+        pub access_token_expires_at: UtcDateTime,
+        pub refresh_token: String,
+        pub refresh_token_expires_at: UtcDateTime,
+    }
+
+    impl From<SessionRecord> for Response {
+        fn from(session: SessionRecord) -> Self {
+            Response {
+                access_token: session.access_token,
+                refresh_token: session.refresh_token,
+                access_token_expires_at: session.access_token_expires_at,
+                refresh_token_expires_at: session.refresh_token_expires_at
+            }
+        }
+    } 
+}

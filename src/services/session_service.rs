@@ -29,8 +29,8 @@ impl SessionService {
     pub async fn create(&self, user: User, ip_address: String, user_agent: String) -> Result<Session, String> {
 
         let now = datetime::now();
-        let access_expires_at = now + constants::ACCESS_TOKEN_LIFETIME;
-        let refresh_expires_at = now + constants::REFRESH_TOKEN_LIFETIME;
+        let access_expires_at = now + constants::auth::ACCESS_TOKEN_LIFETIME;
+        let refresh_expires_at = now + constants::auth::REFRESH_TOKEN_LIFETIME;
 
         let session = Session {
             id: 0, // to be updated
@@ -64,7 +64,6 @@ impl SessionService {
         }
     }
 
-
     pub async fn find_by_access_token(&self, access_token: &str) -> Result<Option<Session>, String> {
         
         // TODO: optimize with a single query
@@ -80,6 +79,23 @@ impl SessionService {
         let session: Session = (record, user).into();
         Ok(Some(session))
     } 
+
+    pub async fn find_by_refresh_token(&self, refresh_token: &str) -> Result<Option<Session>, String> {
+        
+        // TODO: optimize with a single query
+        
+        let Some(record) = self.repository.find_by_refresh_token(refresh_token).await? else {
+            return Ok(None);
+        };
+
+        let Some(user ) = self.user_service.get(&record.user_id).await? else {
+            return Err(format!("User not found with id: '{}'", &record.user_id));
+        };
+
+        let session: Session = (record, user).into();
+        Ok(Some(session))
+    } 
+
 
     //pub async fn update(&self, item: Session) -> Result<(), String> {
     //    self.repository.update(item).await

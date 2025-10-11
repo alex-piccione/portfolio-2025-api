@@ -11,6 +11,9 @@ impl ErrorResponse  {
     pub fn error(message: &str) -> Self {
         ErrorResponse { error: message.to_string(), code: None }
     } 
+    pub fn error_code(error: &str, code: &str) -> Self {
+        ErrorResponse { error: error.to_string(), code: Some(code.to_string()) }
+    } 
 }
 
 #[derive(Serialize)]

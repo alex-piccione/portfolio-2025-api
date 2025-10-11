@@ -1,5 +1,5 @@
 use axum::{body::Body, extract::State, http::{Request}, middleware::Next, response::{IntoResponse}};
-use crate::{endpoints::response_utils::{response_bad_request, response_error, response_unhautorized}, services::auth_service::AuthError, utils::dependency_injection::AppState};
+use crate::{endpoints::response_utils::{response_error, response_missing_auth_header, response_invalid_token}, services::auth_service::AuthError, utils::dependency_injection::AppState};
 
 pub async fn requires_user(
     State(app_state):State<AppState>,
@@ -10,7 +10,7 @@ pub async fn requires_user(
         .get("X-AUTH-TOKEN")
         .and_then(|v| v.to_str().ok())
         else {
-            return response_bad_request("ACCESS TOKEN MISSED OR INVALID");
+            return response_missing_auth_header("X-Auth-Token HTTP header is missed in hte request.");
         };
 
     /*
@@ -19,24 +19,17 @@ pub async fn requires_user(
     .ok()  converts Result to Option
     */
 
-    match app_state.auth_service.validate_access_token(access_token).await {
+    match app_state.auth_service.validate_access(access_token.to_string()).await {
         Ok(session) => {
-            // Add User t oteh request
-            req.extensions_mut().insert(session.user);
+            // Add User to the request
+            req.extensions_mut().insert(session.user_id);
 
             next.run(req).await.into_response()
         }
-        Err(AuthError::ExpiredToken) => {
-            // log
-            response_unhautorized("ACCESS TOKEN EXPIRED")
-        }
-        Err(AuthError::InvalidToken) => {
-            // log
-            response_unhautorized("ACCESS TOKEN UNKNOWN")
-        } 
+        Err(AuthError::InvalidOrExpiredToken) => response_invalid_token("Access Token is invalid or expired"),
         Err(AuthError::DatabaseError(e)) => {
             // log
-            eprint!("Something went wrong on authentication process. {}", e);
+            eprint!("Something went wrong in the authentication process. {}", e);
             response_error("Something went wrong on authentication process")
         }
     }

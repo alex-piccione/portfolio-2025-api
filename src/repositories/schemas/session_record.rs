@@ -28,3 +28,32 @@ impl From<Session> for SessionRecord {
             creation_user_agent: session.creation_user_agent }
     }
 }
+
+#[derive(sqlx::FromRow)]
+pub struct SessionWithUser {
+    pub user_id: String,
+    pub username: String,
+    pub access_token: String,
+    pub access_token_expires_at: UtcDateTime,
+    pub refresh_token: String,
+    pub refresh_token_expires_at: UtcDateTime,
+}
+
+
+pub struct UpdateForAccess {
+    pub old_access_token: String,
+    pub access_token: String,
+    pub access_token_expires_at: UtcDateTime,
+    pub refresh_token: String,
+    pub refresh_token_expires_at: UtcDateTime
+    // TODO: last_access_at
+}
+
+pub struct UpdateForRefresh {
+    pub old_refresh_token: String,
+    pub access_token: String,
+    pub access_token_expires_at: UtcDateTime,
+    pub refresh_token: String,
+    pub refresh_token_expires_at: UtcDateTime
+    // TODO: last_refresh_at
+}

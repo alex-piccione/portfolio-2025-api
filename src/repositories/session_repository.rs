@@ -1,6 +1,6 @@
 use sqlx::PgPool;
 
-use crate::repositories::schemas::session_record::SessionRecord;
+use crate::repositories::schemas::session_record::{SessionRecord, SessionWithUser, UpdateForAccess, UpdateForRefresh};
 
 #[derive(Clone)]
 pub struct SessionRepository {
@@ -35,6 +35,63 @@ impl SessionRepository {
         Ok(row.id)
     }
 
+    pub async fn update_for_access(&self, update: UpdateForAccess,) -> Result<Option<SessionWithUser>, String> {
+        Ok(sqlx::query_as!(
+            SessionWithUser,
+            r#"
+            UPDATE Sessions
+            SET 
+                access_token = $2,
+                access_token_expires_at = $3,
+                refresh_token = $4,
+                refresh_token_expires_at = $5
+            FROM Users
+            WHERE Sessions.access_token = $1
+            AND Sessions.access_token_expires_at > now()
+            AND Users.id = Sessions.user_id
+            RETURNING
+                Sessions.user_id,
+                Users.username,
+                Sessions.access_token,
+                Sessions.access_token_expires_at,
+                Sessions.refresh_token,
+                Sessions.refresh_token_expires_at
+            "#,
+            update.old_access_token,
+            update.access_token,
+            update.access_token_expires_at,
+            update.refresh_token,
+            update.refresh_token_expires_at,
+        )
+        .fetch_optional(&self.db_pool)
+        .await
+        .map_err(|e| e.to_string())?)
+    }
+
+    pub async fn update_for_refresh(&self, update: UpdateForRefresh) -> Result<Option<SessionRecord>, String> {
+        Ok(sqlx::query_as!(
+            SessionRecord,
+            r#"
+            Update Sessions SET 
+                access_token = $2,
+                access_token_expires_at = $3,
+                refresh_token = $4, 
+                refresh_token_expires_at = $5
+            WHERE refresh_token = $1 
+                AND refresh_token_expires_at > now()
+            RETURNING id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, creation_ip_address, creation_user_agent
+            "#,
+            update.old_refresh_token,
+            update.access_token,
+            update.access_token_expires_at,
+            update.refresh_token,
+            update.refresh_token_expires_at,
+        )
+        .fetch_optional(&self.db_pool)
+        .await
+        .map_err(|e| e.to_string())?)
+    }
+
     pub async fn find_by_access_token(&self, access_token: &str) -> Result<Option<SessionRecord>, String> {
         //let _ = sqlx::query_as!(SessionRecord, "SELECT id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at  FROM Sessions");
         sqlx::query_as!(
@@ -47,5 +104,18 @@ impl SessionRepository {
                 .fetch_optional(&self.db_pool)
                 .await
                 .map_err(|e| format!("Failed to get Session by access token. {}", e))
+    }
+
+    pub async fn find_by_refresh_token(&self, refresh_token: &str) -> Result<Option<SessionRecord>, String> {
+        sqlx::query_as!(
+            SessionRecord,
+            r#"
+            SELECT id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, creation_ip_address, creation_user_agent
+            FROM Sessions WHERE refresh_token = $1
+            "#, 
+            refresh_token)
+                .fetch_optional(&self.db_pool)
+                .await
+                .map_err(|e| format!("Failed to get Session by refresh token. {}", e))
     }
 }
