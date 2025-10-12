@@ -538,7 +538,7 @@ collection:
               text: |-
                 {
                 	"username": "demo-1",
-                	"password": "demo-1"
+                	"password": "demo-1"  # gg:allow
                 }
             headers:
               - name: Content-Type
@@ -603,7 +603,7 @@ collection:
               text: |-
                 {
                 	"username": "demo-1",
-                	"password": "demo-1",
+                	"password": "demo-1",    # gg:allow
                 	"currencyId": 1
                 }
             headers:
