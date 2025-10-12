@@ -7,8 +7,10 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
     let public_routes = Router::new()
         .route("/", get(endpoints::common_endpoint::home))        
         // auth
-        .route("/login", post(endpoints::auth_endpoint::login))
-        .route("/signup", post(endpoints::auth_endpoint::signup))
+        .route("/login", post(endpoints::auth_endpoint::login))  // OBSOLETE for backward compatibility
+        .route("/signup", post(endpoints::auth_endpoint::signup))  // OBSOLETE for backward compatibility
+        .route("/auth/login", post(endpoints::auth_endpoint::login))
+        .route("/auth/signup", post(endpoints::auth_endpoint::signup))
         .route("/auth/refresh", post(endpoints::auth_endpoint::refresh_token));
 
         // User required routes (without middleware applied yet)
