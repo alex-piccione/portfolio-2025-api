@@ -3,8 +3,8 @@
 [![Deploy](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml/badge.svg)](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml)
 
 Web API with Rust.  
-**Axum** library for API service.  
-**Sqlx** library as database helper.  
+**Axum**: library for API service.  
+**Sqlx**: library to interact with database (compile-time scghema cheks).
 
 ## Setup e SQLx
 
@@ -15,7 +15,7 @@ See [SQLx](src/repositories/SQLx.md).
 
 _rust-analyzer_ continuosly check the code, but `cargo build` will compile the project with a final list of errors.    
 SQLx is set to verify the database entity and need to be able to access the database.  
-It uses the **DATABASE_URL** variable in the _.env_ file, it points t oa local Docker contyaginer with Postgres.  
+It uses the **DATABASE_URL** variable in the _.env_ file, it points to a local Docker contyaginer with Postgres.  
 `cargo sqlx prepare`
   
 Rust standard library does not have Date or Datetime types (!).  
