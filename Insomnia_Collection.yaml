@@ -484,7 +484,7 @@ collection:
     meta:
       id: fld_2e9b0fe89d7a49db8fcf58030fd8ae95
       created: 1760017700058
-      modified: 1760211962698
+      modified: 1760219962531
       sortKey: -1760017700058
       description: ""
     children:
@@ -519,16 +519,16 @@ collection:
         meta:
           id: fld_84fc3822e5ef45c19bb481187a6460c6
           created: 1759332730257
-          modified: 1760211962698
+          modified: 1760219962531
           sortKey: -1760017712390
           description: ""
         children:
-          - url: "{{ _.url }}/login"
+          - url: "{{ _.url }}/auth/login"
             name: /login
             meta:
               id: req_f299cc90d90943e482c866079202d60a
               created: 1759332736647
-              modified: 1760180043448
+              modified: 1760257978021
               isPrivate: false
               description: ""
               sortKey: -1759332736647
@@ -588,12 +588,12 @@ collection:
                 send: true
                 store: true
               rebuildPath: true
-          - url: "{{ _.url }}/signup"
+          - url: "{{ _.url }}/auth/signup"
             name: /signup
             meta:
               id: req_081f51b09d684716a5a6739f8ea888fb
               created: 1759415965915
-              modified: 1760028489221
+              modified: 1760257958886
               isPrivate: false
               description: ""
               sortKey: -1758376094211
@@ -620,11 +620,11 @@ collection:
                 store: true
               rebuildPath: true
           - url: "{{ _.url }}/auth/refresh"
-            name: /auth/refresh
+            name: /refresh
             meta:
               id: req_adc14fc9dfe743ef8c60e892cea6fd8a
               created: 1760180563533
-              modified: 1760180912174
+              modified: 1760257982295
               isPrivate: false
               description: ""
               sortKey: -1760180563533
@@ -653,16 +653,16 @@ cookieJar:
   meta:
     id: jar_f322ba964e83a6cb0018749707cbaf634cb9e10a
     created: 1755294938724
-    modified: 1760212003778
+    modified: 1760219962524
 environments:
   name: Base Environment
   meta:
     id: env_f322ba964e83a6cb0018749707cbaf634cb9e10a
     created: 1755294938721
-    modified: 1760212003780
+    modified: 1760219962527
     isPrivate: false
   data:
-    accessToken: HKEurmhMn_dRwdpUrMbwVai9njYPFJdL1Q1tPF6E81r11uDXtmbl2udSeG7hdRPh
-    refreshToken: gJPEr0_RHfu1W3cQq-tB1ixvBT04k_AIVKBiYUTijqiOV0pWnScw5HEx7y5PM32P
-    accessTokenExpiresAt: 2025-10-11T20:16:02.623776800Z
-    refreshTokenExpiresAt: 2025-11-10T19:46:02.623776800Z
+    accessToken: zOC-1nNj18eRN1GIKcDrh1mDwfqtKGBrpk84FvuW8hgx8t4Epf7u1JIYhu_3I2xx
+    refreshToken: StuVMxkllJx7DUXy167mvLvPPs7gDDPB3wNbF3mijQ2rPrmwOvlmfYs5a6kbK98r
+    accessTokenExpiresAt: 2025-10-11T22:29:22.448383291Z
+    refreshTokenExpiresAt: 2025-11-10T21:59:22.448383291Z
