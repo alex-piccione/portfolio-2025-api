@@ -14,7 +14,7 @@ These commands can be used to manage database creation and changes:
 - ``cargo sqlx database create`` # Create database
 - ``cargo sqlx database drop``   # Drop database
 
-See the *sqlx_comamnds.sh* file with prepared commands.  
+Refer to the *sqlx_commands.sh* file that has prepared commands.  
 
 
 ```sql
