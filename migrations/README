@@ -1,0 +1,16 @@
+# migrations
+
+Files in this folder MUST be in Linux format (CR), NOT Windows format (CRLF),   
+because they are created with sqlx _migrate_ command in a bash shell.  
+When cloned from the repo they are (possibly) in Windows format (CRLF).  
+Use this comamnd from the root folder:
+```sh
+find migrations -name "*.sql" -exec dos2unix {} \;
+```
+
+Explanation:  
+- find migrations: Start searching in the migrations directory (from current location)
+- -name "*.sql": Look for files with .sql extension
+- -exec dos2unix {} \;: For each file found, run dos2unix on it
+- {} is replaced with the filename found
+- \; marks the end of the -exec command

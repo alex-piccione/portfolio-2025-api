@@ -30,3 +30,28 @@ select * from _sqlx_migrations  [TBC]
 3. create a valid SQL command using a real database,
    once done, delete the table and update the create_<entity>_table
 4. ``cargo sqlx migrate run`` will execute the migration
+
+
+## Issues
+
+### Failed to apply database migrations: migration 20250901085448 was previously applied but has been modified
+
+It is caused by a change on the migration file.  
+Check the git history of that file, and try to recover the initial "execute" version.  
+`file=$(git ls-files | grep 20250901085448) ; echo $file`  
+  
+If there is only one commit use this: `commit=$(git log --follow --format="%H" $file) ; echo $commit`  
+otherwise just sabve the commit: `commit=...`  
+  
+Finally get the content:
+```sh
+# Just print it
+git show $commit:$file
+
+# Save it
+git show $commit:$file > file_at_commit.txt
+```
+
+Can be just a CRLF vs CR different file format (Windows vs Linux).  
+``filr $file`` will tell you if hte file uses CRLF (it should not).  
+See the README file in the _migrations_ folder.

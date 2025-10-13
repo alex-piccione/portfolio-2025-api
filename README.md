@@ -6,18 +6,26 @@ Web API with Rust.
 **Axum**: library for API service.  
 **Sqlx**: library to interact with database (compile-time scghema cheks).
 
-## Setup e SQLx
 
-See [SQLx](src/repositories/SQLx.md).
+## Setup
+
+- _.env_ file: create a .env file on the root, see _.env_example_ as reference. 
+- convert migrations file to Linux format, if on Windows machine ( see README inside /migrations folder) 
 
 
 ## Development
 
-_rust-analyzer_ continuosly check the code, but `cargo build` will compile the project with a final list of errors.    
+_rust-analyzer_ continuosly check the code and highlight issues, `cargo build` will compile the project with the list of errors too.    
+
+### SQLx
+
 SQLx is set to verify the database entity and need to be able to access the database.  
 It uses the **DATABASE_URL** variable in the _.env_ file, it points to a local Docker contyaginer with Postgres.  
-`cargo sqlx prepare`
+`cargo sqlx prepare`.  
   
+Refer to thte [SQLx](src/repositories/SQLx.md) readme.
+
+### DateTime
 Rust standard library does not have Date or Datetime types (!).  
 A modern approach is to use _chrono_ but also _sqlx_ offer it.  
 To keep it simple, I'll use sqlx types. 
@@ -41,15 +49,6 @@ taskkill /PID <PID> /F
 
 
 ## Deploy
-
-### On Azure
-
-TODO: is this still true ??
-
-API is deployed in Azure, in a Web App Service.  
-[TODO: detail CD on Azure with GitHiub action]  
-Since the database is not part of this deploy, it is not described here.
-
 
 ### On private server
 
