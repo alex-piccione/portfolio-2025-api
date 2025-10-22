@@ -122,6 +122,11 @@ impl AuthService {
                 Ok(record) => record
             };
 
+        let (session_id, refresh_token_expires_at) = match session {
+            Some(s) => (s.id.to_string(), s.refresh_token_expires_at.to_string()),
+            None => ("".to_string(), "".to_string())
+        }   ;
+
         let data_for_expired_token = format!("refresh_session.
             token: {}, 
             now: {},
@@ -134,8 +139,8 @@ impl AuthService {
             now,
             (now + constants::auth::ACCESS_TOKEN_LIFETIME),
             now + constants::auth::REFRESH_TOKEN_LIFETIME,
-            match session { Some(s) => s.id.to_string(), None => "".to_string()},
-            match session { Some(s) => s.refresh_token_expires_at.to_string(), None => "".to_string()},
+            session_id,
+            refresh_token_expires_at
         );
         
         match self.session_repository.update_for_refresh(UpdateForRefresh {
