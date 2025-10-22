@@ -19,7 +19,7 @@ pub enum LoginError {
 #[derive(Debug)]
 pub enum AuthError {
     DatabaseError(String),
-    InvalidOrExpiredToken,
+    InvalidOrExpiredToken(String),
 }
 
 pub fn generate_token() -> String {
@@ -82,6 +82,15 @@ impl AuthService {
         (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
         now + constants::auth::REFRESH_TOKEN_LIFETIME);
 
+        let data_for_expired_token = format!("update_for_access: 
+        now: {},
+        access_token_expires_at: {},
+        refresh_token_expires_at: {},
+        ", 
+        now,
+        (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
+        now + constants::auth::REFRESH_TOKEN_LIFETIME);
+
         match self.session_repository.update_for_access(UpdateForAccess {
             access_token,
             access_token_expires_at: now + constants::auth::ACCESS_TOKEN_LIFETIME,
@@ -90,7 +99,7 @@ impl AuthService {
         }).await
             .map_err(|e| AuthError::DatabaseError(e))? {
                 Some(record) => Ok(record),
-                None => Err(AuthError::InvalidOrExpiredToken) // session not found
+                None => Err(AuthError::InvalidOrExpiredToken(data_for_expired_token)) // session not found
         }
     }
 
@@ -105,6 +114,15 @@ impl AuthService {
         now,
         (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
         now + constants::auth::REFRESH_TOKEN_LIFETIME);
+
+        let data_for_expired_token = format!("refresh_session: 
+            now: {},
+            access_token_expires_at: {},
+            refresh_token_expires_at: {},
+            ", 
+            now,
+            (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
+            now + constants::auth::REFRESH_TOKEN_LIFETIME);
         
         match self.session_repository.update_for_refresh(UpdateForRefresh {
             old_refresh_token: refresh_token,
@@ -116,7 +134,7 @@ impl AuthService {
         }).await
             .map_err(|e| AuthError::DatabaseError(e))? {
                 Some(record) => Ok(record),
-                None => Err(AuthError::InvalidOrExpiredToken) // session not found
+                None => Err(AuthError::InvalidOrExpiredToken(data_for_expired_token)) // session not found
         }
     }
 

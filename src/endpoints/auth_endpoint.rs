@@ -64,7 +64,7 @@ pub async fn refresh_token(
     info!("refresh_token");
     match state.auth_service.refresh_session(request.refresh_token).await {
         Ok(session) => response_ok(refresh_token::Response::from(session)),
-        Err(AuthError::InvalidOrExpiredToken) => response_invalid_token("Refresh token is invalid or expired."),
+        Err(AuthError::InvalidOrExpiredToken(data)) => response_invalid_token(format!("Refresh token is invalid or expired. {}", data).as_str()),
         Err(AuthError::DatabaseError(e)) => response_error(&e)
     }
 }
