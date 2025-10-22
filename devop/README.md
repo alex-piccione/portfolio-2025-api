@@ -48,7 +48,7 @@ The description and the procedure is not part of this project.
 
 ### Investigate deploy failure
 
-When thge deploy script fails it is possible to look at the Docker container log to see why it fails to start.  
+When the deploy script fails it is possible to look at the Docker container log to see why it fails to start.  
 ```sh
 # get the id of the failed stack
 docker stack ps portfolio-api

@@ -73,22 +73,15 @@ impl AuthService {
     pub async fn validate_access(&self, access_token: String) -> Result<SessionWithUser, AuthError> {
         let now = datetime::now();
 
-        println!("update_for_access: 
-        now: {},
-        access_token_expires_at: {},
-        refresh_token_expires_at: {},
-        ", 
-        now,
-        (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
-        now + constants::auth::REFRESH_TOKEN_LIFETIME);
-
         let data_for_expired_token = format!("update_for_access: 
+        access_token: {},
         now: {},
         access_token_expires_at: {},
         refresh_token_expires_at: {},
         ", 
+        access_token,
         now,
-        (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
+        now + constants::auth::ACCESS_TOKEN_LIFETIME,
         now + constants::auth::REFRESH_TOKEN_LIFETIME);
 
         match self.session_repository.update_for_access(UpdateForAccess {
@@ -106,15 +99,6 @@ impl AuthService {
     pub async fn refresh_session(&self, refresh_token: String) -> Result<SessionRecord, AuthError> {
         let now = datetime::now();
         
-        println!("refresh_session: 
-        now: {},
-        access_token_expires_at: {},
-        refresh_token_expires_at: {},
-        ", 
-        now,
-        (now + constants::auth::ACCESS_TOKEN_LIFETIME),
-        now + constants::auth::REFRESH_TOKEN_LIFETIME);
-
         // debug
         let session = 
             match self.session_repository.find_by_refresh_token(&refresh_token).await {
@@ -125,10 +109,10 @@ impl AuthService {
         let (session_id, refresh_token_expires_at) = match session {
             Some(s) => (s.id.to_string(), s.refresh_token_expires_at.to_string()),
             None => ("".to_string(), "".to_string())
-        }   ;
+        };
 
         let data_for_expired_token = format!("refresh_session.
-            token: {}, 
+            refresh_token: {}, 
             now: {},
             access_token_expires_at: {},
             refresh_token_expires_at: {},
@@ -137,7 +121,7 @@ impl AuthService {
             ", 
             refresh_token,
             now,
-            (now + constants::auth::ACCESS_TOKEN_LIFETIME),
+            now + constants::auth::ACCESS_TOKEN_LIFETIME,
             now + constants::auth::REFRESH_TOKEN_LIFETIME,
             session_id,
             refresh_token_expires_at
