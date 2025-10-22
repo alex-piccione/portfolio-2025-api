@@ -112,17 +112,31 @@ impl AuthService {
         refresh_token_expires_at: {},
         ", 
         now,
-        (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
+        (now + constants::auth::ACCESS_TOKEN_LIFETIME),
         now + constants::auth::REFRESH_TOKEN_LIFETIME);
 
-        let data_for_expired_token = format!("refresh_session: 
+        // debug
+        let session = 
+            match self.session_repository.find_by_refresh_token(&refresh_token).await {
+                Err(_) => None,
+                Ok(record) => record
+            };
+
+        let data_for_expired_token = format!("refresh_session.
+            token: {}, 
             now: {},
             access_token_expires_at: {},
             refresh_token_expires_at: {},
+            session: {},
+            session.refresh_token_expires_at: {}
             ", 
+            refresh_token,
             now,
-            (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
-            now + constants::auth::REFRESH_TOKEN_LIFETIME);
+            (now + constants::auth::ACCESS_TOKEN_LIFETIME),
+            now + constants::auth::REFRESH_TOKEN_LIFETIME,
+            match session { Some(s) => s.id.to_string(), None => "".to_string()},
+            match session { Some(s) => s.refresh_token_expires_at.to_string(), None => "".to_string()},
+        );
         
         match self.session_repository.update_for_refresh(UpdateForRefresh {
             old_refresh_token: refresh_token,
