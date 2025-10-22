@@ -72,6 +72,16 @@ impl AuthService {
     /// Prolonge the access and refresh token validity and return the session with user id
     pub async fn validate_access(&self, access_token: String) -> Result<SessionWithUser, AuthError> {
         let now = datetime::now();
+
+        println!("update_for_access: 
+        now: {},
+        access_token_expires_at: {},
+        refresh_token_expires_at: {},
+        ", 
+        now,
+        (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
+        now + constants::auth::REFRESH_TOKEN_LIFETIME);
+
         match self.session_repository.update_for_access(UpdateForAccess {
             access_token,
             access_token_expires_at: now + constants::auth::ACCESS_TOKEN_LIFETIME,
@@ -85,8 +95,17 @@ impl AuthService {
     }
 
     pub async fn refresh_session(&self, refresh_token: String) -> Result<SessionRecord, AuthError> {
-
         let now = datetime::now();
+        
+        println!("refresh_session: 
+        now: {},
+        access_token_expires_at: {},
+        refresh_token_expires_at: {},
+        ", 
+        now,
+        (now + constants::auth::ACCESS_TOKEN_LIFETIME).to_string(),
+        now + constants::auth::REFRESH_TOKEN_LIFETIME);
+        
         match self.session_repository.update_for_refresh(UpdateForRefresh {
             old_refresh_token: refresh_token,
             access_token: generate_token(),
