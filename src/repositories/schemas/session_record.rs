@@ -33,7 +33,7 @@ impl From<Session> for SessionRecord {
     }
 }
 
-#[derive(sqlx::FromRow)]
+#[derive(Clone, sqlx::FromRow)]
 #[allow(dead_code)] // fields are used for response but compiler does not see it
 pub struct SessionWithUser {
     pub user_id: String,    

@@ -35,6 +35,7 @@ In the end only _chrono_ has a clear and short "Utc::now()" function and allows 
 
 ## Run locally
 
+### Localhost
 VS Code launch (_launch.json_) is set to run the app locally.  
 
 Sometime the process is still running despite terminal and debug areclosed.  
@@ -47,6 +48,8 @@ Run this to delete it:
 taskkill /PID <PID> /F
 ```
 
+### Docker
+See [devop/README.md] for instruciton to run the api and database in local Docker.  
 
 ## Deploy
 

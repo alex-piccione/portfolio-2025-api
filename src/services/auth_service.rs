@@ -98,6 +98,13 @@ impl AuthService {
 
     pub async fn refresh_session(&self, refresh_token: String) -> Result<SessionRecord, AuthError> {
         let now = datetime::now();
+
+        let exists = self.session_repository.exists_by_refresh_token(&refresh_token)
+            .await.map_err(|e| AuthError::DatabaseError(e))? ;
+
+        if !exists {
+            return Err(AuthError::InvalidOrExpiredToken("NOT FOUND - 111".to_string()));
+        } 
         
         // debug
         let session = 
@@ -113,16 +120,10 @@ impl AuthService {
 
         let data_for_expired_token = format!("refresh_session.
             refresh_token: {}, 
-            now: {},
-            access_token_expires_at: {},
-            refresh_token_expires_at: {},
             session: {},
             session.refresh_token_expires_at: {}
             ", 
             refresh_token,
-            now,
-            now + constants::auth::ACCESS_TOKEN_LIFETIME,
-            now + constants::auth::REFRESH_TOKEN_LIFETIME,
             session_id,
             refresh_token_expires_at
         );

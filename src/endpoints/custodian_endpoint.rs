@@ -1,11 +1,16 @@
 use axum::extract::State;
 use axum::response::IntoResponse;
+use axum::Extension;
 use crate::endpoints::request_json_validator::ValidJson;
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::custodian_models as models;
+use crate::utils::auth_middleware::Session;
 
-pub async fn create(State(state): State<AppState>, ValidJson(reqeust): ValidJson<models::create::Request>) -> impl IntoResponse {
+pub async fn create(
+    State(state): State<AppState>, 
+    Extension(_session): Session,
+    ValidJson(reqeust): ValidJson<models::create::Request>) -> impl IntoResponse {
     match reqeust.to_entity() {
         Ok(entity) => {
             match state.custodian_service.create(entity).await {

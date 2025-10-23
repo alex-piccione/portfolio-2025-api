@@ -1,5 +1,7 @@
-use axum::{body::Body, extract::State, http::{Request}, middleware::Next, response::{IntoResponse}};
-use crate::{endpoints::response_utils::{response_error, response_missing_auth_header, response_invalid_token}, services::auth_service::AuthError, utils::dependency_injection::AppState};
+use axum::{body::Body, extract::State, http::Request, middleware::Next, response::IntoResponse};
+use crate::{endpoints::response_utils::{response_error, response_invalid_token, response_missing_auth_header}, repositories::schemas::session_record::SessionWithUser, services::auth_service::AuthError, utils::dependency_injection::AppState};
+
+pub type Session = axum::Extension<SessionWithUser>;
 
 pub async fn requires_user(
     State(app_state):State<AppState>,
@@ -23,7 +25,7 @@ pub async fn requires_user(
     match app_state.auth_service.validate_access(access_token.to_string()).await {
         Ok(session) => {
             // Add User to the request
-            req.extensions_mut().insert(session.user_id);
+            req.extensions_mut().insert(session);
 
             next.run(req).await.into_response()
         }

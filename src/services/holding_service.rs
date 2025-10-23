@@ -1,4 +1,4 @@
-use crate::{entities::{user::User}, repositories::{custodian_repository::CustodianRepository, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
+use crate::{ repositories::{custodian_repository::CustodianRepository, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
 use crate::endpoints::models::holding_models::create::Request as CreateRequest;
 
 #[derive(Clone)]
@@ -26,8 +26,8 @@ impl HoldingService {
         self.repository.update(item).await
     }*/
 
-    pub async fn list_for_user(&self, user:User) -> Result<Vec<HoldingRecord>, String> {
-        self.repository.list(&user.id).await
+    pub async fn list_for_user(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
+        self.repository.list(user_id).await
         /*let records = self.repository.list(&user.id).await?;        
         let custodians = self.custodian_repository.list().await?;
 

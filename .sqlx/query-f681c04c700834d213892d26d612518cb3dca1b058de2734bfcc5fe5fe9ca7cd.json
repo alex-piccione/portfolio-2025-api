@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, last_access_at, last_refresh_at, creation_ip_address, creation_user_agent\n            FROM Sessions WHERE refresh_token = $1\n            ",
+  "query": "\n            SELECT id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, last_access_at, last_refresh_at, creation_ip_address, creation_user_agent\n            FROM Sessions WHERE id = 72           \n            ",
   "describe": {
     "columns": [
       {
@@ -60,9 +60,7 @@
       }
     ],
     "parameters": {
-      "Left": [
-        "Text"
-      ]
+      "Left": []
     },
     "nullable": [
       false,
@@ -78,5 +76,5 @@
       false
     ]
   },
-  "hash": "ef86285a9484508886b377f7dab4bcc3e1b93631d39587a71493c29cc4691866"
+  "hash": "f681c04c700834d213892d26d612518cb3dca1b058de2734bfcc5fe5fe9ca7cd"
 }

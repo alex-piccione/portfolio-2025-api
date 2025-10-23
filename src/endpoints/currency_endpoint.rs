@@ -1,9 +1,11 @@
-use axum::{extract::Path,  extract::State, response::IntoResponse};
+use axum::{extract::Path,  extract::State, response::IntoResponse, Extension};
 
 use super::response_utils::{response_ok, response_error, response_created_new_id, response_bad_request, response_not_found};
 use crate::endpoints::request_json_validator::ValidJson;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::currency_models as models;
+
+use crate::utils::auth_middleware::Session;
 
 pub async fn create(State(state): State<AppState>, ValidJson(data): ValidJson<models::CreateRequest>) -> impl IntoResponse {
     match data.to_entity() {
@@ -36,7 +38,9 @@ pub async fn single(State(state):State<AppState>, Path(id):Path<i32>) -> impl In
     } 
 }
     
-pub async fn list(State(state): State<AppState>) -> impl IntoResponse {
+pub async fn list(
+    State(state): State<AppState>,
+    Extension(_session): Session) -> impl IntoResponse {
     let entities = state.currency_service.all();
     let models:Vec<models::Currency> = entities.iter().map(|e|models::Currency::from(e.clone())).collect();
     response_ok(models)

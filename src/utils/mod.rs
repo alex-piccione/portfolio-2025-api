@@ -5,4 +5,5 @@ pub mod dependency_injection;
 pub mod helpers;
 pub mod logging;
 
-mod auth_middleware;
+pub mod auth_middleware;
+//pub mod auth_middleware::UserExtension;

@@ -5,16 +5,16 @@ use crate::endpoints::request_json_validator::ValidJson;
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::holding_models as models;
-use crate::entities::user::User;
+use crate::utils::auth_middleware::Session;
 
 pub async fn create(
     State(state): State<AppState>, 
-    Extension(user): Extension<User>,
+    Extension(session): Session,
     ValidJson(request): ValidJson<models::create::Request>) -> impl IntoResponse {
 
     // TODO: validation
 
-    match state.holding_service.create(&user.id, request).await {
+    match state.holding_service.create(&session.user_id, request).await {
         Ok(new_id) => response_created_new_id(new_id),
         Err(e) => response_error(&e)
     }
@@ -34,8 +34,10 @@ pub async fn update(State(state): State<AppState>, Json(data): Json<models::Upda
 }
     */
 
-pub async fn list(State(state): State<AppState>, Extension(user): Extension<User>,) -> impl IntoResponse {
-    match state.holding_service.list_for_user(user).await {
+pub async fn list(
+    State(state): State<AppState>, 
+    Extension(session): Session) -> impl IntoResponse {
+    match state.holding_service.list_for_user(&session.user_id).await {
         Ok(entities) => response_ok(entities),
         /*{
             let models = entities.into_iter()

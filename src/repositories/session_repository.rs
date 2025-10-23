@@ -105,15 +105,30 @@ impl SessionRepository {
                 .map_err(|e| format!("Failed to get Session by access token. {}", e))
     }
     */
-    
-    pub async fn find_by_refresh_token(&self, refresh_token: &str) -> Result<Option<SessionRecord>, String> {
+
+    pub async fn exists_by_refresh_token(&self, refresh_token: &str) -> Result<bool, String> {
+        // First check if the record exists
+        let exists = sqlx::query_scalar!(
+            r#"SELECT EXISTS(SELECT 1 FROM Sessions WHERE TRIM(refresh_token) = TRIM($1))"#,
+            refresh_token
+        )
+        .fetch_one(&self.db_pool)
+        .await
+        .map_err(|e| format!("Failed to check if session exists: {}", e))?;
+
+        if !exists.unwrap_or(false) {
+            return Ok(false);
+        }
+
+        Ok(true)
+    }
+    pub async fn find_by_refresh_token(&self, _refresh_token: &str) -> Result<Option<SessionRecord>, String> {
         sqlx::query_as!(
             SessionRecord,
             r#"
             SELECT id, user_id, access_token, access_token_expires_at, refresh_token, refresh_token_expires_at, created_at, last_access_at, last_refresh_at, creation_ip_address, creation_user_agent
-            FROM Sessions WHERE refresh_token = $1
-            "#, 
-            refresh_token)
+            FROM Sessions WHERE id = 72           
+            "#)
                 .fetch_optional(&self.db_pool)
                 .await
                 .map_err(|e| format!("Failed to get Session by refresh token. {}", e))
