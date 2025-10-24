@@ -16,14 +16,10 @@ pub async fn create(
     match request.to_entity() {
         Ok(entity) => {
 
-            let errors = validate!(
+            validate!(
                 "Name", &entity.name, RuleString::MinLength(3);
                 "Account Country Code", &entity.account_country_code, RuleStringOption::FixLength(2);
             );
-
-            if !errors.is_empty() {  // &errors.join(", ")
-                return response_validation_errors(errors);
-            }
 
             match state.custodian_service.create(entity).await {
                 Ok(new_id) => {

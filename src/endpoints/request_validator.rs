@@ -77,6 +77,24 @@ macro_rules! validate {
                 errors.push(error);
             }
         )*
+        // returns the HTTP response 4xx
+        if !errors.is_empty() {
+            return response_validation_errors(errors);
+        }
+    }};
+}
+
+
+#[macro_export]
+macro_rules! _get_errors {
+    ($($field:expr, $value:expr, $rule:expr);* $(;)?) => {{
+        let mut errors = Vec::new();
+        $(
+            if let Some(error) = $rule.validate($field, $value) {
+                errors.push(error);
+            }
+        )*
+        // returns the errors
         errors
     }};
 }
