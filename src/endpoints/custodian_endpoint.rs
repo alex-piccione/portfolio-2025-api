@@ -6,6 +6,7 @@ use crate::endpoints::request_validator::{RuleString, RuleStringOption};
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::custodian_models as models;
+use crate::services::custodian_service::CreateError;
 use crate::utils::auth_middleware::Session;
 use crate::validate;
 
@@ -23,10 +24,12 @@ pub async fn create(
 
             match state.custodian_service.create(entity).await {
                 Ok(new_id) => {
-                    let response = models::create::Response { new_id };
-                    response_created(response)
+                    response_created_new_id(new_id)
                 },
-                Err(e) => response_error(e.as_str()),
+                Err(e) => match e {
+                    CreateError::NameAlreadyExists => response_duplicated_value("Name"),
+                    CreateError::Unexpected(message) => response_error(&message)
+                } 
             }
         },
         Err(e) => response_bad_request(&e),

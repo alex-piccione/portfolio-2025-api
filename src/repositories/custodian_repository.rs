@@ -1,6 +1,5 @@
-use sqlx::PgPool;
-
-use crate::entities::custodian::{Custodian, CustodianKind};
+use sqlx::{PgPool};
+use crate::{entities::custodian::{Custodian, CustodianKind}, repositories::errors::{DatabaseError}};
 
 #[derive(Clone)]
 pub struct CustodianRepository {
@@ -12,8 +11,8 @@ impl CustodianRepository {
         Self { db_pool }
     }
 
-    pub async fn create(&self, custodian: Custodian) -> Result<i32, String> {
-        let row = sqlx::query!(
+    pub async fn create(&self, custodian: Custodian) -> Result<i32, DatabaseError> {
+        let result = sqlx::query!(
             r#"
                 INSERT INTO Custodian (name, kind, description, url, wallet_address, account_country_code)
                 VALUES ($1, $2, $3, $4, $5, $6)
@@ -27,10 +26,23 @@ impl CustodianRepository {
             custodian.account_country_code
         )
         .fetch_one(&self.db_pool)
-        .await
-        .map_err(|e| e.to_string())?;
+        .await;
 
-        Ok(row.id)
+        match result {
+            Ok(row) => Ok(row.id),
+            /*
+            Err(error) =>  {
+                // 23505 is the error code for unique_violation and Name is the only unique field at the moment
+                match error.code() {
+                    Some("23505") => Err(RepositoryError::DuplicatedField(error.to_string())),
+                    _ => Err(RepositoryError::DatabaseError(error.to_string()))
+                }
+            },
+            */
+            // All other errors
+            //Err(err) => Err(RepositoryError::UnexpectedError(err.into())),
+            Err(err) => Err(DatabaseError::generic(err.to_string())),
+        }        
     }
 
     pub async fn update(&self, custodian: Custodian) -> Result<(), String> {

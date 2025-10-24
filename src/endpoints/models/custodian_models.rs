@@ -1,5 +1,5 @@
 pub mod create {
-    use crate::{endpoints::models::common::NewIdResponse, entities::custodian::{Custodian, CustodianKind}};
+    use crate::{entities::custodian::{Custodian, CustodianKind}};
 
     #[derive(serde::Deserialize)]
     #[serde(rename_all = "camelCase")] 
@@ -26,7 +26,7 @@ pub mod create {
         }
     }
 
-    pub type Response = NewIdResponse;
+    //pub type Response = NewIdResponse;
 }
 
 pub mod update {

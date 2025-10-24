@@ -55,3 +55,12 @@ git show $commit:$file > file_at_commit.txt
 Can be just a CRLF vs CR different file format (Windows vs Linux).  
 ``filr $file`` will tell you if hte file uses CRLF (it should not).  
 See the README file in the _migrations_ folder.
+
+### error communicating with database: An established connection was aborted by the software in your host machine.
+
+> error communicating with database: An established connection was aborted by the software in your host machine. (os error 10053)rust-analyzermacro-error
+
+Check what connection string is defined in _/.env_.  
+If it is localhost it probably point to a local Docker container, check itf it is running.  
+
+``cargo build`` has to be successful and restart VS Code will sometime solve the problem.  

@@ -13,6 +13,7 @@ pub fn response_ok<T: serde::Serialize>(data: T) -> Response {
     (StatusCode::OK, Json(data)).into_response()
 }
 
+#[allow(dead_code)]
 pub fn response_created<T: serde::Serialize>(data: T) -> Response {
     (StatusCode::CREATED, Json(data)).into_response()
 }
@@ -32,6 +33,10 @@ pub fn response_bad_request(message: &str) -> Response {
 
 pub fn response_validation_errors(errors: Vec<String>) -> Response {
     (StatusCode::BAD_REQUEST, Json(ValidationErrorsResponse{errors})).into_response()
+}
+
+pub fn response_duplicated_value(field: &str) -> Response {
+    response_error_code(StatusCode::CONFLICT, &format!("{}: already exists", field), None)
 }
 
 pub fn response_not_found(message: &str) -> Response {

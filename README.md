@@ -20,7 +20,7 @@ _rust-analyzer_ continuosly check the code and highlight issues, `cargo build` w
 ### SQLx
 
 SQLx is set to verify the database entity and need to be able to access the database.  
-It uses the **DATABASE_URL** variable in the _.env_ file, it points to a local Docker contyaginer with Postgres.  
+It uses the **DATABASE_URL** variable set in the _.env_ file, it points to a local Docker container with Postgres.  
 `cargo sqlx prepare`.  
   
 Refer to thte [SQLx](src/repositories/SQLx.md) readme.
@@ -49,7 +49,7 @@ taskkill /PID <PID> /F
 ```
 
 ### Docker
-See [devop/README.md] for instruciton to run the api and database in local Docker.  
+See [devop/README.md] for instruciton to run the api and database on local Docker.  
 
 ## Deploy
 
@@ -79,13 +79,14 @@ let port = std::env::var("PORT")
 ```
 
 ### static mut
-_static mut_ is Rust is ... not possible.  
+_static mut_ in Rust is ... not possible.  
 Not without _unsafe_.  
 In other languages you have thread-safe colelctions, but not in Rust standard library.  
 You can paly around and write cumbersome code with LazyLock, RwLock and Mutex... that's it.  
 Otherwise, third party library. I coose "Dashmap". 
 
 ### Read local file
+(used previously to read configuration)
 
 ```rust
 let config_file = match std::fs::exists(CONFIGURATION_FILE) {
