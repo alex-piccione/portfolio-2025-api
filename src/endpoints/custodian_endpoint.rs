@@ -2,17 +2,29 @@ use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::Extension;
 use crate::endpoints::request_json_validator::ValidJson;
+use crate::endpoints::request_validator::{RuleString, RuleStringOption};
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::custodian_models as models;
 use crate::utils::auth_middleware::Session;
+use crate::validate;
 
 pub async fn create(
     State(state): State<AppState>, 
     Extension(_session): Session,
-    ValidJson(reqeust): ValidJson<models::create::Request>) -> impl IntoResponse {
-    match reqeust.to_entity() {
+    ValidJson(request): ValidJson<models::create::Request>) -> impl IntoResponse {
+    match request.to_entity() {
         Ok(entity) => {
+
+            let errors = validate!(
+                "Name", &entity.name, RuleString::MinLength(3);
+                "Account Country Code", &entity.account_country_code, RuleStringOption::FixLength(2);
+            );
+
+            if !errors.is_empty() {  // &errors.join(", ")
+                return response_validation_errors(errors);
+            }
+
             match state.custodian_service.create(entity).await {
                 Ok(new_id) => {
                     let response = models::create::Response { new_id };

@@ -23,6 +23,12 @@ pub struct NewIdResponse {
     pub new_id: i32
 }
 
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")] 
+pub struct ValidationErrorsResponse {
+    pub errors: Vec<String>,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")] 
 pub struct SuccessErrorResponse {

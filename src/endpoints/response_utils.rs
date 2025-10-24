@@ -3,7 +3,7 @@ use axum::response::{IntoResponse, Response};
 use axum::Json;
 
 use crate::constants;
-use crate::endpoints::models::common::{ErrorResponse, NewIdResponse};
+use crate::endpoints::models::common::{ErrorResponse, NewIdResponse, ValidationErrorsResponse};
 
 pub fn _response_ok_no_data() -> Response {
     (StatusCode::OK).into_response()
@@ -28,6 +28,10 @@ pub fn response_error(message: &str) -> Response {
 
 pub fn response_bad_request(message: &str) -> Response {
     response_error_code(StatusCode::BAD_REQUEST, message,None)
+}
+
+pub fn response_validation_errors(errors: Vec<String>) -> Response {
+    (StatusCode::BAD_REQUEST, Json(ValidationErrorsResponse{errors})).into_response()
 }
 
 pub fn response_not_found(message: &str) -> Response {
