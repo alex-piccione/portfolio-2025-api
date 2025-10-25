@@ -1,5 +1,5 @@
-use sqlx::{PgPool};
-use crate::{entities::custodian::{Custodian, CustodianKind}, repositories::errors::{DatabaseError}};
+use sqlx::{ PgPool};
+use crate::{entities::custodian::{Custodian, CustodianKind}, repositories::{errors::DatabaseError, helpers::check_result_for_new_id}};
 
 #[derive(Clone)]
 pub struct CustodianRepository {
@@ -12,6 +12,7 @@ impl CustodianRepository {
     }
 
     pub async fn create(&self, custodian: Custodian) -> Result<i32, DatabaseError> {
+        /*  this returns an anonymous struct  a dynamic 
         let result = sqlx::query!(
             r#"
                 INSERT INTO Custodian (name, kind, description, url, wallet_address, account_country_code)
@@ -27,22 +28,24 @@ impl CustodianRepository {
         )
         .fetch_one(&self.db_pool)
         .await;
+        */
+        let result = sqlx::query(
+            r#"
+                INSERT INTO Custodian (name, kind, description, url, wallet_address, account_country_code)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING id
+            "#
+        )
+        .bind(&custodian.name)
+        .bind(&custodian.kind)
+        .bind(&custodian.description)
+        .bind(&custodian.url)
+        .bind(&custodian.wallet_address)
+        .bind(&custodian.account_country_code)
+        .fetch_one(&self.db_pool)
+        .await;
 
-        match result {
-            Ok(row) => Ok(row.id),
-            /*
-            Err(error) =>  {
-                // 23505 is the error code for unique_violation and Name is the only unique field at the moment
-                match error.code() {
-                    Some("23505") => Err(RepositoryError::DuplicatedField(error.to_string())),
-                    _ => Err(RepositoryError::DatabaseError(error.to_string()))
-                }
-            },
-            */
-            // All other errors
-            //Err(err) => Err(RepositoryError::UnexpectedError(err.into())),
-            Err(err) => Err(DatabaseError::generic(err.to_string())),
-        }        
+        check_result_for_new_id(result)
     }
 
     pub async fn update(&self, custodian: Custodian) -> Result<(), String> {
