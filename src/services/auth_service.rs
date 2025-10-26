@@ -103,7 +103,7 @@ impl AuthService {
             .await.map_err(|e| AuthError::DatabaseError(e))? ;
 
         if !exists {
-            return Err(AuthError::InvalidOrExpiredToken("NOT FOUND - 111".to_string()));
+            return Err(AuthError::InvalidOrExpiredToken(format!("NOT FOUND - 111 | refresh_token: {}", refresh_token)));
         } 
         
         // debug
