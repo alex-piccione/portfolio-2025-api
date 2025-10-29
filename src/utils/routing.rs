@@ -1,4 +1,4 @@
-use axum::{middleware, routing::{get, post, put}, Router};
+use axum::{middleware, routing::{get, post, put, delete}, Router};
 use crate::{dependency_injection::AppState, endpoints};
 
 pub fn set_routes(app_state: AppState) -> Router<AppState> {
@@ -26,7 +26,8 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/custodian", get(endpoints::custodian_endpoint::list))    
         // holdings (todo)
         .route("/holding", post(endpoints::holding_endpoint::create))  
-        .route("/holding", get(endpoints::holding_endpoint::list));
+        .route("/holding", get(endpoints::holding_endpoint::list))
+        .route("/holding/{id}", delete(endpoints::holding_endpoint::delete));
 
     Router::new()
         .merge(public_routes)

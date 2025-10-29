@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from Holdings where id = $1 and user_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Bpchar"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a43c0fc0c97be32640e982cde4f162c00f6010d35788ab2ebdeef0e2e4342e28"
+}

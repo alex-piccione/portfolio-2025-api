@@ -1,19 +1,25 @@
+#[derive(PartialEq)]
 #[allow(dead_code)]
 pub enum ErrorKind {
     DuplicatedField,
+    RecordNotFound,
     Generic
 }
 
 #[allow(dead_code)]
-pub struct DatabaseError {
+pub struct  DatabaseError {
     pub message: String,
-    pub kind: ErrorKind
+    pub kind: ErrorKind,
 }
 
 #[allow(dead_code)]
 impl DatabaseError {
     pub fn duplicated_field(message: String) -> Self {
         DatabaseError {message, kind: ErrorKind::DuplicatedField}
+    }
+
+    pub fn record_not_found() -> Self {
+        DatabaseError {message: "Record not found".to_string(), kind: ErrorKind::RecordNotFound}
     }
 
     pub fn generic(message: String) -> Self {

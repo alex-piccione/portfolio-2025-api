@@ -1,4 +1,5 @@
 use sqlx::PgPool;
+use crate::repositories::errors::DatabaseError;
 use crate::repositories::schemas::holding_record::HoldingRecord;
 use crate::repositories::helpers::{from_rust_decimal, to_rust_decimal};
 
@@ -33,6 +34,19 @@ impl HoldingRepository {
         .map_err(|e| e.to_string())?;
 
         Ok(row.id)
+    }
+
+    pub async fn delete(&self, id:i32, user_id: &str) -> Result<(), DatabaseError> {
+        let result = sqlx::query!(
+            r#"delete from Holdings where id = $1 and user_id = $2"#, id, user_id)
+            .execute(&self.db_pool)
+            .await
+            .map_err(|e| DatabaseError::generic(e.to_string()))?;
+        if result.rows_affected() > 0 {
+            Ok(())
+        } else {
+            Err(DatabaseError::record_not_found())
+        }
     }
 
     pub async fn list(&self, user_id: &str) -> Result<Vec<HoldingRecord>, String> {

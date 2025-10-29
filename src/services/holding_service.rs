@@ -1,4 +1,4 @@
-use crate::{ repositories::{custodian_repository::CustodianRepository, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
+use crate::{ repositories::{custodian_repository::CustodianRepository, errors::DatabaseError, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
 use crate::endpoints::models::holding_models::create::Request as CreateRequest;
 
 #[derive(Clone)]
@@ -20,6 +20,15 @@ impl HoldingService {
         let record: HoldingRecord = (request, user_id).into();
 
         self.repository.create(record).await
+    }
+
+    pub async fn delete(
+        &self, user_id: &str,
+        id: i32) -> Result<(), DatabaseError> {
+
+        let result = self.repository.delete(id, &user_id).await;
+
+        result
     }
 
     /*pub async fn update(&self, item: Holding) -> Result<(), String> {
