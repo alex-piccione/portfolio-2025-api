@@ -1,3 +1,4 @@
+use std::sync::Arc;  // Atomic Reference Counter
 use dashmap::DashMap;
 //e std::sync::{LazyLock, RwLock}; // Rust doesn't allow "static mut" :-(
 use crate::{entities::currency::{Currency}, repositories::{currency_repository::CurrencyRepository}};
@@ -7,7 +8,7 @@ use crate::endpoints::models::currency_models::CurrencyOfUser;
 pub struct CurrencyService {
     repository: CurrencyRepository,
     // Thread-safe cache
-    currencies: DashMap<i32, Currency>,
+    currencies: Arc<DashMap<i32, Currency>>,
 }
 
 /*
@@ -28,7 +29,7 @@ impl CurrencyService {
     pub fn new(repository: CurrencyRepository) -> Self {
         Self {
             repository,
-            currencies: DashMap::new(), // Initialize empty
+            currencies: Arc::new(DashMap::new()), // Initialize empty
         }
     }
 
@@ -59,9 +60,12 @@ impl CurrencyService {
     }
 
     // Database operations with cache updates
-    pub async fn create(&self, item: Currency) -> Result<i32, String> {
+    pub async fn create(&self, mut item: Currency) -> Result<i32, String> {
         let id = self.repository.create(item.clone()).await?;
         
+        // update the item.id
+        item.id = id;
+
         // Update cache - thread-safe, no locks!
         self.currencies.insert(id, item);
         
@@ -85,7 +89,7 @@ impl CurrencyService {
             .map(|record| record.currency_id)
             .collect();
 
-        let items = self.currencies.clone()
+        let items = self.currencies
             .iter()
                 .filter(|currency| currency.is_active)
                 .map(|currency| 

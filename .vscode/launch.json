@@ -38,10 +38,10 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "Docker Compose",
+            "name": "🐳 Docker Compose",
             "type": "node",
             "request": "attach",
-            "preLaunchTask": "Docker Compose Up",
+            "preLaunchTask": "🐳 Docker Compose Up",
         }
     ]
 }
