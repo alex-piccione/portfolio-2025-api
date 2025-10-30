@@ -2,7 +2,7 @@ use sqlx::PgPool;
 
 use crate::{configuration::Configuration, 
     repositories::{
-        currency_repository::CurrencyRepository, custodian_repository::CustodianRepository, holding_repository::HoldingRepository, session_repository::SessionRepository, user_repository::UserRepository 
+        currency_of_user_repository::CurrencyOfUserRepository, currency_repository::CurrencyRepository, custodian_repository::CustodianRepository, holding_repository::HoldingRepository, session_repository::SessionRepository, user_repository::UserRepository 
         }, 
     services::{
         auth_service::AuthService, currency_service::CurrencyService, custodian_service::CustodianService, holding_service::HoldingService, session_service::SessionService, user_service::UserService}};
@@ -23,10 +23,11 @@ pub async fn inject_services(_config: &Configuration, db_pool:PgPool) -> AppStat
     let user_repository = UserRepository::new(db_pool.clone());
     let session_repository = SessionRepository::new(db_pool.clone());
     let currency_repository = CurrencyRepository::new(db_pool.clone());
+    let currency_of_user_repository = CurrencyOfUserRepository::new(db_pool.clone());
     let custodian_repository = CustodianRepository::new(db_pool.clone());
     let holding_repository = HoldingRepository::new(db_pool.clone());
 
-    let currency_service = CurrencyService::new(currency_repository.clone());
+    let currency_service = CurrencyService::new(currency_repository.clone(), currency_of_user_repository.clone());
     // **LOAD THE CACHE ONLY ONCE**
     if let Err(e) = currency_service.init_cache().await {
         eprintln!("FATAL: Failed to initialize currency cache: {}", e);

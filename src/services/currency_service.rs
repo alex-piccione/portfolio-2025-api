@@ -1,12 +1,14 @@
 use std::sync::Arc;  // Atomic Reference Counter
 use dashmap::DashMap;
 //e std::sync::{LazyLock, RwLock}; // Rust doesn't allow "static mut" :-(
-use crate::{entities::currency::{Currency}, repositories::{currency_repository::CurrencyRepository}};
-use crate::endpoints::models::currency_models::CurrencyOfUser;
+use crate::repositories::currency_of_user_repository::CurrencyOfUserRepository;
+use crate::{entities::currency::Currency, repositories::currency_repository::CurrencyRepository};
+use crate::endpoints::models::currency_models::{CurrencyOfUser};
 
 #[derive(Clone)]
 pub struct CurrencyService {
     repository: CurrencyRepository,
+    repository_of_user: CurrencyOfUserRepository,
     // Thread-safe cache
     currencies: Arc<DashMap<i32, Currency>>,
 }
@@ -26,9 +28,10 @@ impl CurrencyService {
         instance
     }*/
 
-    pub fn new(repository: CurrencyRepository) -> Self {
+    pub fn new(repository: CurrencyRepository, repository_of_user: CurrencyOfUserRepository,) -> Self {
         Self {
             repository,
+            repository_of_user,
             currencies: Arc::new(DashMap::new()), // Initialize empty
         }
     }
@@ -92,8 +95,8 @@ impl CurrencyService {
 
     pub async fn list_for_user(&self, user_id: &str) -> Result<Vec<CurrencyOfUser>, String> {
 
-        let used_by_user: Vec<i32> = self.repository
-            .list_of_user(user_id).await?
+        let used_by_user: Vec<i32> = self.repository_of_user
+            .list(user_id).await?
             .into_iter()
             .map(|record| record.currency_id)
             .collect();
@@ -114,58 +117,12 @@ impl CurrencyService {
 
         Ok(items)
     }
-        // 3. get all the currencies: Ok.
-        // 4. use only the active currency and return a list of CurrencyOfUser, setting the is_used property based on currency id existing in the map/vac/hashlist created at point 2.
-        //let mut items = Vec::with_capacity(self.currencies.len());
-        //for currency in self.currencies.iter().any( c -> c.is_active) {
-        //    //if(currency.is_active)
 
-        //}
-        
-        // 5. return the list
-        //Ok(items)
-
-    /*
-    pub async fn delete(&self, id: i32) -> Result<(), String> {
-        self.repository.delete(id).await?;
-        
-        // Remove from cache
-        self.currencies.remove(&id);
-        
-        Ok(())
-    }
-    */
-
-
-/*
-    async fn load_cache(&self) {
-        match self.repository.list().await {
-            Ok(currencies) => {
-                let map = currencies.into_iter().map(|c|(c.id, c)).collect();
-                CURRENCIES.(map);
-            }
-            Err(e) => {
-                eprintln!("Failed to load currencies into cache: {}", e);
-            }
-        }
+    pub async fn enable_currency_for_user(&self, user_id: String, currency_id: i32, enable: bool) -> Result<(), String> {
+        match enable {
+            true => self.repository_of_user.create(user_id, currency_id).await,
+            false => self.repository_of_user.delete(user_id, currency_id).await
+        }  
     }
 
-    pub async fn create(&self, item: Currency) -> Result<i32, String> {
-        let result = self.repository.create(item).await;
-        self.load_cache().await; // Update cache
-        result
-    }
-
-    pub async fn update(&self, item: Currency) -> Result<(), String> {
-        let result = self.repository.update(item).await;
-        self.load_cache().await; // Update cache
-        result
-    }
-
-    pub fn all() -> Vec<Currency> { CURRENCIES.values().cloned().collect() }
-
-    pub fn get(id: i32) -> Option<Currency> {
-        CURRENCIES.get(&id).cloned()
-    }
-    */
 }

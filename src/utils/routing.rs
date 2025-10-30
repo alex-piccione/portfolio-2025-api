@@ -7,8 +7,6 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
     let public_routes = Router::new()
         .route("/", get(endpoints::common_endpoint::home))        
         // auth
-        .route("/login", post(endpoints::auth_endpoint::login))  // OBSOLETE for backward compatibility
-        .route("/signup", post(endpoints::auth_endpoint::signup))  // OBSOLETE for backward compatibility
         .route("/auth/login", post(endpoints::auth_endpoint::login))
         .route("/auth/signup", post(endpoints::auth_endpoint::signup))
         .route("/auth/refresh", post(endpoints::auth_endpoint::refresh_token));
@@ -19,7 +17,10 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/currency", post(endpoints::currency_endpoint::create))
         .route("/currency", put(endpoints::currency_endpoint::update))
         .route("/currency/{id}", get(endpoints::currency_endpoint::single))
-        .route("/currency", get(endpoints::currency_endpoint::list_of_user))  
+        .route("/currency", get(endpoints::currency_endpoint::list_of_user))   
+        .route("/currency/{id}/enable", put(endpoints::currency_endpoint::enable))  
+        .route("/currency/{id}/disable", put(endpoints::currency_endpoint::disable))  
+        // admin commands 
         .route("/currency/all", get(endpoints::currency_endpoint::list_all))   // TODO: put under admin commands 
         .route("/currency/{id}", delete(endpoints::currency_endpoint::delete))   // TODO: put under admin commands 
         // custodian

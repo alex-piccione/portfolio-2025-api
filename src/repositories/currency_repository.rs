@@ -1,9 +1,6 @@
 use sqlx::PgPool;
-
 use crate::entities::currency::Currency;
 use crate::entities::currency::CurrencyKind;
-
-use crate::repositories::schemas::currency_record::CurrencyOfUserRecord;
 
 #[derive(Clone)]
 pub struct CurrencyRepository {
@@ -87,19 +84,6 @@ impl CurrencyRepository {
             .map_err(|e:sqlx::Error| e.to_string())?;
 
         Ok(currencies)
-    }
-
-    pub async fn list_of_user(&self, user_id: &str) -> Result<Vec<CurrencyOfUserRecord>, String> {
-
-        let items = sqlx::query_as!(
-            CurrencyOfUserRecord,
-            "SELECT id, user_id, currency_id FROM CurrenciesOfUser WHERE user_id = $1", 
-            user_id)
-                .fetch_all(&self.db_pool)
-                .await
-                .map_err(|e| format!("Failed to get Holdings of user. {}", e))?;
-
-        Ok(items)
     }
 
 }

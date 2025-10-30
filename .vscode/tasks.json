@@ -2,10 +2,32 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "🐳 Docker Compose Up",
+            "label": "Cargo Build",
             "icon": {
                 "id": "play",
                 "color": "terminal.ansiGreen"
+            },
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}"},
+            "command": "cargo build",
+            "group": "build"
+        },
+        {
+            "label": "Cargo SQLx Prepare",
+            "icon": {
+                "id": "database",
+                "color": "terminal.ansiYellow"
+            },
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}"},
+            "command": "cargo sqlx prepare",
+            "group": "build"
+        },
+        {
+            "label": "🐳 Docker Compose Up",
+            "icon": {
+                "id": "play",
+                "color": "terminal.ansiBlue"
             },
             "type": "shell",
             "options": { "cwd": "${workspaceFolder}/devop"},

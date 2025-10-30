@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                delete from CurrenciesOfUser WHERE user_id = $1 AND currency_id = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Bpchar",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "ae26d050bd2a6c75976b877ea67b6c97e8afdef61990e56074baf66996d8440e"
+}

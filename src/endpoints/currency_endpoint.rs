@@ -64,3 +64,27 @@ pub async fn list_of_user(
         Err(err) => response_error(&err)
     }
 }
+
+pub async fn enable(
+    State(state):State<AppState>, 
+    Extension(session): Session,
+    Path(id):Path<i32>,
+) -> impl IntoResponse {    
+
+    match state.currency_service.enable_currency_for_user(session.user_id, id, true).await {  // true
+        Ok(()) => response_ok_no_data(),
+        Err(e) => response_error(&e),
+    } 
+}
+
+pub async fn disable(
+    State(state):State<AppState>, 
+    Extension(session): Session,
+    Path(id):Path<i32>,
+) -> impl IntoResponse {    
+
+    match state.currency_service.enable_currency_for_user(session.user_id, id, false).await {  // false
+        Ok(()) => response_ok_no_data(),
+        Err(e) => response_error(&e),
+    } 
+}
