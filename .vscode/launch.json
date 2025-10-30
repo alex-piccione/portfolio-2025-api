@@ -36,6 +36,12 @@
             },
             "args": [],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Docker Compose",
+            "type": "node",
+            "request": "attach",
+            "preLaunchTask": "Docker Compose Up",
         }
     ]
 }

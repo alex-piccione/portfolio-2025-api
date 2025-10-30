@@ -1,0 +1,16 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🐳 Docker Compose Up",
+            "icon": {
+                "id": "play",
+                "color": "terminal.ansiGreen"
+            },
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}/devop"},
+            "command": "docker compose -f compose.all.yaml up --build -d",
+            "group": "build"
+        }
+    ]
+}
