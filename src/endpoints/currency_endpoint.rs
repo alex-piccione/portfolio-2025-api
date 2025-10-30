@@ -38,15 +38,16 @@ pub async fn single(State(state):State<AppState>, Path(id):Path<i32>) -> impl In
     } 
 }
     
-pub async fn list(
+pub async fn list_all(
     State(state): State<AppState>,
     Extension(_session): Session) -> impl IntoResponse {
+        
     let entities = state.currency_service.all();
     let models:Vec<models::Currency> = entities.iter().map(|e|models::Currency::from(e.clone())).collect();
     response_ok(models)
 }
 
-pub async fn list_v2(
+pub async fn list_of_user(
     State(state): State<AppState>,
     Extension(session): Session) -> impl IntoResponse {
 
