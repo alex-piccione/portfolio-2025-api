@@ -11,6 +11,7 @@ The application, at start, will check and execute the migrations (inside _/migra
 These commands can be used to manage database creation and changes:
 - ``cargo sqlx prepare``         # Generate query metadata (local cache used by static analizer)
 - ``cargo sqlx migrate run``     # Run database migrations
+- ``cargo sqlx migrate add``     # Create database migration file
 - ``cargo sqlx database create`` # Create database
 - ``cargo sqlx database drop``   # Drop database
 

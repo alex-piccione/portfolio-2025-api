@@ -74,3 +74,15 @@ impl UpdateRequest {
         })
     }
 }
+
+
+//#[derive(Debug, Clone, FromRow)]
+#[derive(serde::Serialize)]
+#[serde(rename_all ="camelCase")] 
+pub struct CurrencyOfUser {
+    pub id: i32,
+    pub symbol: String,
+    pub name: String,
+    pub kind: String,
+    pub is_used: bool,
+}

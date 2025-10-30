@@ -1,6 +1,7 @@
 use dashmap::DashMap;
 //e std::sync::{LazyLock, RwLock}; // Rust doesn't allow "static mut" :-(
-use crate::{entities::currency::Currency, repositories::currency_repository::CurrencyRepository};
+use crate::{entities::currency::{Currency}, repositories::{currency_repository::CurrencyRepository}};
+use crate::endpoints::models::currency_models::CurrencyOfUser;
 
 #[derive(Clone)]
 pub struct CurrencyService {
@@ -33,10 +34,10 @@ impl CurrencyService {
 
     // Initialize cache at startup (called only once)
     pub async fn init_cache(&self) -> Result<(), String> {
-        let currencies_list = self.repository.list().await?;
+        let items: Vec<Currency> = self.repository.list().await?;
         
         self.currencies.clear();
-        for currency in currencies_list {
+        for currency in items {
             self.currencies.insert(currency.id, currency);
         }
         Ok(())
@@ -70,11 +71,46 @@ impl CurrencyService {
     pub async fn update(&self, item: Currency) -> Result<(), String> {
         self.repository.update(item.clone()).await?;
         
-        // Update cache
+        // Update the cache
         self.currencies.insert(item.id, item);
         
         Ok(())
     }
+
+    pub async fn list_for_user(&self, user_id: &str) -> Result<Vec<CurrencyOfUser>, String> {
+
+        let used_by_user: Vec<i32> = self.repository
+            .list_of_user(user_id).await?
+            .into_iter()
+            .map(|record| record.currency_id)
+            .collect();
+
+        let items = self.currencies.clone()
+            .iter()
+                .filter(|currency| currency.is_active)
+                .map(|currency| 
+                    CurrencyOfUser {
+                        id: currency.id,
+                        symbol: currency.symbol.clone(),
+                        name: currency.name.clone(),
+                        kind: currency.kind.clone().into(),
+                        is_used: used_by_user.contains(&currency.id),
+                    }
+                )
+                .collect();
+
+        Ok(items)
+    }
+        // 3. get all the currencies: Ok.
+        // 4. use only the active currency and return a list of CurrencyOfUser, setting the is_used property based on currency id existing in the map/vac/hashlist created at point 2.
+        //let mut items = Vec::with_capacity(self.currencies.len());
+        //for currency in self.currencies.iter().any( c -> c.is_active) {
+        //    //if(currency.is_active)
+
+        //}
+        
+        // 5. return the list
+        //Ok(items)
 
     /*
     pub async fn delete(&self, id: i32) -> Result<(), String> {

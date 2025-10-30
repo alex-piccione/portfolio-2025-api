@@ -45,3 +45,13 @@ pub async fn list(
     let models:Vec<models::Currency> = entities.iter().map(|e|models::Currency::from(e.clone())).collect();
     response_ok(models)
 }
+
+pub async fn list_v2(
+    State(state): State<AppState>,
+    Extension(session): Session) -> impl IntoResponse {
+
+    match state.currency_service.list_for_user(&session.user_id).await {
+        Ok(data) => response_ok(data),
+        Err(err) => response_error(&err)
+    }
+}

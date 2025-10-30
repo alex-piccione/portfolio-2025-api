@@ -19,7 +19,8 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/currency", post(endpoints::currency_endpoint::create))
         .route("/currency", put(endpoints::currency_endpoint::update))
         .route("/currency/{id}", get(endpoints::currency_endpoint::single))
-        .route("/currency", get(endpoints::currency_endpoint::list))        
+        .route("/currency", get(endpoints::currency_endpoint::list))   
+        .route("/v2/currency", get(endpoints::currency_endpoint::list_v2))        
         // custodian
         .route("/custodian", post(endpoints::custodian_endpoint::create))
         .route("/custodian", put(endpoints::custodian_endpoint::update))
