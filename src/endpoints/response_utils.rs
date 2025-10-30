@@ -5,7 +5,7 @@ use axum::Json;
 use crate::constants;
 use crate::endpoints::models::common::{ErrorResponse, NewIdResponse, ValidationErrorsResponse};
 
-pub fn _response_ok_no_data() -> Response {
+pub fn response_ok_no_data() -> Response {
     (StatusCode::OK).into_response()
 }
 

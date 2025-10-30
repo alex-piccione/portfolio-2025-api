@@ -5,6 +5,7 @@ use crate::endpoints::request_json_validator::ValidJson;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::currency_models as models;
 
+use crate::endpoints::response_utils::response_ok_no_data;
 use crate::utils::auth_middleware::Session;
 
 pub async fn create(State(state): State<AppState>, ValidJson(data): ValidJson<models::CreateRequest>) -> impl IntoResponse {
@@ -31,6 +32,13 @@ pub async fn update(State(state): State<AppState>, ValidJson(data): ValidJson<mo
     }
 }
 
+pub async fn delete(State(state):State<AppState>, Path(id):Path<i32>) -> impl IntoResponse {    
+    match state.currency_service.delete(id).await {
+        Ok(()) => response_ok_no_data(),
+        Err(e) => response_error(&e),
+    } 
+}
+
 pub async fn single(State(state):State<AppState>, Path(id):Path<i32>) -> impl IntoResponse {    
     match state.currency_service.try_get(id) {
         Some(currency) => response_ok(models::Currency::from(currency)),
@@ -41,7 +49,7 @@ pub async fn single(State(state):State<AppState>, Path(id):Path<i32>) -> impl In
 pub async fn list_all(
     State(state): State<AppState>,
     Extension(_session): Session) -> impl IntoResponse {
-        
+
     let entities = state.currency_service.all();
     let models:Vec<models::Currency> = entities.iter().map(|e|models::Currency::from(e.clone())).collect();
     response_ok(models)

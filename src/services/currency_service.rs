@@ -73,10 +73,19 @@ impl CurrencyService {
     }
 
     pub async fn update(&self, item: Currency) -> Result<(), String> {
-        self.repository.update(item.clone()).await?;
+        self.repository.update(&item).await?;
         
         // Update the cache
         self.currencies.insert(item.id, item);
+        
+        Ok(())
+    }
+
+    pub async fn delete(&self, id: i32) -> Result<(), String> {
+        self.repository.delete(id).await?;
+        
+        // Update the cache
+        self.currencies.remove(&id);
         
         Ok(())
     }

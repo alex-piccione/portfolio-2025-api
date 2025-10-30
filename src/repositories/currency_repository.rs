@@ -36,7 +36,7 @@ impl CurrencyRepository {
         Ok(row.id)
     }
 
-    pub async fn update(&self, currency: Currency) -> Result<(), String> {
+    pub async fn update(&self, currency: &Currency) -> Result<(), String> {
         //let _test = sqlx::query!("SELECT COUNT(*) FROM Currency").fetch_one(&self.db_pool).await;
         let result = sqlx::query!(
             r#"
@@ -46,7 +46,7 @@ impl CurrencyRepository {
             "#,
             currency.symbol,
             currency.name,
-            currency.kind as CurrencyKind,
+            currency.kind.clone() as CurrencyKind,
             currency.is_active,
             currency.precision,
             currency.id
@@ -58,6 +58,21 @@ impl CurrencyRepository {
         if result.rows_affected() == 0 {
             return Err("No currency updated".to_string());
         }
+        Ok(())
+    }
+
+    pub async fn delete(&self, id: i32) -> Result<(), String> {
+        sqlx::query!(
+            r#"
+                delete from Currency WHERE id = $1
+            "#,
+            id
+        )
+        .execute(&self.db_pool)
+        .await
+        .map_err(|e| e.to_string())?;
+
+        // no need to check rows affected because if 0 it was not found because already deleted
         Ok(())
     }
 

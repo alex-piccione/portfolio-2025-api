@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                delete from Currency WHERE id = $1\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "7bdd757ad3364dcff0693e65b17df0ea5e8cf85f1daa9a9bf86ee7eb6be94287"
+}
