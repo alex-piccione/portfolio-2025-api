@@ -14,7 +14,7 @@ ALTER TABLE Holdings
 ADD CONSTRAINT holdings_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE Holdings
-ADD CONSTRAINT holdings_custodian_fk FOREIGN KEY (custodian_id) REFERENCES custodian(id) ON DELETE CASCADE;
+ADD CONSTRAINT holdings_custodian_fk FOREIGN KEY (custodian_id) REFERENCES custodians(id) ON DELETE CASCADE;
 
 ALTER TABLE Holdings
 ADD CONSTRAINT holdings_currency_fk FOREIGN KEY (currency_id) REFERENCES currency(id) ON DELETE CASCADE;
