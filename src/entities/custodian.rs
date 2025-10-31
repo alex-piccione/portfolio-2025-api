@@ -3,12 +3,13 @@ use sqlx::{FromRow, Type};
 #[derive(FromRow, Debug, Clone, serde::Serialize)]
 pub struct Custodian {
     pub id: i32,
+    pub user_id: String,
     pub name: String,
+    pub custodian: String,
+    pub account: Option<String>,
     pub kind: CustodianKind,
-    pub description: Option<String>,
-    pub url: Option<String>,
-    pub wallet_address: Option<String>,
-    pub account_country_code: Option<String>,
+    pub color_code: String,
+    pub description: Option<String>
 }
 
 #[derive(Debug, Clone, Type, serde::Serialize)]

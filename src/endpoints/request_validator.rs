@@ -42,6 +42,7 @@ impl RuleString {
 }
 
 impl RuleStringOption {
+    #[allow(dead_code)]
     pub fn validate(&self, field: &str, value: &Option<String>) -> Option<String> {
         match value {
             None => None, // None always passes

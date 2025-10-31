@@ -31,17 +31,18 @@ impl CustodianRepository {
         */
         let result = sqlx::query(
             r#"
-                INSERT INTO Custodian (name, kind, description, url, wallet_address, account_country_code)
-                VALUES ($1, $2, $3, $4, $5, $6)
+                INSERT INTO Custodians (user_id, name, custodian, account, kind, color_code, description)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING id
             "#
         )
+        .bind(&custodian.user_id)
         .bind(&custodian.name)
+        .bind(&custodian.custodian)
+        .bind(&custodian.account)
         .bind(&custodian.kind)
+        .bind(&custodian.color_code)
         .bind(&custodian.description)
-        .bind(&custodian.url)
-        .bind(&custodian.wallet_address)
-        .bind(&custodian.account_country_code)
         .fetch_one(&self.db_pool)
         .await;
 
@@ -51,17 +52,17 @@ impl CustodianRepository {
     pub async fn update(&self, custodian: Custodian) -> Result<(), String> {
         sqlx::query!(
             r#"
-                UPDATE Custodian
-                SET name = $2, kind = $3, description = $4, url = $5, wallet_address = $6, account_country_code = $7
+                UPDATE Custodians
+                SET name = $2, custodian = $3, account = $4, kind = $5, color_code = $6, description = $7
                 WHERE id = $1
             "#,
             custodian.id,
             custodian.name,
+            custodian.custodian,
+            custodian.account,
             custodian.kind as CustodianKind,
-            custodian.description,
-            custodian.url,
-            custodian.wallet_address,
-            custodian.account_country_code
+            custodian.color_code,
+            custodian.description
         )
         .execute(&self.db_pool)
         .await
@@ -72,8 +73,8 @@ impl CustodianRepository {
     pub async fn list(&self) -> Result<Vec<Custodian>, String> {
         let custodians = sqlx::query_as!(Custodian,
             r#"
-                SELECT id, name, kind as "kind!: CustodianKind", description, url, wallet_address, account_country_code
-                FROM Custodian
+                SELECT id, user_id, name, custodian, account, kind as "kind!: CustodianKind", color_code, description
+                FROM Custodians
             "#
         )
         .fetch_all(&self.db_pool)

@@ -2,7 +2,7 @@ use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::Extension;
 use crate::endpoints::request_json_validator::ValidJson;
-use crate::endpoints::request_validator::{RuleString, RuleStringOption};
+use crate::endpoints::request_validator::{RuleString};
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::custodian_models as models;
@@ -12,14 +12,16 @@ use crate::validate;
 
 pub async fn create(
     State(state): State<AppState>, 
-    Extension(_session): Session,
+    Extension(session): Session,
     ValidJson(request): ValidJson<models::create::Request>) -> impl IntoResponse {
-    match request.to_entity() {
+
+    match request.to_entity(session.user_id) {
         Ok(entity) => {
 
             validate!(
                 "Name", &entity.name, RuleString::MinLength(3);
-                "Account Country Code", &entity.account_country_code, RuleStringOption::FixLength(2);
+                "Custodian", &entity.custodian, RuleString::NotEmpty;
+                //"Account", &entity.account, RuleStringOption::(2);                
             );
 
             match state.custodian_service.create(entity).await {
@@ -36,8 +38,12 @@ pub async fn create(
     }
 }
 
-pub async fn update(State(state): State<AppState>, ValidJson(request): ValidJson<models::update::Request>) -> impl IntoResponse {
-    match request.to_entity() {
+pub async fn update(
+    State(state): State<AppState>, 
+    Extension(session): Session,
+    ValidJson(request): ValidJson<models::update::Request>) -> impl IntoResponse {
+
+    match request.to_entity(session.user_id) {
         Ok(entity) => {
             match state.custodian_service.update(entity).await {
                 Ok(()) => response_ok("Custodian updated successfully"),

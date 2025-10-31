@@ -1,0 +1,62 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                SELECT id, user_id, name, custodian, account, kind as \"kind!: CustodianKind\", color_code, description\n                FROM Custodians\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": "Bpchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "custodian",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "account",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "kind!: CustodianKind",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "color_code",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "description",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "1d71db18c8a1d78cceb98acdbe8d9f6573bd14c0ea23d5b8083dd2fc66d08ac8"
+}

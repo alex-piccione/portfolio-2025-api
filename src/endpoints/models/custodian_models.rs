@@ -5,23 +5,24 @@ pub mod create {
     #[serde(rename_all = "camelCase")] 
     pub struct Request {
         pub name: String,
+        pub custodian: String,
+        pub account: Option<String>,
         pub kind: String,
-        pub description: Option<String>,
-        pub url: Option<String>,
-        pub wallet_address: Option<String>,
-        pub account_country_code: Option<String>,
+        pub color_code: String,
+        pub description: Option<String>
     }
 
     impl Request {
-        pub fn to_entity(self) -> Result<Custodian, String> {
+        pub fn to_entity(self, user_id: String) -> Result<Custodian, String> {
             Ok(Custodian {
                 id: 0,
+                user_id,
                 name: self.name,
+                custodian: self.custodian,
+                account: self.account,
                 kind: CustodianKind::from_string(&self.kind)?,
-                description: self.description,
-                url: self.url,
-                wallet_address: self.wallet_address,
-                account_country_code: self.account_country_code,
+                color_code: self.color_code,
+                description: self.description
             })
         }
     }
@@ -39,23 +40,24 @@ pub mod update {
     pub struct Request {
         pub id: i32,
         pub name: String,
+        pub custodian: String,
+        pub account: Option<String>,
         pub kind: String,
+        pub color_code: String,
         pub description: Option<String>,
-        pub url: Option<String>,
-        pub wallet_address: Option<String>,
-        pub account_country_code: Option<String>,
     }
 
     impl Request {
-        pub fn to_entity(self) -> Result<Custodian, String> {
+        pub fn to_entity(self, user_id:String) -> Result<Custodian, String> {
             Ok(Custodian {
                 id: self.id,
+                user_id,
                 name: self.name,
+                custodian: self.custodian,
+                account: self.account,
                 kind: CustodianKind::from_string(&self.kind)?,
-                description: self.description,
-                url: self.url,
-                wallet_address: self.wallet_address,
-                account_country_code: self.account_country_code,
+                color_code: self.color_code,
+                description: self.description
             })
         }
     }
