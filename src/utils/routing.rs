@@ -26,6 +26,7 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         // custodian
         .route("/custodian", post(endpoints::custodian_endpoint::create))
         .route("/custodian", put(endpoints::custodian_endpoint::update))
+        .route("/custodian/{id}", delete(endpoints::custodian_endpoint::delete))
         .route("/custodian", get(endpoints::custodian_endpoint::list))    
         // holdings (todo)
         .route("/holding", post(endpoints::holding_endpoint::create))  

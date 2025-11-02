@@ -1,4 +1,4 @@
-use crate::{entities::custodian::Custodian, repositories::{custodian_repository::CustodianRepository}};
+use crate::{entities::custodian::Custodian, repositories::{custodian_repository::CustodianRepository, errors::DatabaseError}};
 
 #[derive(Clone)]
 pub struct CustodianService {
@@ -24,6 +24,10 @@ impl CustodianService {
 
     pub async fn update(&self, item: Custodian) -> Result<(), String> {
         self.repository.update(item).await
+    }
+
+    pub async fn delete(&self, user_id: &str, id: i32) -> Result<(), DatabaseError> {
+        self.repository.delete(id, &user_id).await
     }
 
     pub async fn list(&self) -> Result<Vec<Custodian>, String> {

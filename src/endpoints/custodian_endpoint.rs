@@ -1,4 +1,4 @@
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::response::IntoResponse;
 use axum::Extension;
 use crate::endpoints::request_json_validator::ValidJson;
@@ -6,6 +6,7 @@ use crate::endpoints::request_validator::{RuleString};
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::custodian_models as models;
+use crate::repositories::errors::ErrorKind;
 use crate::services::custodian_service::CreateError;
 use crate::utils::auth_middleware::Session;
 use crate::validate;
@@ -51,6 +52,22 @@ pub async fn update(
             }
         },
         Err(e) => response_bad_request(&e),
+    }
+}
+
+pub async fn delete(
+    State(state): State<AppState>, 
+    Extension(session): Session,
+    Path(id):Path<i32>) -> impl IntoResponse {
+
+    // TODO: validation
+
+    match state.custodian_service.delete(&session.user_id, id).await {
+        Ok(()) => response_ok(()),
+        Err(e) if e.kind == ErrorKind::RecordNotFound => {
+            response_not_found(&e.message)
+        },
+        Err(e) => response_error(&e.message)
     }
 }
 
