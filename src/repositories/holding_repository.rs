@@ -36,16 +36,47 @@ impl HoldingRepository {
         Ok(row.id)
     }
 
+    pub async fn update(&self, record:HoldingRecord) -> Result<(), DatabaseError> {
+        let result = sqlx::query!(
+            r#"
+                UPDATE Holdings SET
+                    custodian_id = $3,
+                    currency_id = $4,
+                    date = $5,
+                    action = $6,
+                    amount = $7,
+                    note = $8                
+                WHERE id = $1 AND user_id = $2
+            "#,
+            record.id,            
+            record.user_id,
+            record.custodian_id,
+            record.currency_id,
+            record.date,
+            record.action,
+            from_rust_decimal(record.amount).map_err(|e| DatabaseError::generic(e))?,
+            record.note
+        )
+        .execute(&self.db_pool)
+        .await
+        .map_err(|e| DatabaseError::generic(e.to_string()))?;
+
+        match result.rows_affected() > 0 {
+            true => Ok(()),
+            false => Err(DatabaseError::record_not_found())
+        }
+    }
+
     pub async fn delete(&self, id:i32, user_id: &str) -> Result<(), DatabaseError> {
         let result = sqlx::query!(
             r#"delete from Holdings where id = $1 and user_id = $2"#, id, user_id)
             .execute(&self.db_pool)
             .await
             .map_err(|e| DatabaseError::generic(e.to_string()))?;
-        if result.rows_affected() > 0 {
-            Ok(())
-        } else {
-            Err(DatabaseError::record_not_found())
+
+        match result.rows_affected() > 0 {
+            true => Ok(()),
+            false => Err(DatabaseError::record_not_found())
         }
     }
 

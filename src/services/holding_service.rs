@@ -1,5 +1,5 @@
-use crate::{ repositories::{custodian_repository::CustodianRepository, errors::DatabaseError, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
-use crate::endpoints::models::holding_models::create::Request as CreateRequest;
+use crate::{ endpoints::models::holding_models::{create, update}, 
+    repositories::{custodian_repository::CustodianRepository, errors::DatabaseError, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
 
 #[derive(Clone)]
 pub struct HoldingService {
@@ -13,27 +13,19 @@ impl HoldingService {
         Self {repository, _currency_service, _custodian_repository}
     }
 
-    pub async fn create(
-        &self, user_id: &str,
-        request: CreateRequest) -> Result<i32, String> {
-
+    pub async fn create(&self, user_id: &str, request: create::Request) -> Result<i32, String> {
         let record: HoldingRecord = (request, user_id).into();
-
         self.repository.create(record).await
     }
 
-    pub async fn delete(
-        &self, user_id: &str,
-        id: i32) -> Result<(), DatabaseError> {
-
-        let result = self.repository.delete(id, &user_id).await;
-
-        result
+    pub async fn update(&self, user_id: &str, id: i32, request: update::Request) -> Result<(), DatabaseError> {
+        let record: HoldingRecord = (id, request, user_id).into();
+        self.repository.update(record).await
     }
 
-    /*pub async fn update(&self, item: Holding) -> Result<(), String> {
-        self.repository.update(item).await
-    }*/
+    pub async fn delete(&self, user_id: &str,id: i32) -> Result<(), DatabaseError> {
+        self.repository.delete(id, &user_id).await
+    }
 
     pub async fn list_for_user(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
         self.repository.list(user_id).await

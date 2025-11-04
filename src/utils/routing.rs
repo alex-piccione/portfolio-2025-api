@@ -30,6 +30,7 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/custodian", get(endpoints::custodian_endpoint::list))    
         // holdings (todo)
         .route("/holding", post(endpoints::holding_endpoint::create))  
+        .route("/holding/{id}", put(endpoints::holding_endpoint::update))  
         .route("/holding", get(endpoints::holding_endpoint::list))
         .route("/holding/{id}", delete(endpoints::holding_endpoint::delete));
 

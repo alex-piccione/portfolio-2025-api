@@ -1,0 +1,21 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE Holdings SET\n                    custodian_id = $3,\n                    currency_id = $4,\n                    date = $5,\n                    action = $6,\n                    amount = $7,\n                    note = $8                \n                WHERE id = $1 AND user_id = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Bpchar",
+        "Int4",
+        "Int4",
+        "Timestamptz",
+        "Varchar",
+        "Numeric",
+        "Varchar"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "407a33e7a58ee353898d1d58ec73d40e82eb17dffb80bd68c68750787a446f6e"
+}

@@ -3,18 +3,23 @@ use axum::Extension;
 use axum::{extract::State};
 use axum::response::IntoResponse;
 use crate::endpoints::request_json_validator::ValidJson;
+use crate::endpoints::request_validator::RuleNumber;
 use crate::endpoints::response_utils::*;
 use crate::dependency_injection::AppState;
 use crate::endpoints::models::holding_models as models;
 use crate::repositories::errors::{ErrorKind};
 use crate::utils::auth_middleware::Session;
+use crate::validate;
 
 pub async fn create(
     State(state): State<AppState>, 
     Extension(session): Session,
     ValidJson(request): ValidJson<models::create::Request>) -> impl IntoResponse {
 
-    // TODO: validation
+    validate!(
+        //"Name", request.date, RuleString::NotEmpty;
+        "Amount", request.amount, RuleNumber::NotZero;
+    );
 
     match state.holding_service.create(&session.user_id, request).await {
         Ok(new_id) => response_created_new_id(new_id),
@@ -22,26 +27,27 @@ pub async fn create(
     }
 }
 
-/* 
-pub async fn update(State(state): State<AppState>, Json(data): Json<models::UpdateRequest>) -> impl IntoResponse {
-    match data.to_entity() {
-        Ok(entity) => {
-            match state.custodian_service.update(entity).await {
-                Ok(()) => response_ok("Custodian updated successfully"),
-                Err(e) => response_error(e.as_str()),
-            }
-        },
-        Err(e) => response_bad_request(&e),
+pub async fn update(
+    State(state): State<AppState>, 
+    Extension(session): Session,
+    Path(id):Path<i32>,
+    ValidJson(request): ValidJson<models::update::Request>) -> impl IntoResponse {
+
+    validate!(
+        //"Name", request.date, RuleString::NotEmpty;
+        "Amount", request.amount, RuleNumber::NotZero;
+    );
+
+    match state.holding_service.update(&session.user_id, id, request).await {
+        Ok(()) => response_ok_no_data(),
+        Err(e) => response_error(&e.message),
     }
 }
-*/
 
 pub async fn delete(
     State(state): State<AppState>, 
     Extension(session): Session,
     Path(id):Path<i32>) -> impl IntoResponse {
-
-    // TODO: validation
 
     match state.holding_service.delete(&session.user_id, id).await {
         Ok(()) => response_ok(()),

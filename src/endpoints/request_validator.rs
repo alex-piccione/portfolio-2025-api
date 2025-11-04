@@ -19,6 +19,10 @@ pub enum RuleNumber {
     NotZero,
 }
 
+pub enum RuleDate {
+    NotInFuture,
+}
+
 
 impl RuleString {
     pub fn validate(&self, field: &str, value: &str) -> Option<String> {       
@@ -58,7 +62,7 @@ impl RuleStringOption {
 }
 
 impl RuleNumber {
-    fn _validate<T: PartialEq + Default>(&self, field: &str, value: T) -> Option<String> {
+    pub fn validate<T: PartialEq + Default>(&self, field: &str, value: T) -> Option<String> {
         match self {
             RuleNumber::NotZero if value == T::default() => {
                 Some(format!("{}: cannot be zero", field))

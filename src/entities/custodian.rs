@@ -1,6 +1,7 @@
 use sqlx::{FromRow, Type};
 
 #[derive(FromRow, Debug, Clone, serde::Serialize)]
+#[serde(rename_all ="camelCase")] 
 pub struct Custodian {
     pub id: i32,
     pub user_id: String,
