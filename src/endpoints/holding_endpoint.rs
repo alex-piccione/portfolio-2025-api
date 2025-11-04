@@ -64,11 +64,6 @@ pub async fn single(
     Path(id):Path<i32>) -> impl IntoResponse {
     match state.holding_service.single_for_user(&session.user_id, id).await {
         Ok(record) => response_ok(record),
-        /*{
-            let models = entities.into_iter()
-                .map(|entity| entity.into())
-                .collect::<Vec<models::Custodian>>();            
-        },*/
         Err(e) => response_error(e.as_str()),
     }
 }
