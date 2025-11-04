@@ -80,6 +80,30 @@ impl HoldingRepository {
         }
     }
 
+    pub async fn single_for_user(&self, id:i32, user_id: &str) -> Result<HoldingRecord, String> {
+        let row =
+            sqlx::query!(
+                "SELECT id, user_id, custodian_id, currency_id, date, action, amount, note FROM Holdings 
+                WHERE user_id=$1 AND id=$2 ",
+                    user_id, id)
+                .fetch_one(&self.db_pool)
+                .await
+                .map_err(|e| format!("Failed to get Holdings of user. {}", e))?;
+        
+        let record = HoldingRecord {
+                id: row.id,
+                user_id: row.user_id,
+                custodian_id: row.custodian_id,
+                currency_id: row.currency_id,
+                date: row.date,
+                action: row.action,
+                amount: to_rust_decimal(row.amount.ok_or("Amount is NULL")?)?,
+                note: row.note,
+            };
+
+        Ok(record)
+    }
+
     pub async fn list(&self, user_id: &str) -> Result<Vec<HoldingRecord>, String> {
         /* SQLx uses its BigDecimal type... instead of rust_decimal::Decimal, so a manual mapping is required */
         /*

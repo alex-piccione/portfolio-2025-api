@@ -23,8 +23,12 @@ impl HoldingService {
         self.repository.update(record).await
     }
 
-    pub async fn delete(&self, user_id: &str,id: i32) -> Result<(), DatabaseError> {
+    pub async fn delete(&self, user_id: &str, id: i32) -> Result<(), DatabaseError> {
         self.repository.delete(id, &user_id).await
+    }
+
+    pub async fn single_for_user(&self, user_id:&str, id:i32) -> Result<HoldingRecord, String> {
+        self.repository.single_for_user(id, user_id).await
     }
 
     pub async fn list_for_user(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
