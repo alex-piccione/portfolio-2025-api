@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Cargo Build",
+            "label": "🦀 Cargo Build",
             "icon": {
                 "id": "play",
                 "color": "terminal.ansiGreen"

@@ -1,5 +1,17 @@
 use sqlx::{FromRow, Type};
 
+pub const KINDS: &[&str] = &[
+    "Bank",                      // HSBC, Revolut
+    "Exchange",                  // Binance
+    "Fintech Platform",          // Wise, Nexo
+    "Pension",                   // Aviva
+    "Blockchain Wallet",         // Ethereum address, Bitcoin address, Radix account
+    "Broker",                    // Trading 212, eToro
+    "Payment Platform",          // PayPal, Stripe
+    "Other",
+];
+// let owned: Vec<String> = KINDS.iter().map(|s| s.to_string()).collect();
+
 #[derive(FromRow, Debug, Clone, serde::Serialize)]
 #[serde(rename_all ="camelCase")] 
 pub struct Custodian {
@@ -23,7 +35,9 @@ pub enum CustodianKind {
     Pension,
     #[sqlx(rename = "Blockchain Wallet")]
     BlockchainWallet,
-    // Broker
+    Broker,
+    #[sqlx(rename = "Payment Platform")]
+    PaymentPlatform,
     Other
 }
 
@@ -35,6 +49,8 @@ impl CustodianKind {
             "Fintech Platform" => Ok(CustodianKind::FintechPlatform), // Alias
             "Pension" => Ok(CustodianKind::Pension),
             "Blockchain Wallet" => Ok(CustodianKind::BlockchainWallet),
+            "Payment Platform" => Ok(CustodianKind::PaymentPlatform),
+            "Broker" => Ok(CustodianKind::Broker),
             _ => Err(format!("Invalid custodian kind: '{}'", kind)),
         }
     }
@@ -48,6 +64,8 @@ impl From<CustodianKind> for String {
             CustodianKind::FintechPlatform => "Fintech Platform".to_string(),
             CustodianKind::Pension => "Pension".to_string(),
             CustodianKind::BlockchainWallet => "Blockchain Wallet".to_string(),
+            CustodianKind::PaymentPlatform => "Payment Platform".to_string(),
+            CustodianKind::Broker => "Broker".to_string(),
             CustodianKind::Other => "Other".to_string(),
         }
     }

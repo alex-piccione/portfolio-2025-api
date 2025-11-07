@@ -38,6 +38,12 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "🦀 Cargo Build",
+            "type": "node",
+            "request": "attach",
+            "preLaunchTask": "🦀 Cargo Build",
+        },
+        {
             "name": "🐳 Docker Compose",
             "type": "node",
             "request": "attach",

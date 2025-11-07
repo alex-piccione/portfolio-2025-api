@@ -1,3 +1,7 @@
+use chrono::Utc;
+
+use crate::{entities::custodian::KINDS, utils::datetime::UtcDateTime};
+
 #[allow(dead_code)]
 pub enum RuleString {
     NotEmpty,
@@ -5,6 +9,7 @@ pub enum RuleString {
     MaxLength(usize),
     FixLength(usize),
     UUID,
+    IsValidCustodianKind()
 }
 
 #[allow(dead_code)]
@@ -14,7 +19,6 @@ pub enum RuleStringOption {
     FixLength(usize),
 }
 
-#[allow(dead_code)]
 pub enum RuleNumber {
     NotZero,
 }
@@ -40,6 +44,9 @@ impl RuleString {
                 Some(format!("{}: must be {} characters", field, len))
             }
             RuleString::UUID => None, // TODO: not implemented
+            RuleString::IsValidCustodianKind() if !KINDS.contains(&value) => {
+                Some(format!("{}: is not a valid kind. Valid values: {}.", field, KINDS.join(", ")))
+            },
             _ => None,
         }
     }
@@ -68,6 +75,18 @@ impl RuleNumber {
                 Some(format!("{}: cannot be zero", field))
             }
             _ => None,
+        }
+    }
+}
+
+impl RuleDate {
+    #[allow(dead_code)]
+    pub fn validate(&self, field: &str, value: UtcDateTime) -> Option<String> {
+        match self {
+            RuleDate::NotInFuture if value > Utc::now() => {
+                Some(format!("{}: cannot be in the future", field))
+            }
+            _ => None
         }
     }
 }

@@ -8,13 +8,19 @@ pub struct ErrorResponse {
     pub code: Option<String>
 }
 
-impl ErrorResponse  {
+impl ErrorResponse {
     pub fn error(message: &str) -> Self {
         ErrorResponse { error: message.to_string(), code: None }
     } 
     pub fn error_code(error: &str, code: &str) -> Self {
         ErrorResponse { error: error.to_string(), code: Some(code.to_string()) }
     } 
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")] 
+pub struct ConfigResponse {
+    pub(crate) custodian_kinds: Vec<String>
 }
 
 #[derive(Serialize)]

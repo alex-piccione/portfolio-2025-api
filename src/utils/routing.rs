@@ -13,6 +13,8 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
 
         // User required routes (without middleware applied yet)
     let user_routes = Router::new()
+        // common
+        .route("/config", get(endpoints::common_endpoint::config))
         // currency
         .route("/currency", post(endpoints::currency_endpoint::create))
         .route("/currency", put(endpoints::currency_endpoint::update))
