@@ -1,7 +1,8 @@
-# Learning Rust - Axum
+# Portfolio 2025 - API
 
 [![Deploy](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml/badge.svg)](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml)
 
+This API was created as a learning project for the Rust language.  
 Web API with Rust.  
 **Axum**: library for API service.  
 **Sqlx**: library to interact with database (compile-time scghema cheks).
