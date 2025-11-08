@@ -1,4 +1,5 @@
-use sqlx::PgPool;
+//use sqlx::postgres::PgArguments;
+use sqlx::{PgPool};
 use crate::repositories::errors::DatabaseError;
 use crate::repositories::repository_traits::BaseRepository;
 use crate::repositories::schemas::holding_record::HoldingRecord;
@@ -99,6 +100,85 @@ impl HoldingRepository {
             };
 
         Ok(record)
+    }
+
+    /*async fn execute_query_for_list(&self, query: sqlx::query::Query<'_, Postgres, PgArguments>) {
+        let rows = query.fetch_all(&self.db_pool)
+            .await
+            .map_err(|e| format!("Failed to get Holdings of user. {}", e))?;
+        
+        let mut items = Vec::with_capacity(rows.len());
+        for row in rows {
+            items.push(HoldingRecord {
+                id: row.id,
+                user_id: row.user_id,
+                custodian_id: row.custodian_id,
+                currency_id: row.currency_id,
+                date: row.date,
+                action: row.action,
+                amount: to_rust_decimal(row.amount.ok_or("Amount is NULL")?)?,
+                note: row.note,
+            });
+        }
+
+        Ok(items)
+    }*/
+
+    /*async fn execute_query_for_list(&self, query: &str) {
+        let rows =
+            sqlx::query("")
+                .fetch_all(&self.db_pool)
+                .await
+                .map_err(|e| format!("Failed to get Holdings of user. {}", e))?;
+        
+        let mut items = Vec::with_capacity(rows.len());
+        for row in rows {
+            items.push(HoldingRecord {
+                id: row.id,
+                user_id: row.user_id,
+                custodian_id: row.custodian_id,
+                currency_id: row.currency_id,
+                date: row.date,
+                action: row.action,
+                amount: to_rust_decimal(row.amount.ok_or("Amount is NULL")?)?,
+                note: row.note,
+            });
+        }
+
+        Ok(items)
+    }*/
+
+    pub async fn list_last_balance(&self, user_id: &str) -> Result<Vec<HoldingRecord>, String> {
+        let query = sqlx::query!(
+            "SELECT DISTINCT ON (custodian_id, currency_id) 
+                id, user_id, custodian_id, currency_id, date, action, amount, note
+            FROM holdings
+            WHERE user_id = $1
+            ORDER BY custodian_id, currency_id, date DESC;",
+            user_id);
+        
+        let rows = query 
+            .fetch_all(&self.db_pool)
+            .await
+            .map_err(|e| format!("Failed to get Holdings of user. {}", e))?;
+
+        //self.execute_query_for_list(&query)
+
+        let mut items = Vec::with_capacity(rows.len());
+        for row in rows {
+            items.push(HoldingRecord {
+                id: row.id,
+                user_id: row.user_id,
+                custodian_id: row.custodian_id,
+                currency_id: row.currency_id,
+                date: row.date,
+                action: row.action,
+                amount: to_rust_decimal(row.amount.ok_or("Amount is NULL")?)?,
+                note: row.note,
+            });
+        }
+
+        Ok(items)        
     }
 
     pub async fn list(&self, user_id: &str) -> Result<Vec<HoldingRecord>, String> {

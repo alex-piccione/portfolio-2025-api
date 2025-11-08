@@ -54,3 +54,12 @@ pub mod update {
         }
     }
 }
+
+pub mod search {
+
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")] 
+    pub struct Params {
+        pub only_latest_balance: bool
+    }
+}

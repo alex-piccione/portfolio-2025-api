@@ -1,4 +1,4 @@
-use axum::extract::Path;
+use axum::extract::{Path, Query};
 use axum::Extension;
 use axum::{extract::State};
 use axum::response::IntoResponse;
@@ -68,6 +68,7 @@ pub async fn single(
     }
 }
 
+/*
 pub async fn list(
     State(state): State<AppState>, 
     Extension(session): Session) -> impl IntoResponse {
@@ -80,5 +81,32 @@ pub async fn list(
         },*/
         Err(e) => response_error(e.as_str()),
     }
+}*/
+
+pub async fn list(
+    State(state): State<AppState>, 
+    Extension(session): Session,
+    Query(params): Query<models::search::Params> ) -> impl IntoResponse {
+
+    let result = match params.only_latest_balance {
+        true => state.holding_service.list_last_balance(&session.user_id).await,
+        _ => state.holding_service.list_for_user(&session.user_id).await
+    };
+
+    match result {
+        Ok(entities) => response_ok(entities),
+        /*{
+            let models = entities.into_iter()
+                .map(|entity| entity.into())
+                .collect::<Vec<models::Custodian>>();            
+        },*/
+        Err(e) => response_error(e.as_str()),
+    }
+
+    /*
+    match state.holding_service.list_for_user(&session.user_id).await {
+        Ok(entities) => response_ok(entities),
+        Err(e) => response_error(e.as_str()),
+    }*/
 }
 

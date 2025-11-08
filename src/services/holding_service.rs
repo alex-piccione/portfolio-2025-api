@@ -31,6 +31,10 @@ impl HoldingService {
         self.repository.single_for_user(id, user_id).await
     }
 
+    pub async fn list_last_balance(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
+        self.repository.list_last_balance(user_id).await
+    }
+
     pub async fn list_for_user(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
         self.repository.list(user_id).await
         /*let records = self.repository.list(&user.id).await?;        
