@@ -3,7 +3,7 @@
 # move where Dockerfile and source code is
 cd ..
 CONFIGURATION_FILE=configuration_local.json
-VERSION=local-1 #not used
+VERSION=local-1
 docker build \
     -t portfolio-api:$VERSION \
     --build-arg CONFIGURATION_FILE=$CONFIGURATION_FILE \

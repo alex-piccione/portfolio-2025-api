@@ -39,19 +39,42 @@ pub async fn create(
     }
 }
 
+pub async fn single(
+    State(state): State<AppState>, 
+    Extension(session): Session,
+    Path(id):Path<i32>) -> impl IntoResponse {
+
+    match state.custodian_service.single(id, &session.user_id).await {
+        Ok(item) => response_ok(item),
+        Err(e) => response_error(&e),
+    }
+}
+
 pub async fn update(
     State(state): State<AppState>, 
     Extension(session): Session,
+    Path(id):Path<i32>,
     ValidJson(request): ValidJson<models::update::Request>) -> impl IntoResponse {
 
-    match request.to_entity(session.user_id) {
-        Ok(entity) => {
-            match state.custodian_service.update(entity).await {
-                Ok(()) => response_ok("Custodian updated successfully"),
-                Err(e) => response_error(e.as_str()),
-            }
-        },
-        Err(e) => response_bad_request(&e),
+    if session.user_id == "" {
+        return response_unhautorized("User ID is empty");
+    }
+    else {
+        match request.to_entity(id, session.user_id) {
+            /*validate!(
+                "Name", &entity.name, RuleString::MinLength(3);
+                "Custodian", &entity.custodian, RuleString::NotEmpty;
+                //"Account", &entity.account, RuleStringOption::(2);                
+            );*/
+
+            Ok(entity) => {
+                match state.custodian_service.update(entity).await {
+                    Ok(()) => response_ok("Custodian updated successfully"),
+                    Err(e) => response_error(&e.message),
+                }
+            },
+            Err(e) => response_bad_request(&e),
+        }
     }
 }
 
@@ -62,7 +85,7 @@ pub async fn delete(
 
     // TODO: validation
 
-    match state.custodian_service.delete(&session.user_id, id).await {
+    match state.custodian_service.delete(id, &session.user_id).await {
         Ok(()) => response_ok(()),
         Err(e) if e.kind == ErrorKind::RecordNotFound => {
             response_not_found(&e.message)

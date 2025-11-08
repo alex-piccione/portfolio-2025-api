@@ -21,12 +21,16 @@ impl CustodianService {
         self.repository.create(item).await
         .map_err(|err| CreateError::Unexpected(err.message) )
     }
+    
+    pub async fn single(&self, id: i32, user_id: &str,) -> Result<Custodian, String> {
+        self.repository.single(id, &user_id).await
+    }
 
-    pub async fn update(&self, item: Custodian) -> Result<(), String> {
+    pub async fn update(&self, item: Custodian) -> Result<(), DatabaseError> {
         self.repository.update(item).await
     }
 
-    pub async fn delete(&self, user_id: &str, id: i32) -> Result<(), DatabaseError> {
+    pub async fn delete(&self, id: i32, user_id: &str,) -> Result<(), DatabaseError> {
         self.repository.delete(id, &user_id).await
     }
 

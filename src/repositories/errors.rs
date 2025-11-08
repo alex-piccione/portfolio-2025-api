@@ -19,7 +19,11 @@ impl DatabaseError {
     }
 
     pub fn record_not_found() -> Self {
-        DatabaseError {message: "Record not found".to_string(), kind: ErrorKind::RecordNotFound}
+        DatabaseError {message: "Record not found.".to_string(), kind: ErrorKind::RecordNotFound}
+    }
+
+    pub fn record_not_found_with_id(id: i32) -> Self {
+        DatabaseError {message: format!("Record not found. ID: {}.", id), kind: ErrorKind::RecordNotFound}
     }
 
     pub fn generic(message: String) -> Self {

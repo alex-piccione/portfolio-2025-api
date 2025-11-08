@@ -1,0 +1,21 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE Custodians\n                SET name = $3, custodian = $4, account = $5, kind = $6, color_code = $7, description = $8\n                where id = $1 and user_id = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Bpchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "d04b2a0752f0ffb2c0ed916848ae2ab48036d65b81aa3032b3592393b75f2c16"
+}

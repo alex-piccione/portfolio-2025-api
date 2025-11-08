@@ -27,15 +27,16 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/currency/{id}", delete(endpoints::currency_endpoint::delete))   // TODO: put under admin commands 
         // custodian
         .route("/custodian", post(endpoints::custodian_endpoint::create))
-        .route("/custodian", put(endpoints::custodian_endpoint::update))
+        .route("/custodian/{id}", get(endpoints::custodian_endpoint::single))
+        .route("/custodian/{id}", put(endpoints::custodian_endpoint::update))
         .route("/custodian/{id}", delete(endpoints::custodian_endpoint::delete))
         .route("/custodian", get(endpoints::custodian_endpoint::list))    
         // holdings (todo)
         .route("/holding", post(endpoints::holding_endpoint::create))  
-        .route("/holding/{id}", put(endpoints::holding_endpoint::update))  
         .route("/holding/{id}", get(endpoints::holding_endpoint::single))
-        .route("/holding", get(endpoints::holding_endpoint::list))
-        .route("/holding/{id}", delete(endpoints::holding_endpoint::delete));
+        .route("/holding/{id}", put(endpoints::holding_endpoint::update))  
+        .route("/holding/{id}", delete(endpoints::holding_endpoint::delete))
+        .route("/holding", get(endpoints::holding_endpoint::list));        
 
     Router::new()
         .merge(public_routes)

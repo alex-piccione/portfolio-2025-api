@@ -1,5 +1,6 @@
 use sqlx::PgPool;
 use crate::repositories::errors::DatabaseError;
+use crate::repositories::repository_traits::BaseRepository;
 use crate::repositories::schemas::holding_record::HoldingRecord;
 use crate::repositories::helpers::{from_rust_decimal, to_rust_decimal};
 
@@ -7,6 +8,8 @@ use crate::repositories::helpers::{from_rust_decimal, to_rust_decimal};
 pub struct HoldingRepository {
     db_pool: PgPool,
 }
+
+impl BaseRepository for HoldingRepository {}
 
 impl HoldingRepository {
     pub fn new(db_pool: PgPool) -> Self {
@@ -61,10 +64,7 @@ impl HoldingRepository {
         .await
         .map_err(|e| DatabaseError::generic(e.to_string()))?;
 
-        match result.rows_affected() > 0 {
-            true => Ok(()),
-            false => Err(DatabaseError::record_not_found())
-        }
+        self.check_result(result)
     }
 
     pub async fn delete(&self, id:i32, user_id: &str) -> Result<(), DatabaseError> {
@@ -74,10 +74,7 @@ impl HoldingRepository {
             .await
             .map_err(|e| DatabaseError::generic(e.to_string()))?;
 
-        match result.rows_affected() > 0 {
-            true => Ok(()),
-            false => Err(DatabaseError::record_not_found())
-        }
+        self.check_result(result)
     }
 
     pub async fn single_for_user(&self, id:i32, user_id: &str) -> Result<HoldingRecord, String> {
@@ -139,6 +136,5 @@ impl HoldingRepository {
         }
 
         Ok(items)
-
     }
 }

@@ -23,6 +23,7 @@ pub enum RuleNumber {
     NotZero,
 }
 
+#[allow(dead_code)]
 pub enum RuleDate {
     NotInFuture,
 }
@@ -31,22 +32,18 @@ pub enum RuleDate {
 impl RuleString {
     pub fn validate(&self, field: &str, value: &str) -> Option<String> {       
         match self {
-            RuleString::NotEmpty if value.is_empty() => {
-                Some(format!("{}: cannot be empty", field))
-            }
-            RuleString::MinLength(min) if value.len() < *min => {
-                Some(format!("{}: must be at least {} characters", field, min))
-            }
-            RuleString::MaxLength(max) if value.len() > *max => {
-                Some(format!("{}: must be at max {} characters", field, max))
-            }
-            RuleString::FixLength(len) if value.len() > *len => {
-                Some(format!("{}: must be {} characters", field, len))
-            }
-            RuleString::UUID => None, // TODO: not implemented
-            RuleString::IsValidCustodianKind() if !KINDS.contains(&value) => {
-                Some(format!("{}: is not a valid kind. Valid values: {}.", field, KINDS.join(", ")))
-            },
+            RuleString::NotEmpty if value.is_empty() =>
+                Some(format!("{}: cannot be empty", field)),
+            RuleString::MinLength(min) if value.len() < *min =>
+                Some(format!("{}: must be at least {} characters", field, min)),
+            RuleString::MaxLength(max) if value.len() > *max =>
+                Some(format!("{}: must be at max {} characters", field, max)),
+            RuleString::FixLength(len) if value.len() > *len => 
+                Some(format!("{}: must be {} characters", field, len)),
+            RuleString::UUID => 
+                None, // TODO: not implemented
+            RuleString::IsValidCustodianKind() if !KINDS.contains(&value) =>
+                Some(format!("{}: is not a valid kind. Valid values: {}.", field, KINDS.join(", "))),
             _ => None,
         }
     }

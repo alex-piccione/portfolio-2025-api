@@ -18,18 +18,15 @@ The database is a Postgres docker container running on a Linux VPS, not part of 
 We use [SQLx](https://docs.rs/sqlx/latest/sqlx) to manage database interaction.  
 We use SQLx macros that check the SQL over the database, see the [doc about SQLx](../src/repositories/SQLx.md).  
 
-### Setup Local database
+### Local database
 
-Local database on a Docker container.  
-Instead of `docker run` I will use a _docker-compose_ (it is easier to upfdate).  
-In this way if in the future we need to add some other service it will be easy.  
-
-Run ``docker compose -f compose.database.yaml up`` from this folder,   
+Using _docker-compose_  we can run both th API and the database.  
+Run ``docker compose -f compose.database.yaml up`` from this folder to run/start the database only,   
 it will use the _.env_ file (git-ignored) to get the environment variables for secrets.  
 
 ### Connection string
 
-The database connection string is set in the Configuration.  
+The database connection string is stored in the Configuration.  
 The Configuration is filled with a _configuration.json_ file.  
 For local development we have a git-ignored file in the solution,  
 for remote environment a **CONFIGURATION_FILE** environment variable should indicates where to read that file.  
@@ -37,9 +34,10 @@ for remote environment a **CONFIGURATION_FILE** environment variable should indi
 
 ## Test Docker image locally
 
-See _local_Dockerfile.sh_.
+See _local_Dockerfile.sh_.  
+Useful to check the Dockerfile quickly.  
 
-
+ 
 ## Deploy
 
 Deploy is executed with a GitHub action that launch a script on a private server.  

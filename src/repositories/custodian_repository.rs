@@ -1,10 +1,12 @@
 use sqlx::{ PgPool};
-use crate::{entities::custodian::{Custodian, CustodianKind}, repositories::{errors::DatabaseError, helpers::check_result_for_new_id}};
+use crate::{entities::custodian::{Custodian, CustodianKind}, repositories::{errors::DatabaseError, repository_traits::BaseRepository}};
 
 #[derive(Clone)]
-pub struct CustodianRepository {
+pub struct CustodianRepository  {
     db_pool: PgPool,
 }
+
+impl BaseRepository for CustodianRepository {}
 
 impl CustodianRepository {
     pub fn new(db_pool: PgPool) -> Self {
@@ -12,7 +14,7 @@ impl CustodianRepository {
     }
 
     pub async fn create(&self, custodian: Custodian) -> Result<i32, DatabaseError> {
-        /*  this returns an anonymous struct  a dynamic 
+        /*  this returns an anonymous struct a dynamic 
         let result = sqlx::query!(
             r#"
                 INSERT INTO Custodian (name, kind, description, url, wallet_address, account_country_code)
@@ -46,17 +48,18 @@ impl CustodianRepository {
         .fetch_one(&self.db_pool)
         .await;
 
-        check_result_for_new_id(result)
+        self.check_result_for_new_id(result)
     }
 
-    pub async fn update(&self, custodian: Custodian) -> Result<(), String> {
-        sqlx::query!(
+    pub async fn update(&self, custodian: Custodian) -> Result<(), DatabaseError> {
+        let result = sqlx::query!(
             r#"
                 UPDATE Custodians
-                SET name = $2, custodian = $3, account = $4, kind = $5, color_code = $6, description = $7
-                WHERE id = $1
+                SET name = $3, custodian = $4, account = $5, kind = $6, color_code = $7, description = $8
+                where id = $1 and user_id = $2
             "#,
             custodian.id,
+            custodian.user_id,
             custodian.name,
             custodian.custodian,
             custodian.account,
@@ -66,8 +69,10 @@ impl CustodianRepository {
         )
         .execute(&self.db_pool)
         .await
-        .map_err(|e| e.to_string())?;
-        Ok(())
+        //.map_err(|e| e.to_string())?;
+        .map_err(|e| DatabaseError::generic(e.to_string()))?;
+
+        self.check_result(result)
     }
 
     pub async fn delete(&self, id:i32, user_id: &str) -> Result<(), DatabaseError> {
@@ -76,11 +81,22 @@ impl CustodianRepository {
             .execute(&self.db_pool)
             .await
             .map_err(|e| DatabaseError::generic(e.to_string()))?;
-        if result.rows_affected() > 0 {
-            Ok(())
-        } else {
-            Err(DatabaseError::record_not_found())
-        }
+        
+        self.check_result(result)
+    }
+
+    pub async fn single(&self, id:i32, user_id: &str) -> Result<Custodian, String> {
+        let item =
+            sqlx::query_as!(
+                Custodian,
+                r#"SELECT id, user_id, name, custodian, account, kind as "kind!: CustodianKind", color_code, description
+                FROM Custodians
+                WHERE user_id=$1 AND id=$2 "#,
+                user_id, id)
+                    .fetch_one(&self.db_pool)
+                    .await
+                    .map_err(|e| format!("Failed to get Cistodian of user. {}", e))?;
+        Ok(item)
     }
 
     pub async fn list(&self) -> Result<Vec<Custodian>, String> {
@@ -97,7 +113,4 @@ impl CustodianRepository {
         Ok(custodians)
     }
 }
-
-
-
 

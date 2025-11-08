@@ -8,3 +8,4 @@ pub mod custodian_repository;
 pub mod holding_repository;
 
 mod helpers;
+mod repository_traits;
