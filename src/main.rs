@@ -52,7 +52,7 @@ async fn main() {
         
     println!("setup jobs...");
     jobs::job_manager::schedule_jobs(&config, app_state.clone()).await;
-    println!("jobs setup completed");
+    println!("jobs setup ... done");
 
     let app = utils::routing::set_routes(app_state.clone())
         .with_state(app_state)

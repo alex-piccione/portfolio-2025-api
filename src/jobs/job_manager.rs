@@ -1,8 +1,6 @@
 use crate::{configuration::Configuration, utils::dependency_injection::AppState};
 use async_cron_scheduler::{Job, Scheduler};
 
-
-
 pub async fn schedule_jobs(config: &Configuration, app_state: AppState) {
 
     let (mut scheduler, service) = Scheduler::<chrono::offset::Utc>::launch(smol::Timer::after);
@@ -15,7 +13,10 @@ pub async fn schedule_jobs(config: &Configuration, app_state: AppState) {
         ).await;
     println!("'Update Exchange Rate' job scheduled ({})", &config.jobs.update_exchange_rate_cron);
 
-    service.await;
+    // Spawn the service in the background instead of awaiting it
+    tokio::spawn(async move {
+        service.await;
+    });
 }
 
 fn parse_cron(cron_expression: &str) -> Job<chrono::offset::Utc> {
