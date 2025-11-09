@@ -39,6 +39,7 @@ pub async fn login(
     ValidJson(request): ValidJson<login::Request>
 ) -> impl IntoResponse {
 
+    //tracing::info!("🔥 LOGIN ENDPOINT HIT");  // Add this
     info!("login");
 
     let username = request.username.trim().to_string();

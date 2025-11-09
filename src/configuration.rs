@@ -8,7 +8,18 @@ pub struct Configuration {
     pub app_domain: String, // used to set CORS
     pub database_connection_string: String,
     pub run_database_migrations: bool,
-    //pub admin_email: String
+    pub secrets: Secrets,
+    pub jobs: Jobs
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Secrets {
+    pub coingecko_api_key: String,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Jobs {
+    pub update_exchange_rate_cron: String
 }
 
 impl Configuration {

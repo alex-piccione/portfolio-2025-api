@@ -11,6 +11,7 @@ mod endpoints;
 mod entities;
 mod services;
 mod repositories;
+mod jobs;
 
 // The tokio::main macro is used to run the async main function
 #[tokio::main]
@@ -48,7 +49,11 @@ async fn main() {
     }
 
     let app_state = dependency_injection::inject_services(&config, db_pool).await;
-    
+        
+    println!("setup jobs...");
+    jobs::job_manager::schedule_jobs(&config, app_state.clone()).await;
+    println!("jobs setup completed");
+
     let app = utils::routing::set_routes(app_state.clone())
         .with_state(app_state)
         .set_cors(&config.app_domain);

@@ -21,6 +21,8 @@ once_cell = "1.21.3"
 dashmap = "6.1.0"
 base64 = "0.22.1"
 rust_decimal = "1.38.0"
+async-cron-scheduler = "2.0.1"
+smol = "2.0.2"
 
 #[dev-dependencies]
 #sqlx-cli = { version = "0.8.6", features = ["postgres"] }
