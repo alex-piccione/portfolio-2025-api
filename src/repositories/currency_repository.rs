@@ -13,7 +13,6 @@ impl CurrencyRepository {
     }
 
     pub async fn create(&self, currency: Currency) -> Result<i32, String> {
-        //let _ = sqlx::query_as!(Currency, "SELECT id, symbol, name, kind as \"kind: _\", is_active, precision FROM Currency");
         let row = sqlx::query!(
             r#"
                 INSERT INTO Currency (symbol, name, kind, is_active, precision)

@@ -1,11 +1,18 @@
-use rust_decimal::Decimal as RustDecimal;
+use rust_decimal::Decimal;
 use sqlx::{types::BigDecimal};
 use std::{str::FromStr};
 
-pub fn from_rust_decimal(rd: RustDecimal) -> Result<BigDecimal, String> {
-    BigDecimal::from_str(&rd.to_string()).map_err(|e| format!("Failed to convert RustDecimal '{}' to BigDecimal. {}", rd, e))
+pub fn from_rust_decimal(d: Decimal) -> Result<BigDecimal, String> {
+    BigDecimal::from_str(&d.to_string()).map_err(|e| format!("Failed to convert Decimal '{}' to BigDecimal. {}", d, e))
 }
 
-pub fn to_rust_decimal(bd: BigDecimal) -> Result<RustDecimal, String> {
-    RustDecimal::from_str(&bd.to_string()).map_err(|e| format!("Failed to convert BigDecimal '{}' to RustDecimal. {}", bd, e))
+pub fn to_rust_decimal(bd: BigDecimal) -> Result<Decimal, String> {
+    Decimal::from_str(&bd.to_string()).map_err(|e| format!("Failed to convert BigDecimal '{}' to Decimal. {}", bd, e))
+}
+
+pub fn parse_decimal(value: Option<BigDecimal>) -> Result<Decimal, sqlx::Error> {    
+    match value {
+        Some(bd) => to_rust_decimal(bd).map_err(|e|sqlx::Error::InvalidArgument(e)),
+        None => Ok(Decimal::ZERO), // or return an error if NULL is not allowed
+    }
 }

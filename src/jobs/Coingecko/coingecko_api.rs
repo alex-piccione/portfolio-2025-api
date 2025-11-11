@@ -1,38 +1,41 @@
-use reqwest::blocking::Client;
-use reqwest::header::{HeaderMap, HeaderValue};
+use reqwest::{Client, header::{HeaderMap, HeaderValue}};
 
+use crate::configuration::Configuration;
+
+#[derive(Clone)]
 pub struct CoingeckoApi {
     config: Configuration,
     client: Client,
 }
 
-const api_url:str = "https://api.coingecko.com/api/v3";
+const API_URL: &'static str = "https://api.coingecko.com/api/v3";
 
 impl CoingeckoApi {
-    // Constructor
-    pub fn new(config: Configuration) -> Self {
+
+    pub fn new(config: &Configuration) -> Self {
         Self {
-            config,
+            config: config.clone(),
             client: Client::new(),
         }
     }
 
     // Ping endpoint (GET /ping)
-    pub fn ping(&self) -> bool {
-        let url = format!("{}/ping", api_url);
+    pub async fn ping(&self) -> bool {
+        let url = format!("{}/ping", API_URL);
 
         // Set up headers with API key "x-cg-demo-api-key"
         let mut headers = HeaderMap::new();
         headers.insert(
             "x-cg-demo-api-key",
-            HeaderValue::from_str(&self.config.secrets.coingecko_api_key),
+            HeaderValue::from_str(&self.config.secrets.coingecko_api_key).unwrap(),
         );
 
         // Make the GET request
         let resp = self.client
             .get(url)
             .headers(headers)
-            .send();
+            .send()
+            .await;
 
         match resp {
             Ok(response) => response.status().is_success(),

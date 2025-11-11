@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-
 use crate::entities::currency as entities;
 use crate::entities::currency::CurrencyKind;
 
@@ -76,7 +75,6 @@ impl UpdateRequest {
 }
 
 
-
 //#[derive(Debug, Clone, FromRow)]
 #[derive(serde::Serialize)]
 #[serde(rename_all ="camelCase")] 
@@ -87,3 +85,4 @@ pub struct CurrencyOfUser {
     pub kind: String,
     pub is_used: bool,
 }
+

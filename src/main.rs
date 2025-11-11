@@ -59,7 +59,7 @@ async fn main() {
         .set_cors(&config.app_domain);
    
     // Bind on server (Azure or Docker container) requires 0.0.0.0 
-    // LOcally it will bind 127.0.0.1 and localhost.
+    // Locally it will bind 127.0.0.1 and localhost.
     let address = format!("0.0.0.0:{}", &config.server_port);
 
     let listener = TcpListener::bind(&address)

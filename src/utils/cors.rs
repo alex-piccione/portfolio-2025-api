@@ -1,6 +1,5 @@
 use axum::{http::{self, HeaderValue}, Router};
 use tower_http::cors::{Any, CorsLayer};
-
 use crate::info;
 
 pub trait RouterExtensions<S> {
@@ -13,7 +12,7 @@ where S: Clone + Send + Sync + 'static
     fn set_cors(self, domain: &str) -> Self {
         let production_url = format!("https://{}", domain);
 
-        info!("CORS for {}", production_url);
+        info!("CORS set for domain '{}'.", production_url);
 
         self.layer(
             CorsLayer::new()

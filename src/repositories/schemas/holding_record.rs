@@ -13,5 +13,5 @@ pub struct HoldingRecord {
     pub date: UtcDateTime,
     pub action: String,
     pub amount: Decimal,
-    pub note: Option<String>,    
+    pub note: Option<String>,
 }

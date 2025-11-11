@@ -24,6 +24,8 @@ pub async fn requires_user(
 
     match app_state.auth_service.validate_access(access_token.to_string()).await {
         Ok(session) => {
+            crate::info!("Successfully validated access token");
+
             // Add User to the request
             req.extensions_mut().insert(session);
 

@@ -25,6 +25,9 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         // admin commands 
         .route("/currency/all", get(endpoints::currency_endpoint::list_all))   // TODO: put under admin commands 
         .route("/currency/{id}", delete(endpoints::currency_endpoint::delete))   // TODO: put under admin commands 
+        // currency rates
+        .route("/currency-rates/at-date", get(endpoints::currency_rates_endpoint::list_at_date))
+        .route("/currency-rates/pair", get(endpoints::currency_rates_endpoint::single_for_pair))
         // custodian
         .route("/custodian", post(endpoints::custodian_endpoint::create))
         .route("/custodian/{id}", get(endpoints::custodian_endpoint::single))

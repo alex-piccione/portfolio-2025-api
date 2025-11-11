@@ -88,9 +88,18 @@ impl RuleDate {
     }
 }
 
-
+/// Validates a list of `(field, value, rule)` triplets.
+///
+/// # Example
+/// ```ignore
+/// validate!(
+///     "username", user.username, RuleString::NotEmpty;
+///     "email", user.email, rules::email();
+/// );
+/// ```
 #[macro_export]
 macro_rules! validate {
+    //use crate::endpoints::response_utils::response_validation_errors;
     ($($field:expr, $value:expr, $rule:expr);* $(;)?) => {{
         let mut errors = Vec::new();
         $(
@@ -100,7 +109,7 @@ macro_rules! validate {
         )*
         // returns the HTTP response 4xx
         if !errors.is_empty() {
-            return response_validation_errors(errors);
+            return crate::endpoints::response_utils::response_validation_errors(errors);
         }
     }};
 }

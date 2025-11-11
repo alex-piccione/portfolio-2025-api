@@ -7,6 +7,9 @@ pub mod common_endpoint;
 pub mod auth_endpoint;
 pub mod currency_endpoint;
 pub mod custodian_endpoint;
+pub mod currency_rates_endpoint;
 pub mod holding_endpoint;
 
 pub mod models;
+
+mod helper;

@@ -4,7 +4,19 @@
         "**/node_modules/**": true,
         "**/src/configuration_prod.json": true
     },
-    "files.exclude": {
-       
-    }
+    "files.exclude": {       
+    },
+    // Show your own methods before trait methods
+    "rust-analyzer.completion.fullFunctionSignatures.enable": true,
+
+    "rust-analyzer.completion.autoimport.enable": false,
+
+    // Sort completions so local/defined items appear first
+    "rust-analyzer.completion.snippets.custom": {},
+
+    // (optional) disable useless postfix completions like `.dbg`, `.err`, etc.
+    "rust-analyzer.completion.postfix.enable": false,
+
+    // Avoid noise from trait completions if you prefer
+    "rust-analyzer.completion.privateEditable.enable": true
 }

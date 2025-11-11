@@ -1,6 +1,7 @@
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
+use serde::Serialize;
 
 use crate::constants;
 use crate::endpoints::models::common::{ErrorResponse, NewIdResponse, ValidationErrorsResponse};
@@ -11,6 +12,13 @@ pub fn response_ok_no_data() -> Response {
 
 pub fn response_ok<T: serde::Serialize>(data: T) -> Response {
     (StatusCode::OK, Json(data)).into_response()
+}
+
+pub fn response_ok_map<T, U>(data: impl IntoIterator<Item = T>, _target: fn(T) -> U) -> Response
+where U: Serialize + From<T>,
+{
+    let mapped: Vec<U> = data.into_iter().map(U::from).collect();
+    response_ok(mapped)
 }
 
 #[allow(dead_code)]
