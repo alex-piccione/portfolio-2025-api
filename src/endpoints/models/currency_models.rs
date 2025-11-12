@@ -34,6 +34,7 @@ pub struct CreateRequest {
     pub kind: String,
     pub is_active: bool,
     pub precision: i16,
+    pub coingecko_id: Option<String>,
 }
 
 impl CreateRequest {
@@ -45,6 +46,7 @@ impl CreateRequest {
             kind: CurrencyKind::from_string(&self.kind)?,
             is_active: self.is_active,
             precision: self.precision,
+            coingecko_id: self.coingecko_id,
         })
     }
 }
@@ -59,6 +61,7 @@ pub struct UpdateRequest {
     pub kind: String,
     pub is_active: bool,
     pub precision: i16,
+    pub coingecko_id: Option<String>,
 }
 
 impl UpdateRequest {
@@ -70,6 +73,7 @@ impl UpdateRequest {
             kind: CurrencyKind::from_string(&self.kind)?,
             is_active: self.is_active,
             precision: self.precision,
+            coingecko_id: self.coingecko_id,
         })
     }
 }

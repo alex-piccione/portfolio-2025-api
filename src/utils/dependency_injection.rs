@@ -11,13 +11,7 @@ use crate::{configuration::Configuration,
         user_repository::UserRepository 
     }, 
     services::{
-        auth_service::AuthService, 
-        currency_service::CurrencyService, 
-        custodian_service::CustodianService, 
-        holding_service::HoldingService, 
-        session_service::SessionService, 
-        user_service::UserService,
-        currency_rate_service::CurrencyRateService
+        Coingecko::coingecko_api::CoingeckoApi, auth_service::AuthService, currency_rate_service::CurrencyRateService, currency_service::CurrencyService, custodian_service::CustodianService, holding_service::HoldingService, session_service::SessionService, user_service::UserService
     }};
 
 #[derive(Clone)]
@@ -30,9 +24,10 @@ pub struct AppState {
     pub custodian_service: CustodianService,
     pub holding_service: HoldingService,
     pub currency_rate_service: CurrencyRateService,
+    
 }
 
-pub async fn inject_services(_config: &Configuration, db_pool: PgPool) -> AppState {
+pub async fn inject_services(config: &Configuration, db_pool: PgPool) -> AppState {
 
     let user_repository = UserRepository::new(db_pool.clone());
     let session_repository = SessionRepository::new(db_pool.clone());
@@ -41,6 +36,8 @@ pub async fn inject_services(_config: &Configuration, db_pool: PgPool) -> AppSta
     let custodian_repository = CustodianRepository::new(db_pool.clone());
     let holding_repository = HoldingRepository::new(db_pool.clone());
     let currency_rate_repository = CurrencyRateRepository::new(db_pool.clone());
+
+    let coingecko_api = CoingeckoApi::new(&config);
 
     let currency_service = CurrencyService::new(currency_repository.clone(), currency_of_user_repository.clone());
     // **LOAD THE CACHE ONLY ONCE**
@@ -53,7 +50,7 @@ pub async fn inject_services(_config: &Configuration, db_pool: PgPool) -> AppSta
     let session_service = SessionService::new(session_repository.clone(), user_service.clone());
     let auth_service = AuthService::new(user_service.clone(), session_service.clone(), session_repository.clone());
     let holding_service = HoldingService::new(holding_repository, currency_service.clone(), custodian_repository.clone());
-    let currency_rate_service = CurrencyRateService::new(currency_rate_repository);
+    let currency_rate_service = CurrencyRateService::new(currency_rate_repository, currency_service.clone(), coingecko_api);
 
     AppState {
         //config: config.clone(),

@@ -1,16 +1,27 @@
 use std::sync::Arc;  // Atomic Reference Counter
 use dashmap::DashMap;
+use crate::entities::currency::CurrencyKind;
 //e std::sync::{LazyLock, RwLock}; // Rust doesn't allow "static mut" :-(
 use crate::repositories::currency_of_user_repository::CurrencyOfUserRepository;
 use crate::{entities::currency::Currency, repositories::currency_repository::CurrencyRepository};
 use crate::endpoints::models::currency_models::{CurrencyOfUser};
+
+// Using Arc<DashMap<...>> for thread-safe, lock-free shared state.
+// DashMap provides internal synchronization, allowing concurrent reads and writes
+// without requiring &mut self or manual Mutex/RwLock handling.
+// This lets async methods safely update caches from multiple tasks or threads
+
 
 #[derive(Clone)]
 pub struct CurrencyService {
     repository: CurrencyRepository,
     repository_of_user: CurrencyOfUserRepository,
     // Thread-safe cache
-    currencies: Arc<DashMap<i32, Currency>>,
+    pub currencies: Arc<DashMap<i32, Currency>>,
+    pub crypto_and_stable_currencies: Arc<DashMap<i32, Currency>>,
+    pub fiat_currencies: Arc<DashMap<i32, Currency>>,
+    map_by_symbol: Arc<DashMap<String, Currency>>,
+    map_by_coingecko: Arc<DashMap<String, Currency>>,
 }
 
 /*
@@ -33,6 +44,10 @@ impl CurrencyService {
             repository,
             repository_of_user,
             currencies: Arc::new(DashMap::new()), // Initialize empty
+            crypto_and_stable_currencies: Arc::new(DashMap::new()), // Initialize empty
+            fiat_currencies: Arc::new(DashMap::new()), // Initialize empty
+            map_by_symbol: Arc::new(DashMap::new()),  // Initialize empty
+            map_by_coingecko: Arc::new(DashMap::new()),  // Initialize empty
         }
     }
 
@@ -42,7 +57,17 @@ impl CurrencyService {
         
         self.currencies.clear();
         for currency in items {
-            self.currencies.insert(currency.id, currency);
+            self.currencies.insert(currency.id, currency.clone());
+            match &currency.kind {
+                CurrencyKind::Fiat => self.fiat_currencies.insert(currency.id, currency.clone()),
+                CurrencyKind::Crypto | CurrencyKind::Stablecoin => self.crypto_and_stable_currencies.insert(currency.id, currency.clone())
+            };
+
+            // symbol map
+            self.map_by_symbol.insert(currency.symbol.clone().to_uppercase(), currency.clone()); // Uppercase
+            if let Some(id) = &currency.coingecko_id {
+                self.map_by_coingecko.insert(id.clone(), currency.clone()); // Uppercase
+            }
         }
         Ok(())
     }
@@ -58,7 +83,25 @@ impl CurrencyService {
         self.currencies.get(&id).map(|entry| entry.clone())
     }
 
+    #[allow(non_snake_case)]
+    pub fn try_get_by_symbol_CI(&self, symbol: &str) -> Option<Currency> {
+        self.map_by_symbol.get(&symbol.to_uppercase()).map(|entry| entry.clone())
+    }
+
+    #[allow(non_snake_case)]
+    pub fn try_get_by_Coingecko_id(&self, id: &str) -> Option<Currency> {
+        self.map_by_coingecko.get(id).map(|entry| entry.clone())
+    }
+
     pub fn all(&self) -> Vec<Currency> {
+        self.currencies.iter().map(|entry| entry.value().clone()).collect()
+    }
+
+    pub fn _all_crypto_and_stable(&self) -> Vec<Currency> {
+        self.currencies.iter().map(|entry| entry.value().clone()).collect()
+    }
+
+    pub fn _all_fiat(&self) -> Vec<Currency> {
         self.currencies.iter().map(|entry| entry.value().clone()).collect()
     }
 

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT id, symbol, name, kind as \"kind!: CurrencyKind\", is_active, precision \n            FROM Currency\n            ",
+  "query": "\n            SELECT id, symbol, name, kind as \"kind!: CurrencyKind\", is_active, precision, coingecko_id\n            FROM Currency\n            ",
   "describe": {
     "columns": [
       {
@@ -32,6 +32,11 @@
         "ordinal": 5,
         "name": "precision",
         "type_info": "Int2"
+      },
+      {
+        "ordinal": 6,
+        "name": "coingecko_id",
+        "type_info": "Varchar"
       }
     ],
     "parameters": {
@@ -43,8 +48,9 @@
       false,
       false,
       false,
-      false
+      false,
+      true
     ]
   },
-  "hash": "479b94b6ce2c8fcebef02079143ae1b75268bb37b07d34277cbb174448aaedce"
+  "hash": "82a423338b6b41cdd66eb5ea9bd65d19d6850632350fe3a744f53ff69eee5a1b"
 }

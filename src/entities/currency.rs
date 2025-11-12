@@ -9,9 +9,21 @@ pub struct Currency {
     pub kind: CurrencyKind,
     pub is_active: bool,
     pub precision: i16,    
+    pub coingecko_id: Option<String>,
 }
 
-#[derive(Debug, Clone, Type)]
+/*
+impl Currency {
+    pub fn _is_crypto(&self) -> bool {
+        self.kind == CurrencyKind::Crypto || self.kind == CurrencyKind::Stablecoin
+    }
+
+    pub fn _is_fiat(&self) -> bool {
+        self.kind == CurrencyKind::Fiat
+    }
+}*/
+
+#[derive(Debug, Clone, Type, PartialEq)]
 #[sqlx(type_name = "VARCHAR")]
 pub enum CurrencyKind {
     Fiat,

@@ -9,3 +9,8 @@ pub mod auth {
         pub const INVALID_OR_EXPIRED_TOKEN:&str = "INVALID_OR_EXPIRED_TOKEN";
     }
 }
+
+pub mod external_services {
+    pub const COINGECKO:&str = "CoinGecko";
+    //pub const COINMARKETCAP:&str = "CoinMarketCap";
+} 

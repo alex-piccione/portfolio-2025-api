@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                INSERT INTO Currency (symbol, name, kind, is_active, precision)\n                VALUES ($1, $2, $3, $4, $5)\n                RETURNING id\n            ",
+  "query": "\n                INSERT INTO Currency (symbol, name, kind, is_active, precision, coingecko_id)\n                VALUES ($1, $2, $3, $4, $5, $6)\n                RETURNING id\n            ",
   "describe": {
     "columns": [
       {
@@ -15,12 +15,13 @@
         "Varchar",
         "Varchar",
         "Bool",
-        "Int2"
+        "Int2",
+        "Varchar"
       ]
     },
     "nullable": [
       false
     ]
   },
-  "hash": "abd89287ef3c6c0a03443e99a8e9bab7b3914282001d4450318b9102f298ceef"
+  "hash": "7c60d022156e4a8c80a85077cdd50059586578331bc2e336a6646fab650c2550"
 }

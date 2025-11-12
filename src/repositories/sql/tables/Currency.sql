@@ -4,5 +4,6 @@ CREATE TABLE Currency (
     name VARCHAR(100) NOT NULL UNIQUE,
     kind VARCHAR(20) NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    precision SMALLINT NOT NULL CHECK (precision >= 0 AND precision <= 18)
+    precision SMALLINT NOT NULL CHECK (precision >= 0 AND precision <= 18),
+    coingecko_id varchar(15) NULL,
 );

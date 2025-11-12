@@ -2,7 +2,7 @@
 // TIMESYAMPTZ is required to have UTC date in Postgres.
 //
 // usage:
-// UtcDateTime::now() ✅ 
+// UtcDateTime::now()
 // UtcDateTime::try_from(date as string) 
 
 use chrono::{DateTime, Utc, NaiveDate, NaiveTime};
@@ -10,9 +10,15 @@ use serde::{Deserialize, Serialize};
 
 // type alias (does not allow impl)
 pub type UtcDateTime = DateTime<Utc>;
+pub type Date = chrono::NaiveDate; // Datetime without timezone
 
-pub fn now() -> DateTime<Utc> {
+
+pub fn now() -> UtcDateTime {
     chrono::Utc::now()
+}
+
+pub fn today() -> Date {
+    chrono::Utc::now().date_naive()
 }
 
 pub fn try_from(s: String) -> Result<UtcDateTime, String> {

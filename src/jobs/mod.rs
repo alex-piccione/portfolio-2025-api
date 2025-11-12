@@ -1,3 +1,3 @@
 pub mod job_manager;
-#[allow(non_snake_case)]
-pub mod Coingecko;
+
+mod update_currency_rates_job;

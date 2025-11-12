@@ -1,13 +1,13 @@
 use rust_decimal::Decimal;
 use serde::Deserialize;
-use crate::{repositories::schemas::currency_rate_record::CurrencyRateRecord, utils::datetime::UtcDateTime};
+use crate::{repositories::schemas::currency_rate_record::CurrencyRateRecord, utils::datetime::Date};
 
 #[derive(serde::Serialize)]
 #[serde(rename_all ="camelCase")] 
 pub struct CurrencyRate {
     pub base_currency_id: i32,
     pub quote_currency_id: i32,
-    pub date: UtcDateTime,
+    pub date: Date,
     pub rate: Decimal,
     pub source: String, 
 }

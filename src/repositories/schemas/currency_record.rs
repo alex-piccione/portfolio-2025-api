@@ -1,17 +1,14 @@
-/*
+/* 
 #[derive(sqlx::FromRow, serde::Serialize)]
 #[serde(rename_all = "camelCase")] 
-pub struct CurrencyRecord {
+pub struct CurrencyRecord {  
     pub id: i32,
-    
-    pub user_id: String,
-    pub custodian_id: i32,
-    pub currency_id: i32,
-
-    pub date: UtcDateTime,
-    pub action: String,
-    pub amount: Decimal,
-    pub note: Option<String>,    
+    pub symbol: String,
+    pub name: String,
+    pub kind: String,
+    pub is_active: bool,
+    pub precision: i16,
+    pub coingecko_id: String,
 }
 */
 

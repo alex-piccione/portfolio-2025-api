@@ -1,6 +1,5 @@
 use sqlx::{PgPool};
-
-use crate::{repositories::{helpers::from_rust_decimal, schemas::currency_rate_record::CurrencyRateRecord}, utils::datetime::UtcDateTime};
+use crate::{repositories::{helpers::from_rust_decimal, schemas::currency_rate_record::CurrencyRateRecord}, utils::datetime::Date};
 
 #[derive(Clone)]
 pub struct CurrencyRateRepository {
@@ -12,11 +11,15 @@ impl CurrencyRateRepository {
         Self { db_pool }
     }
 
-    pub async fn create(&self, record: CurrencyRateRecord) -> Result<(), String> {
+    pub async fn create(&self, record: &CurrencyRateRecord) -> Result<(), String> {
         sqlx::query!(
+            // Postgres UPSERT
             r#"
                 INSERT INTO CurrencyRates (base_currency_id, quote_currency_id, date, source, rate)
                 VALUES ($1, $2, $3, $4, $5)
+                ON CONFLICT (base_currency_id, quote_currency_id, date, source) DO UPDATE SET
+                    rate = EXCLUDED.rate,
+                    created_at = CURRENT_TIMESTAMP
             "#,
             record.base_currency_id,
             record.quote_currency_id,
@@ -24,19 +27,19 @@ impl CurrencyRateRepository {
             record.source,
             from_rust_decimal(record.rate)?
         )
-        .fetch_one(&self.db_pool)
+        .execute(&self.db_pool)
         .await
         .map_err(|e| e.to_string())?;
 
         Ok(())
     }
 
-    pub async fn search(&self, base_currency_id: i32, quote_currency_id: i32, date: Option<UtcDateTime>) -> Result<Vec<CurrencyRateRecord>, String> {        
+    pub async fn search(&self, base_currency_id: i32, quote_currency_id: i32, date: Option<Date>) -> Result<Vec<CurrencyRateRecord>, String> {        
         let rates = sqlx::query_as::<_, CurrencyRateRecord>(
             r#"
             SELECT base_currency_id, quote_currency_id, date, source, rate, created_at
             FROM CurrencyRates
-            WHERE base_currency_id = $1 AND quote_currency_id = $2 AND ($3::TIMESTAMPTZ IS NULL OR date = $3)
+            WHERE base_currency_id = $1 AND quote_currency_id = $2 AND ($3::DATE IS NULL OR date = $3)
             "#)
             .bind(base_currency_id)
             .bind(quote_currency_id)
@@ -48,7 +51,7 @@ impl CurrencyRateRepository {
         Ok(rates)
     }
 
-    pub async fn list_at_date(&self, date: UtcDateTime) -> Result<Vec<CurrencyRateRecord>, String> {        
+    pub async fn list_at_date(&self, date: Date) -> Result<Vec<CurrencyRateRecord>, String> {        
         let rates = sqlx::query_as::<_, CurrencyRateRecord>(
             r#"
             SELECT base_currency_id, quote_currency_id, date, source, rate::numeric, created_at
