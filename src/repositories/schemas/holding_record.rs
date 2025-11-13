@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use crate::utils::datetime::UtcDateTime;
 
-#[derive(sqlx::FromRow, serde::Serialize)]
+#[derive(sqlx::FromRow, serde::Serialize, Clone)]
 #[serde(rename_all = "camelCase")] 
 pub struct HoldingRecord {
     pub id: i32,

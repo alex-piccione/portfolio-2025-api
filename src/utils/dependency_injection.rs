@@ -23,8 +23,7 @@ pub struct AppState {
     pub currency_service: CurrencyService,
     pub custodian_service: CustodianService,
     pub holding_service: HoldingService,
-    pub currency_rate_service: CurrencyRateService,
-    
+    pub currency_rate_service: CurrencyRateService,    
 }
 
 pub async fn inject_services(config: &Configuration, db_pool: PgPool) -> AppState {
@@ -49,9 +48,9 @@ pub async fn inject_services(config: &Configuration, db_pool: PgPool) -> AppStat
     let user_service = UserService::new(user_repository.clone(), currency_service.clone());
     let session_service = SessionService::new(session_repository.clone(), user_service.clone());
     let auth_service = AuthService::new(user_service.clone(), session_service.clone(), session_repository.clone());
-    let holding_service = HoldingService::new(holding_repository, currency_service.clone(), custodian_repository.clone());
     let currency_rate_service = CurrencyRateService::new(currency_rate_repository, currency_service.clone(), coingecko_api);
-
+    let holding_service = HoldingService::new(holding_repository, currency_rate_service.clone(), currency_service.clone(), custodian_repository.clone());
+    
     AppState {
         //config: config.clone(),
         //user_service: user_service.clone(),

@@ -1,16 +1,20 @@
-use crate::{ endpoints::models::holding_models::{create, update}, 
-    repositories::{custodian_repository::CustodianRepository, errors::DatabaseError, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::currency_service::CurrencyService};
+use std::collections::HashMap;
+
+use rust_decimal::Decimal;
+
+use crate::{ endpoints::models::holding_models::{create, search, update}, entities::currency::Currency, repositories::{custodian_repository::CustodianRepository, errors::DatabaseError, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::{currency_rate_service::CurrencyRateService, currency_service::CurrencyService}, utils::datetime::today};
 
 #[derive(Clone)]
 pub struct HoldingService {
     repository: HoldingRepository, 
+    currency_rate_service: CurrencyRateService,
     _currency_service: CurrencyService,
     _custodian_repository: CustodianRepository
 }
 
 impl HoldingService {
-    pub fn new(repository: HoldingRepository, _currency_service: CurrencyService, _custodian_repository: CustodianRepository) -> Self {
-        Self {repository, _currency_service, _custodian_repository}
+    pub fn new(repository: HoldingRepository, currency_rate_service: CurrencyRateService, _currency_service: CurrencyService, _custodian_repository: CustodianRepository) -> Self {
+        Self {repository, currency_rate_service, _currency_service, _custodian_repository}
     }
 
     pub async fn create(&self, user_id: &str, request: create::Request) -> Result<i32, String> {
@@ -31,28 +35,46 @@ impl HoldingService {
         self.repository.single_for_user(id, user_id).await
     }
 
-    pub async fn list_last_balance(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
-        self.repository.list_last_balance(user_id).await
+    pub async fn list_last_balance(&self, user_id:&str) -> Result<Vec<search::Response>, String> {
+        // TODO: from request
+        let main_currency = self._currency_service.try_get_by_symbol_CI("EUR").unwrap();
+
+        match self.repository.list_last_balance(user_id).await {
+            Ok(records) => self.add_amount_in_main_currency(&records, &main_currency).await,
+            Err(e) => Err(e),
+        }
     }
 
-    pub async fn list_for_user(&self, user_id:&str) -> Result<Vec<HoldingRecord>, String> {
-        self.repository.list(user_id).await
-        /*let records = self.repository.list(&user.id).await?;        
-        let custodians = self.custodian_repository.list().await?;
+    pub async fn list_for_user(&self, user_id:&str) -> Result<Vec<search::Response>, String> {
+        // TODO: from request
+        let main_currency = self._currency_service.try_get_by_symbol_CI("EUR").unwrap();
 
-        records.into_iter().map(|record| -> Result<Holding, String> {
-            Ok(Holding {
-                id: record.id,
-                user: user.clone(),
-                custodian: find_by!(custodians, |item| item.id == record.custodian_id)?,
-                currency: self.currency_service.get(record.currency_id),
-                date: record.date,
-                action: record.action,
-                amount: record.amount,
-                note: record.note
-            })
-        })        
-        .to_vec()  // instead of .collect::<Result<Vec<_>, _>>()
-        */
+        match  self.repository.list(user_id).await {
+            Ok(records) => self.add_amount_in_main_currency(&records, &main_currency).await,
+            Err(e) => Err(e),
+        }
     }    
+
+    async fn add_amount_in_main_currency (&self, records: &Vec<HoldingRecord>, main_currency: &Currency) -> Result<Vec<search::Response>, String> {
+        
+        let rates= self.currency_rate_service.list_at_date(today()).await?;
+
+        let rates_map: HashMap<i32, Decimal> = HashMap::from_iter(
+            rates.into_iter()
+                .filter(|rate| rate.quote_currency_id.eq(&main_currency.id))
+                .map(|rate| (rate.base_currency_id, rate.rate))                
+        );
+
+        Ok(records.into_iter().map(|r| {
+            let amount = match r.currency_id.eq(&main_currency.id) {
+                true => Some(r.amount), 
+                false => match rates_map.get(&r.currency_id) {
+                    Some(rate) => Some( (r.amount * rate).round_dp(main_currency.precision as u32)),
+                    None => None,
+                }
+            };
+
+           search::Response::from((r.clone(), amount))
+        }).collect())
+    }
 }

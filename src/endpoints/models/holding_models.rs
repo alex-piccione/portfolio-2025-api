@@ -62,4 +62,36 @@ pub mod search {
     pub struct Params {
         pub only_latest_balance: bool
     }
+
+    use rust_decimal::Decimal;
+    use crate::{repositories::schemas::holding_record::HoldingRecord, utils::datetime::UtcDateTime};
+
+    #[derive(serde::Serialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Response {
+        pub id: i32,
+        pub custodian_id: i32,
+        pub currency_id: i32,
+        pub date: UtcDateTime,
+        pub action: String,
+        pub amount: Decimal,
+        pub note: Option<String>,
+        pub amount_in_main_currency: Option<Decimal>,
+    }
+
+
+    impl From<(HoldingRecord, Option<Decimal>)> for Response {
+        fn from((record, amount_in_main_currency):(HoldingRecord, Option<Decimal>)) -> Self {
+            Self {
+                id: record.id,
+                custodian_id: record.custodian_id,
+                currency_id: record.currency_id,
+                date: record.date,
+                action: record.action,
+                amount: record.amount,
+                note: record.note,
+                amount_in_main_currency,
+            }
+        }
+    }
 }
