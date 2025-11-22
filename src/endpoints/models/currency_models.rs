@@ -11,6 +11,7 @@ pub struct Currency {
     pub kind: String,
     pub is_active: bool,
     pub precision: i16,
+    pub is_major: bool,
 }
 
 impl From<entities::Currency> for Currency {
@@ -22,6 +23,7 @@ impl From<entities::Currency> for Currency {
             kind: entity.kind.into(), // This line works because of `impl From<CurrencyKind> for String` block
             is_active: entity.is_active,
             precision: entity.precision,
+            is_major: entity.is_major,
         }
     }
 }
@@ -34,6 +36,7 @@ pub struct CreateRequest {
     pub kind: String,
     pub is_active: bool,
     pub precision: i16,
+    pub is_major: bool,
     pub coingecko_id: Option<String>,
 }
 
@@ -46,6 +49,7 @@ impl CreateRequest {
             kind: CurrencyKind::from_string(&self.kind)?,
             is_active: self.is_active,
             precision: self.precision,
+            is_major: self.is_major,
             coingecko_id: self.coingecko_id,
         })
     }
@@ -61,6 +65,7 @@ pub struct UpdateRequest {
     pub kind: String,
     pub is_active: bool,
     pub precision: i16,
+    pub is_major: bool,
     pub coingecko_id: Option<String>,
 }
 
@@ -73,6 +78,7 @@ impl UpdateRequest {
             kind: CurrencyKind::from_string(&self.kind)?,
             is_active: self.is_active,
             precision: self.precision,
+            is_major: self.is_major,
             coingecko_id: self.coingecko_id,
         })
     }
@@ -87,6 +93,6 @@ pub struct CurrencyOfUser {
     pub symbol: String,
     pub name: String,
     pub kind: String,
+    pub is_major: bool,
     pub is_used: bool,
 }
-

@@ -15,8 +15,8 @@ impl CurrencyRepository {
     pub async fn create(&self, currency: Currency) -> Result<i32, String> {
         let row = sqlx::query!(
             r#"
-                INSERT INTO Currency (symbol, name, kind, is_active, precision, coingecko_id)
-                VALUES ($1, $2, $3, $4, $5, $6)
+                INSERT INTO Currency (symbol, name, kind, is_active, precision, is_major, coingecko_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING id
             "#,
             currency.symbol,
@@ -24,6 +24,7 @@ impl CurrencyRepository {
             currency.kind as CurrencyKind,
             currency.is_active,
             currency.precision,
+            currency.is_major,
             currency.coingecko_id
         )
         .fetch_one(&self.db_pool)
@@ -38,14 +39,15 @@ impl CurrencyRepository {
         let result = sqlx::query!(
             r#"
                 UPDATE Currency 
-                SET symbol = $1, name = $2, kind = $3, is_active = $4, precision = $5, coingecko_id = $6
-                WHERE id = $7
+                SET symbol = $1, name = $2, kind = $3, is_active = $4, precision = $5, is_major = $6, coingecko_id = $7
+                WHERE id = $8
             "#,
             currency.symbol,
             currency.name,
             currency.kind.clone() as CurrencyKind,
             currency.is_active,
             currency.precision,
+            currency.is_major,
             currency.coingecko_id,
             currency.id
         )
@@ -77,7 +79,7 @@ impl CurrencyRepository {
     pub async fn list(&self) -> Result<Vec<Currency>, String> {        
         let currencies = sqlx::query_as!(Currency, 
             r#"
-            SELECT id, symbol, name, kind as "kind!: CurrencyKind", is_active, precision, coingecko_id
+            SELECT id, symbol, name, kind as "kind!: CurrencyKind", is_active, precision, is_major, coingecko_id
             FROM Currency
             "#)
             .fetch_all(&self.db_pool)

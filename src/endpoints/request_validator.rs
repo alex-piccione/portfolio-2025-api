@@ -32,7 +32,7 @@ pub enum RuleDate {
 impl RuleString {
     pub fn validate(&self, field: &str, value: &str) -> Option<String> {       
         match self {
-            RuleString::NotEmpty if value.is_empty() =>
+            RuleString::NotEmpty if value.trim().is_empty() =>
                 Some(format!("{}: cannot be empty", field)),
             RuleString::MinLength(min) if value.len() < *min =>
                 Some(format!("{}: must be at least {} characters", field, min)),

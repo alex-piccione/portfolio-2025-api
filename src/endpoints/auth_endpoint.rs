@@ -1,4 +1,4 @@
-use crate::{info};
+use crate::{endpoints::request_validator::RuleString, info, validate};
 
 use axum::{extract::State, response::IntoResponse};
 use crate::{endpoints::{models::auth_models::refresh_token, request_json_validator::ValidJson}, services::auth_service::{AuthError, LoginError, LoginRequest}};
@@ -15,10 +15,11 @@ pub async fn signup(
     ValidJson(request): ValidJson<signup::Request>
  ) -> impl IntoResponse {
 
-    // TODO: create a validator helper
-    if request.username.trim().is_empty() || request.password.trim().is_empty() {
-        return response_bad_request("Username and password cannot be empty");
-    }
+    validate!(
+        //"Name", request.date, RuleString::NotEmpty;
+        "Username", &request.username, RuleString::NotEmpty;
+        "Password", &request.password, RuleString::NotEmpty;
+    );
 
     let Some(currency) = state.currency_service.try_get(request.currency_id) else {
         return response_bad_request(&format!("Currency not found with ID={}", request.currency_id));

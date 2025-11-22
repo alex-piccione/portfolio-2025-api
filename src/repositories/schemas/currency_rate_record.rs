@@ -4,7 +4,7 @@ use sqlx:: Row;
 use crate::{repositories::helpers::{parse_decimal}, utils::datetime::{UtcDateTime, Date}};
 
 
-#[derive(serde::Serialize)]
+#[derive(serde::Serialize, Clone)]
 #[serde(rename_all = "camelCase")] 
 pub struct CurrencyRateRecord {
     pub base_currency_id: i32,

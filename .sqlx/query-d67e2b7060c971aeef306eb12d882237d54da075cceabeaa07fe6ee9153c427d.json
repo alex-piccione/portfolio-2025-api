@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT id, username, hashed_password, creation_date, currency_id, role FROM users WHERE id = $1",
+  "query": "SELECT id, username, hashed_password, creation_date, currency_id, role \n            FROM users WHERE username = $1",
   "describe": {
     "columns": [
       {
@@ -41,7 +41,12 @@
     ],
     "parameters": {
       "Left": [
-        "Bpchar"
+        {
+          "Custom": {
+            "name": "citext",
+            "kind": "Simple"
+          }
+        }
       ]
     },
     "nullable": [
@@ -53,5 +58,5 @@
       false
     ]
   },
-  "hash": "0abe74bd14341a33e58b19615dbfc7be991b1225937a8ab041fb6d1dcaf063ee"
+  "hash": "d67e2b7060c971aeef306eb12d882237d54da075cceabeaa07fe6ee9153c427d"
 }

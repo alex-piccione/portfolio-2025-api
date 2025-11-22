@@ -83,14 +83,28 @@ pub async fn list(
     }
 }*/
 
+
+// TODO: move in helper file
+macro_rules! get_user {
+    ($state:expr, $session:expr) => {
+        match $state.user_service.get(&$session.user_id).await {
+            Ok(Some(user)) => user,
+            Ok(None) => return response_bad_request("User not found"),
+            Err(e) => return response_error(&e),
+        }
+    };
+}
+
 pub async fn list(
     State(state): State<AppState>, 
     Extension(session): Session,
     Query(params): Query<models::search::Params> ) -> impl IntoResponse {
 
+    let user = get_user!(state, session);
+
     let result = match params.only_latest_balance {
-        true => state.holding_service.list_last_balance(&session.user_id).await,
-        _ => state.holding_service.list_for_user(&session.user_id).await
+        true => state.holding_service.list_last_balance(&user).await,
+        _ => state.holding_service.list_for_user(&user).await
     };
 
     match result {
@@ -102,11 +116,5 @@ pub async fn list(
         },*/
         Err(e) => response_error(e.as_str()),
     }
-
-    /*
-    match state.holding_service.list_for_user(&session.user_id).await {
-        Ok(entities) => response_ok(entities),
-        Err(e) => response_error(e.as_str()),
-    }*/
 }
 

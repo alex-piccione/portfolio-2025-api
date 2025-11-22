@@ -17,8 +17,8 @@ use crate::{configuration::Configuration,
 #[derive(Clone)]
 pub struct AppState {
     //pub config: Configuration,
-    //pub user_service: UserService,
-    //pub session_service: SessionService,
+    pub user_service: UserService,
+    //pub session_service: SessionService,    
     pub auth_service: AuthService,
     pub currency_service: CurrencyService,
     pub custodian_service: CustodianService,
@@ -53,7 +53,7 @@ pub async fn inject_services(config: &Configuration, db_pool: PgPool) -> AppStat
     
     AppState {
         //config: config.clone(),
-        //user_service: user_service.clone(),
+        user_service: user_service.clone(),
         //session_service: session_service.clone(),
         auth_service: auth_service.clone(),
         currency_service: currency_service.clone(),

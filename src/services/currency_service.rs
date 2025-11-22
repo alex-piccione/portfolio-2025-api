@@ -153,6 +153,7 @@ impl CurrencyService {
                         symbol: currency.symbol.clone(),
                         name: currency.name.clone(),
                         kind: currency.kind.clone().into(),
+                        is_major: currency.is_major,
                         is_used: used_by_user.contains(&currency.id),
                     }
                 )

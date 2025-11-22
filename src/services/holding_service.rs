@@ -2,7 +2,9 @@ use std::collections::HashMap;
 
 use rust_decimal::Decimal;
 
-use crate::{ endpoints::models::holding_models::{create, search, update}, entities::currency::Currency, repositories::{custodian_repository::CustodianRepository, errors::DatabaseError, holding_repository::HoldingRepository, schemas::holding_record::HoldingRecord}, services::{currency_rate_service::CurrencyRateService, currency_service::CurrencyService}, utils::datetime::today};
+use crate::{ endpoints::models::holding_models::{create, search, update}, entities::{currency::Currency, user::User}, 
+repositories::{custodian_repository::CustodianRepository, errors::DatabaseError, holding_repository::HoldingRepository, 
+    schemas::holding_record::HoldingRecord}, services::{currency_rate_service::CurrencyRateService, currency_service::CurrencyService}};
 
 #[derive(Clone)]
 pub struct HoldingService {
@@ -35,29 +37,24 @@ impl HoldingService {
         self.repository.single_for_user(id, user_id).await
     }
 
-    pub async fn list_last_balance(&self, user_id:&str) -> Result<Vec<search::Response>, String> {
-        // TODO: from request
-        let main_currency = self._currency_service.try_get_by_symbol_CI("EUR").unwrap();
+    pub async fn list_last_balance(&self, user:&User) -> Result<Vec<search::Response>, String> {
 
-        match self.repository.list_last_balance(user_id).await {
-            Ok(records) => self.add_amount_in_main_currency(&records, &main_currency).await,
+        match self.repository.list_last_balance(&user.id).await {
+            Ok(records) => self.add_amount_in_main_currency(&records, &user.currency).await,
             Err(e) => Err(e),
         }
     }
 
-    pub async fn list_for_user(&self, user_id:&str) -> Result<Vec<search::Response>, String> {
-        // TODO: from request
-        let main_currency = self._currency_service.try_get_by_symbol_CI("EUR").unwrap();
-
-        match  self.repository.list(user_id).await {
-            Ok(records) => self.add_amount_in_main_currency(&records, &main_currency).await,
+    pub async fn list_for_user(&self, user:&User) -> Result<Vec<search::Response>, String> {
+        match  self.repository.list(&user.id).await {
+            Ok(records) => self.add_amount_in_main_currency(&records, &user.currency).await,
             Err(e) => Err(e),
         }
     }    
 
     async fn add_amount_in_main_currency (&self, records: &Vec<HoldingRecord>, main_currency: &Currency) -> Result<Vec<search::Response>, String> {
         
-        let rates= self.currency_rate_service.list_at_date(today()).await?;
+        let rates= self.currency_rate_service.get_rates_of_today().await?;
 
         let rates_map: HashMap<i32, Decimal> = HashMap::from_iter(
             rates.into_iter()

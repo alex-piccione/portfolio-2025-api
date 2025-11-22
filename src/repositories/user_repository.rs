@@ -24,7 +24,7 @@ impl UserRepository {
             user.hashed_password,
             user.creation_date,
             user.currency.id,
-            user.role            
+            user.role  
         )
         .execute(&self.db_pool)
         .await
@@ -33,10 +33,11 @@ impl UserRepository {
         Ok(())
     }
 
-    pub async fn _get(&self, id: &str) -> Result<Option<UserRecord>, String> {
+    pub async fn get(&self, id: &str) -> Result<Option<UserRecord>, String> {
         sqlx::query_as!(
             UserRecord,
-            "SELECT id, username, hashed_password, creation_date, currency_id, role FROM users WHERE id = $1", 
+            "SELECT id, username, hashed_password, creation_date, currency_id, role
+            FROM users WHERE id = $1", 
             id)
                 .fetch_optional(&self.db_pool)
                 .await
@@ -46,7 +47,8 @@ impl UserRepository {
     pub async fn find_by_username(&self, username: String) -> Result<Option<UserRecord>, String> {
         sqlx::query_as!(
             UserRecord,
-            "SELECT id, username, hashed_password, creation_date, currency_id, role FROM users WHERE username = $1", 
+            "SELECT id, username, hashed_password, creation_date, currency_id, role 
+            FROM users WHERE username = $1", 
             username)
                 .fetch_optional(&self.db_pool)
                 .await

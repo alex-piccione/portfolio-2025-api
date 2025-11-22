@@ -8,7 +8,8 @@ pub struct Currency {
     pub name: String,
     pub kind: CurrencyKind,
     pub is_active: bool,
-    pub precision: i16,    
+    pub precision: i16,
+    pub is_major: bool,
     pub coingecko_id: Option<String>,
 }
 

@@ -83,8 +83,6 @@ pub async fn delete(
     Extension(session): Session,
     Path(id):Path<i32>) -> impl IntoResponse {
 
-    // TODO: validation
-
     match state.custodian_service.delete(id, &session.user_id).await {
         Ok(()) => response_ok(()),
         Err(e) if e.kind == ErrorKind::RecordNotFound => {
