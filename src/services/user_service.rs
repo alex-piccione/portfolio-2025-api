@@ -1,9 +1,7 @@
 use crate::{
     entities::user::User, 
-    repositories::user_repository::UserRepository, 
-    services::{
-        currency_service::{CurrencyService}
-    }};
+    repositories::{errors::DatabaseError, user_repository::UserRepository}, 
+    services::currency_service::CurrencyService};
 
 #[derive(Clone)]
 pub struct UserService {
@@ -68,5 +66,10 @@ impl UserService {
                 currency: self.currency_service.get(record.currency_id),
                 role: record.role
         }))
+    }
+    
+    pub(crate) async fn update_currency(&self, user_id: String, currency_id: i32) -> Result<(), DatabaseError> {
+        self.user_repository.update_currency(user_id, currency_id).await
+            .map_err(|e| DatabaseError::generic( e) )  
     }     
 }

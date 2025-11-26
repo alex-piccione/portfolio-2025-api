@@ -84,7 +84,7 @@ _static mut_ in Rust is ... not possible.
 Not without _unsafe_.  
 In other languages you have thread-safe colelctions, but not in Rust standard library.  
 You can paly around and write cumbersome code with LazyLock, RwLock and Mutex... that's it.  
-Otherwise, third party library. I coose "Dashmap". 
+Otherwise, third party library. I choose "Dashmap". There is not an equivalent of Dashmap for collections! 
 
 ### Read local file
 (used previously to read configuration)

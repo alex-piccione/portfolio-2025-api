@@ -1,4 +1,4 @@
-use axum::{middleware, routing::{get, post, put, delete}, Router};
+use axum::{middleware, routing::{get, post, put, delete, patch}, Router};
 use crate::{dependency_injection::AppState, endpoints};
 
 pub fn set_routes(app_state: AppState) -> Router<AppState> {
@@ -15,6 +15,8 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
     let user_routes = Router::new()
         // common
         .route("/config", get(endpoints::common_endpoint::config))
+        // user
+        .route("/user",patch(endpoints::user_endpoint::update))
         // currency
         .route("/currency", post(endpoints::currency_endpoint::create))
         .route("/currency", put(endpoints::currency_endpoint::update))
@@ -34,7 +36,7 @@ pub fn set_routes(app_state: AppState) -> Router<AppState> {
         .route("/custodian/{id}", put(endpoints::custodian_endpoint::update))
         .route("/custodian/{id}", delete(endpoints::custodian_endpoint::delete))
         .route("/custodian", get(endpoints::custodian_endpoint::list))    
-        // holdings (todo)
+        // holdings
         .route("/holding", post(endpoints::holding_endpoint::create))  
         .route("/holding/{id}", get(endpoints::holding_endpoint::single))
         .route("/holding/{id}", put(endpoints::holding_endpoint::update))  

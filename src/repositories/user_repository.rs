@@ -54,4 +54,21 @@ impl UserRepository {
                 .await
                 .map_err(|e| format!("Failed to get User by username. {}", e))
     }
+
+    pub async fn update_currency(&self, user_id: String, currency_id: i32) -> Result<(), String> {
+        sqlx::query!(
+            r#"
+                UPDATE users
+                SET currency_id = $1
+                WHERE id = $2
+            "#,
+            currency_id,
+            user_id
+        )
+        .execute(&self.db_pool)
+        .await
+        .map_err(|e| format!("Failed to update user currency. {}", e))?;
+
+        Ok(())
+    }
 }
