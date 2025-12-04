@@ -1,4 +1,4 @@
-use crate::{configuration::Configuration, jobs::update_currency_rates_job::UpdateCurrencyRatesJob, utils::dependency_injection::AppState};
+use crate::{configuration::Configuration, info, jobs::update_currency_rates_job::UpdateCurrencyRatesJob, utils::dependency_injection::AppState};
 use tokio_cron_scheduler::{Job, JobScheduler};
 use async_trait::async_trait;
 
@@ -20,7 +20,7 @@ pub async fn schedule_jobs(config: &Configuration, app_state: AppState) {
 
     scheduler.start().await.unwrap();
 
-    println!("'Update Exchange Rate' job scheduled ({})", &config.jobs.update_exchange_rate_cron);
+    info!("'Update Exchange Rate' job scheduled ({})", &config.jobs.update_exchange_rate_cron);
 
     // Spawn the service in the background instead of awaiting it
     /*tokio::spawn(async move {

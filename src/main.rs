@@ -1,8 +1,7 @@
 use tokio::{net::TcpListener};
 use sqlx::PgPool;
 use crate::{
-    configuration::{Configuration}, 
-    utils::{cors::RouterExtensions as _, dependency_injection}};
+    configuration::Configuration, utils::{cors::RouterExtensions as _, dependency_injection}};
 
 mod configuration;
 mod constants;
@@ -26,33 +25,37 @@ async fn main() {
     let config = Configuration::load_from_json_file(&config_file)
         .expect("Failed to create Configuration");
 
-    println!("Configuration loaded for environment '{}'", config.environment);
+    println!("Configuration loaded. Environment: {}. Log level: {}.", config.environment, &config.log_level);
 
-    println!("Connect to database...");
+    // setup Logging
+    utils::logging::setup_logging(&config.log_level);
+    info!("Logging is set up.");
+
+    info!("Connect to database...");
     let db_pool = PgPool::connect(&config.database_connection_string)
         .await
-        .unwrap_or_else(|e| panic!(
+        .unwrap_or_else(|e| fatal_end_exit!(
             "Failed to create database connection pool. Connection string: '{}'. {}",
             config.database_connection_string, e
         ));
-    println!("...done");
+    info!("...done");
 
     // Run database migrations if enabled in configuration
     if config.run_database_migrations {
-        println!("Running database migrations...");
+        info!("Running database migrations...");
         match sqlx::migrate!("./migrations").run(&db_pool).await {
-            Ok(_) => println!("Database migrations applied successfully."),
-            Err(e) => panic!("Failed to apply database migrations: {}", e),
+            Ok(_) => info!("Database migrations applied successfully."),
+            Err(e) => fatal_end_exit!("Failed to initialize currency cache: {}", e),
         }
     } else {
-        println!("Database migrations are disabled in configuration.");
+        info!("Database migrations are disabled in configuration.");
     }
 
     let app_state = dependency_injection::inject_services(&config, db_pool).await;
         
-    println!("setup jobs...");
+    info!("setup jobs...");
     jobs::job_manager::schedule_jobs(&config, app_state.clone()).await;
-    println!("jobs setup ... done");
+    info!("... done");
 
     let app = utils::routing::set_routes(app_state.clone())
         .with_state(app_state)
@@ -66,7 +69,7 @@ async fn main() {
         .await
         .expect("Failed to bind to address");
 
-    println!("Server running at http://{}", listener.local_addr().unwrap().to_string().replace("0.0.0.0", "127.0.0.1"));
+    info!("Server running at http://{}", listener.local_addr().unwrap().to_string().replace("0.0.0.0", "127.0.0.1"));
 
     axum::serve(listener, app)
         .await

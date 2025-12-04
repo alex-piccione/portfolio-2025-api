@@ -1,7 +1,7 @@
 use axum::{
     Extension, extract::{State}, response::IntoResponse
 };
-use crate::{dependency_injection::AppState, endpoints::{request_json_validator::ValidJson, response_utils::{response_error, response_ok_no_data}}, utils::auth_middleware::Session};
+use crate::{dependency_injection::AppState, endpoints::{request_json_validator::ValidJson, response_utils::{response_error, response_ok_no_data}}, info, utils::auth_middleware::Session};
 use crate::endpoints::models::user_models as models;
 
 pub async fn update(
@@ -11,7 +11,7 @@ pub async fn update(
 ) -> impl IntoResponse {
     // Here you would add the logic to update the user's currency in the database.
     // For now, it's a placeholder.
-    println!("Updating user currency to: {}", request.currency_id);
+    info!("Updating user currency, new currency: {}", request.currency_id);
 
     match state.user_service.update_currency(session.user_id, request.currency_id).await {
         Ok(()) => response_ok_no_data(),

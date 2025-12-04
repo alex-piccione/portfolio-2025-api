@@ -5,6 +5,7 @@ use serde::Deserialize;
 pub struct Configuration {
     pub environment: String,
     pub server_port: u16,
+    pub log_level: String,
     pub app_domain: String, // used to set CORS
     pub database_connection_string: String,
     pub run_database_migrations: bool,

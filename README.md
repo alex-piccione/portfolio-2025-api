@@ -36,11 +36,11 @@ In the end only _chrono_ has a clear and short "Utc::now()" function and allows 
 
 ## Run locally
 
-### Localhost
+### Debug Localhost
 VS Code launch (_launch.json_) is set to run the app locally.  
 
-Sometime the process is still running despite terminal and debug areclosed.  
-Run this to find teh process PID (<process>.exe):  
+Sometime the process is still running despite terminal and debug are closed.  
+Run this to find the process PID (<process>.exe):  
 ```sh
 tasklist | findstr portfolio`
 ```
@@ -56,15 +56,27 @@ See [devop/README.md] for instruciton to run the api and database on local Docke
 
 ### On private server
 
-"distroless" Dockerfile
-✅ Minimal attack surface (no shell, package manager, etc.)
-✅ Only contains your application and minimal runtime
-✅ Regularly updated by Google
-✅ Industry standard for production containers
+"distroless" Dockerfile avantages:
+- Minimal attack surface (no shell, package manager, etc.)
+- Only contains your application and minimal runtime
+- Regularly updated by Google
+- Industry standard for production containers
 
 The deploy is executed running a script on a private server.  
 See [devop/README.md](devop/README.md#Deploy) for how to configure the script.
 
+
+## Logging
+
+I use _tracing_ and _tracing-subscriber_.  
+Use the environment variable _RUST_LOG_ (`RUST_LOG=info=info` or `RUST_LOG=your_crate=debug,tower=info`).  
+There are macros in _logging.rs_ to facilitate it.  
+
+TODO:  
+- logs with macro
+- setup log_level in production
+- Grafana
+- Loki
 
 
 ## Tips

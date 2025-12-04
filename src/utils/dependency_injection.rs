@@ -1,7 +1,6 @@
 use sqlx::PgPool;
 
-use crate::{configuration::Configuration, 
-    repositories::{
+use crate::{configuration::Configuration, fatal_end_exit, repositories::{
         currency_of_user_repository::CurrencyOfUserRepository, 
         currency_rate_repository::CurrencyRateRepository, 
         currency_repository::CurrencyRepository, 
@@ -9,8 +8,7 @@ use crate::{configuration::Configuration,
         holding_repository::HoldingRepository, 
         session_repository::SessionRepository, 
         user_repository::UserRepository 
-    }, 
-    services::{
+    }, services::{
         Coingecko::coingecko_api::CoingeckoApi, auth_service::AuthService, currency_rate_service::CurrencyRateService, currency_service::CurrencyService, custodian_service::CustodianService, holding_service::HoldingService, session_service::SessionService, user_service::UserService
     }};
 
@@ -41,8 +39,7 @@ pub async fn inject_services(config: &Configuration, db_pool: PgPool) -> AppStat
     let currency_service = CurrencyService::new(currency_repository.clone(), currency_of_user_repository.clone());
     // **LOAD THE CACHE ONLY ONCE**
     if let Err(e) = currency_service.init_cache().await {
-        eprintln!("FATAL: Failed to initialize currency cache: {}", e);
-        std::process::exit(1); // Or handle the error as needed
+        fatal_end_exit!("Failed to initialize currency cache: {}", e);
     }
 
     let user_service = UserService::new(user_repository.clone(), currency_service.clone());

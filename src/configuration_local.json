@@ -1,6 +1,7 @@
 {
     "environment": "Local",
     "server_port": 3000,
+    "log_level": "info",
     "app_domain": "my-app.com",
     "database_connection_string": "postgres://portfolio_user:portfolio_password@localhost:50302/portfolio",
     "run_database_migrations": true,
