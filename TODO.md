@@ -15,7 +15,11 @@ _Nothing currently in progress._
   - [ ] Add testcontainers-based Postgres fixture
   - [ ] Integration tests for main endpoints
 - [ ] **Auth** Review session/refresh-token flow (Sessions table, refresh date migration)
-- [ ] **Docs** Update README setup instructions (typo fixes, .env reference)
+- [ ] **[feat/04_readme_docs]** Update README documentation (typos, .env reference, setup clarity)
+  - [ ] Fix typos (`scghema cheks`, `continuosly`, `thte`, `instruciton`, `colelctions`, `paly`, `avantages`, `RUST_LOG=info=info` example)
+  - [ ] Fix broken links (badge points to old repo name; `[devop/README.md]` missing parentheses)
+  - [ ] Add env-var reference section based on `.env_example` (`DATABASE_URL`, `CONFIGURATION_FILE`, plus `PORT`, `RUST_LOG`)
+  - [ ] Clarify SQLx setup note (`cargo sqlx prepare` needs live DB; CI uses committed `.sqlx` cache with `SQLX_OFFLINE=true`)
 - [ ] **Jobs** Document and test scheduled jobs (currency rates via CoinGecko)
 
 ## Completed
