@@ -1,6 +1,9 @@
 # configuration file for local debug
 src/configuration.json
 
+# agent local build output
+agent_build/
+
 # Cargo build output
 target/
 
