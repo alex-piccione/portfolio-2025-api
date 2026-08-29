@@ -1,10 +1,7 @@
-use rand::RngCore;
-use base64::{engine::general_purpose, Engine as _};
-
 use crate::{constants, 
     entities::{session::Session, user::User},
     repositories::{schemas::session_record::SessionRecord, session_repository::SessionRepository},
-    services::user_service::UserService, utils::datetime
+    services::user_service::UserService, utils::datetime, utils::token::generate_token
 };
 
 #[derive(Clone)]
@@ -12,12 +9,6 @@ pub struct SessionService {
     repository: SessionRepository,    
     #[allow(dead_code)]
     user_service: UserService
-}
-
-pub fn generate_token() -> String {
-    let mut bytes = [0u8; 48];
-    rand::rng().fill_bytes(&mut bytes);
-    general_purpose::URL_SAFE_NO_PAD.encode(bytes)
 }
 
 impl SessionService {
@@ -103,28 +94,4 @@ impl SessionService {
     //pub async fn update(&self, item: Session) -> Result<(), String> {
     //    self.repository.update(item).await
     //}
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn generate_token_returns_non_empty_string() {
-        let token = generate_token();
-        assert!(!token.is_empty());
-    }
-
-    #[test]
-    fn generate_token_has_expected_length() {
-        let token = generate_token();
-        assert_eq!(token.len(), 64);
-    }
-
-    #[test]
-    fn generate_token_returns_unique_values() {
-        let t1 = generate_token();
-        let t2 = generate_token();
-        assert_ne!(t1, t2);
-    }
 }
