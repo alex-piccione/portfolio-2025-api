@@ -17,3 +17,34 @@ pub fn verify_password(password: &str, hashed_password: &str) -> bool {
     
     argon2.verify_password(password.as_bytes(), &parsed_hash).is_ok()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn hash_and_verify_roundtrip() {
+        let hash = hash_password("S3cret-Pass!");
+        assert!(hash.starts_with("$argon2"));
+        assert!(verify_password("S3cret-Pass!", &hash));
+    }
+
+    #[test]
+    fn verify_rejects_wrong_password() {
+        let hash = hash_password("correct");
+        assert!(!verify_password("incorrect", &hash));
+    }
+
+    #[test]
+    fn hashes_are_salted_and_unique() {
+        let h1 = hash_password("same");
+        let h2 = hash_password("same");
+        assert_ne!(h1, h2);
+    }
+
+    #[test]
+    #[should_panic]
+    fn verify_panics_on_invalid_hash_format() {
+        verify_password("whatever", "not-a-valid-hash");
+    }
+}

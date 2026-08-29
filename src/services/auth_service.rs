@@ -150,3 +150,34 @@ pub struct LoginRequest {
     pub ip_address: String,
     pub user_agent:String
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn generate_token_returns_non_empty_string() {
+        let token = generate_token();
+        assert!(!token.is_empty());
+    }
+
+    #[test]
+    fn generate_token_has_expected_length() {
+        let token = generate_token();
+        // 48 bytes base64url without padding = 64 chars
+        assert_eq!(token.len(), 64);
+    }
+
+    #[test]
+    fn generate_token_returns_unique_values() {
+        let t1 = generate_token();
+        let t2 = generate_token();
+        assert_ne!(t1, t2);
+    }
+
+    #[test]
+    fn generate_token_uses_url_safe_alphabet() {
+        let token = generate_token();
+        assert!(token.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_'));
+    }
+}
