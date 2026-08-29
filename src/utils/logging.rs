@@ -1,5 +1,11 @@
 use tracing;
 use tracing_subscriber;
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, filter::EnvFilter};
+
+// Defines macros for logging at different levels
+// Setup the logging system with setup_logging function
+// Log path is defined in constants module (TODO: pass as parameter?)
 
 #[macro_export]
 macro_rules! trace {
@@ -63,14 +69,32 @@ pub(crate) fn setup_logging(log_level:&str) {
         _ => tracing::Level::INFO, // default
     };
 
-    tracing_subscriber::fmt()
-        .json()        
-        .with_max_level(log_level)
+    // Create filter from level
+    let filter = EnvFilter::from_default_env()
+        .add_directive(log_level.into());
+    //let file_appender = RollingFileAppender::new(
+    //    tracing_appender::rolling::daily("/data/logs", "api.log")
+    //);
+
+    // JSON formatted logging to file
+    let file_layer = tracing_subscriber::fmt::layer()
+        .json()
+        .with_writer(tracing_appender::rolling::daily( constants::logging::LOG_DIRECTORY, constants::logging::LOG_FILE_NAME))
         .with_thread_ids(true)
+        .with_filter(filter.clone());
         //.with_thread_names(true)  // If you use named threads
         //.with_file(true)          // Adds source file path
         //.with_line_number(true)   // Adds line number
-        .init()
+
+    let stdout_layer = tracing_subscriber::fmt::layer()        
+        .with_writer(std::io::stdout)
+        .with_thread_ids(true)
+        .with_filter(filter);
+
+    tracing_subscriber::registry()    
+        .with(file_layer)
+        .with(stdout_layer)
+        .init();
 }
 
 /*#[macro_export]

@@ -11,3 +11,8 @@ services:
       - "50302:5432"
     volumes:
       - ${VOLUMES_ROOT:?missed}/postgres:/var/lib/postgresql/data
+    networks: [portfolio]
+
+networks:
+  portfolio:
+    external: true

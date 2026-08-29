@@ -44,10 +44,10 @@
             "preLaunchTask": "🦀 Cargo Build",
         },
         {
-            "name": "🐳 Docker Compose",
+            "name": "🐳 Docker Stack Deploy",
             "type": "node",
             "request": "attach",
-            "preLaunchTask": "🐳 Docker Compose Up",
+            "preLaunchTask": "🐳 Docker Stack Deploy",
         }
     ]
 }

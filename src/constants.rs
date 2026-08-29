@@ -10,6 +10,11 @@ pub mod auth {
     }
 }
 
+pub mod logging {
+    pub const LOG_DIRECTORY:&str = "/data/logs";
+    pub const LOG_FILE_NAME:&str = "api.log";
+}
+
 pub mod external_services {
     pub const COINGECKO:&str = "CoinGecko";
     //pub const COINMARKETCAP:&str = "CoinMarketCap";

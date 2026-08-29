@@ -1,3 +1,4 @@
+# Replaced by docker-stack.yml
 name: portfolio
 
 services:
@@ -13,4 +14,11 @@ services:
       - "50301:3000"
     volumes:
       - ${VOLUMES_ROOT:?missed}/api:/data
-
+    ## logging with loki does not work with Docker Swarm
+    #logging:
+    #  driver: loki  # Docker Loki driver
+    #    opltions:
+    #      loki-url: "http://loki:3100/loki/api/v1/push"
+    #      loki-external-labels: "service=portfolio-api, environment=Local"
+    #      loki-retries: 2
+    #      loki-batch-size: 400

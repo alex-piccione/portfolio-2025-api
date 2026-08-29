@@ -29,15 +29,18 @@
             "group": "build"
         },
         {
+            "label": "🐳 Docker Stack Deploy",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}/devop"},
+            "command": "./deploy-local.sh",
+            "group": "build"
+        }
+        /*{
             "label": "🐳 Docker Compose Up",
-            /*"icon": {
-                "id": "play",
-                "color": "terminal.ansiBlue"
-            },*/
             "type": "shell",
             "options": { "cwd": "${workspaceFolder}/devop"},
             "command": "docker compose -f compose.all.yaml up --build -d",
             "group": "build"
-        }
+        }*/
     ]
 }

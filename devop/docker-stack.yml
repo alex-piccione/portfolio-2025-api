@@ -1,26 +1,32 @@
-# this is an example/old copy
-version: '3.8'
+# this is for local deployment of Docker Swarm stack
+version: '3.9'
+
+networks:
+  portfolio:
+    #name: portfolio  # inernal network, without specify the name it will create "{stack_name}_portfolio"
+    external: true  # use existing network
 
 services:
   api:
-    image: ghcr.io/alex-piccione/portfolio-api:latest
+    image: portfolio-api:local-1
     ports:
       # port exposed on server: 50301
       # the IP is used to allow main NGINX to access the localhost service
       # - 127.0.0.1:50301:80  Docker Swarm does not allow to change IP, so use 0.0.0.0
       - 0.0.0.0:50301:3000
-
+    networks: [portfolio]
     volumes:
-      - /Data/projects/portfolio/logs/api:/logs
-      - /Data/projects/portfolio/docker-volumes/api:/data
+      - ${VOLUMES_ROOT}/api:/data
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       update_config:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+               
+      
     ## host.docker.internal is required to allow Docker Swarm services to reach other container on the same server
     #extra_hosts:
     #  - "host.docker.internal:host-gateway" 

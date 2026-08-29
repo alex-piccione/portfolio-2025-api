@@ -1,6 +1,6 @@
 # ./test_local_Dockerfile.sh
 
-# move where Dockerfile and source code is
+# move where Dockerfile and source code are located
 cd ..
 CONFIGURATION_FILE=configuration_local.json
 VERSION=local-1

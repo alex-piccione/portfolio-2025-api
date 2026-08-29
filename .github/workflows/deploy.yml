@@ -10,10 +10,10 @@ permissions:
   packages: write
 
 env:
-  # it MUST contain start with ghcr.io/ and it MUST be lowercase
+  # it MUST start with ghcr.io/ and it MUST be lowercase
   IMAGE: ghcr.io/${{ github.repository_owner }}/portfolio-api
   VERSION: 0.1.${{ github.run_number }}
-  CONFIGURATION_FILE: /Data/projects/
+  CONFIGURATION_FILE: /Data/projects/  # path on the server where configuration files are stored
 
 jobs:
   docker_image:

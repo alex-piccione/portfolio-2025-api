@@ -5,16 +5,33 @@ Ports:
 - 50301: api
 - 50302: database
 
+## Docker prerequisites
+
+It requires a network to already exists in Docker (type "external" mean that).  
+  
+```sh
+docker network create --driver overlay --attachable portfolio
+```
+
+"overlay" is required for Swarm to manage replicas and load balancing  
+"attachable" allows standalone container (not-Swarm) to join the network (database?)
+
 ## Docker containers for API and Database
 
+```sh
+docker stack deploy --with-registry-auth --prune --detach=false -c=docker-stack.yml portfolio-api
+```
+
+### OLD - docker compose for API service
 From the "devop" folder:  
 `docker compose -f compose.all.yaml up`  or  
 `docker compose -f compose.all.yaml up --build`  
 **note:** if you change the _.env_ or the _configuration_ files, use **--buil** version.  
 
+
 ## Database
 
-The database is a Postgres docker container running on a Linux VPS, not part of this project.    
+The database is a Postgres docker container running on a Linux server, not part of this project.    
 We use [SQLx](https://docs.rs/sqlx/latest/sqlx) to manage database interaction.  
 We use SQLx macros that check the SQL over the database, see the [doc about SQLx](../src/repositories/SQLx.md).  
 
