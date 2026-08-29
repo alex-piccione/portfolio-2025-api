@@ -9,7 +9,10 @@ _Nothing currently in progress._
 - [ ] **Testing** Integration tests for endpoints with test Postgres container (follow-up after unit tests)
   - [ ] Add testcontainers-based Postgres fixture
   - [ ] Integration tests for main endpoints
-- [ ] **Utils** Extract `generate_token` from `auth_service` + `session_service` into `src/utils/token.rs` (DRY — identical 3-line function duplicated in both modules)
+- [ ] **[refactor/05_extract_generate_token]** Extract `generate_token` from `auth_service` + `session_service` into `src/utils/token.rs` (DRY)
+  - [ ] Create `src/utils/token.rs` with shared implementation (+ module declaration in `utils/mod.rs`), move its unit tests along
+  - [ ] Remove duplicated implementations and their test blocks from `auth_service.rs` / `session_service.rs`; import from `crate::utils::token`
+  - [ ] Verify locally (`cargo build`/`test`, `SQLX_OFFLINE=true`) and via PR Check workflow
 - [ ] **Auth** Review session/refresh-token flow (Sessions table, refresh date migration)
 - [ ] **Docs** Update README setup instructions (typo fixes, .env reference)
 - [ ] **Jobs** Document and test scheduled jobs (currency rates via CoinGecko)
