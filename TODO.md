@@ -19,7 +19,7 @@ _Nothing currently in progress._
 
 ## Completed
 
-- **[feat/04_readme_docs]** Update README documentation — fixed typos (`scghema cheks`, `continuosly`, `thte`, `instruciton`, `colelctions`, `paly`, `avantages`, `RUST_LOG=info=info`), fixed badge repo name and broken `devop/README.md` link, added env-var reference table (`DATABASE_URL`, `CONFIGURATION_FILE`, `RUST_LOG`; runtime settings come from the configuration JSON) and clarified SQLx offline-mode note for CI.
+- **[feat/04_readme_docs]** Update README documentation — typo and broken-link fixes, new environment-variable reference section, and clarified SQLx setup notes.
 - **[feat/02_ci_workflow]** Add PR Check workflow — `.github/workflows/pr_check.yml`: cargo check, build, test on every PR to `main`, with `SQLX_OFFLINE=true` using the committed `.sqlx` cache (no DB in CI). Committed directly on `main` by the owner (PAT lacks `workflow` scope).
 
 _Nothing else completed yet._
