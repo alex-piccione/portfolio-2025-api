@@ -2,13 +2,17 @@
 
 ## In Progress
 
-_Nothing currently in progress._
+- **[feat/06_endpoint_integration_tests]** Integration tests for main endpoints using mocked AppState (no DB)
+  - Strategy: call endpoint functions directly with a hand-built `AppState` (services use in-memory DashMap caches; no PgPool needed).
+  - Cover: auth (signup/login/refresh), config/home, currencies CRUD, holdings CRUD
+  - Run via `cargo test`
+  - Follow-up (testcontainers-based Postgres fixture) left for later when DB-backed integration is required.
 
 ## Backlog
 
 - [ ] **Testing** Integration tests for endpoints with test Postgres container (follow-up after unit tests)
   - [ ] Add testcontainers-based Postgres fixture
-  - [ ] Integration tests for main endpoints
+  - [ ] Integration tests for main endpoints (DB-backed variant)
 - [ ] **[refactor/05_extract_generate_token]** Extract `generate_token` from `auth_service` + `session_service` into `src/utils/token.rs` (DRY)
   - [ ] Create `src/utils/token.rs` with shared implementation (+ module declaration in `utils/mod.rs`), move its unit tests along
   - [ ] Remove duplicated implementations and their test blocks from `auth_service.rs` / `session_service.rs`; import from `crate::utils::token`
@@ -25,5 +29,3 @@ _Nothing currently in progress._
   - Write unit tests: `password_hashing` (hash/verify roundtrip, wrong password rejection, salted uniqueness, invalid format panic), `generate_token` (non-empty, 64-char length, uniqueness, URL-safe alphabet), `datetime::now()` (within tolerance), `datetime::today()` (matches today), `datetime::try_from()` (RFC3339, ISO with microseconds, date-only, error on invalid input)
   - 17 tests passing via `cargo test`
 - **[feat/02_ci_workflow]** Add PR Check workflow — `.github/workflows/pr_check.yml`: cargo check, build, test on every PR to `main`, with `SQLX_OFFLINE=true` using the committed `.sqlx` cache (no DB in CI). Committed directly on `main` by the owner (PAT lacks `workflow` scope).
-
-_Nothing else completed yet._
