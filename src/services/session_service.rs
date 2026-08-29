@@ -104,3 +104,27 @@ impl SessionService {
     //    self.repository.update(item).await
     //}
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn generate_token_returns_non_empty_string() {
+        let token = generate_token();
+        assert!(!token.is_empty());
+    }
+
+    #[test]
+    fn generate_token_has_expected_length() {
+        let token = generate_token();
+        assert_eq!(token.len(), 64);
+    }
+
+    #[test]
+    fn generate_token_returns_unique_values() {
+        let t1 = generate_token();
+        let t2 = generate_token();
+        assert_ne!(t1, t2);
+    }
+}

@@ -114,6 +114,59 @@ impl TryFrom<String> for AppDateTime {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::{Utc, Datelike, Timelike};
+
+    #[test]
+    fn now_returns_current_time() {
+        let now = now();
+        let expected = Utc::now();
+        let diff = (now - expected).num_seconds().unsigned_abs();
+        assert!(diff < 5, "now() was {} seconds off", diff);
+    }
+
+    #[test]
+    fn today_returns_today() {
+        let today = today();
+        let expected = Utc::now().date_naive();
+        assert_eq!(today, expected);
+    }
+
+    #[test]
+    fn try_from_parses_rfc3339() {
+        let dt = try_from("2024-01-15T10:30:00Z".to_string()).unwrap();
+        assert_eq!(dt.year(), 2024);
+        assert_eq!(dt.month(), 1);
+        assert_eq!(dt.day(), 15);
+        assert_eq!(dt.hour(), 10);
+        assert_eq!(dt.minute(), 30);
+    }
+
+    #[test]
+    fn try_from_parses_iso_with_microseconds() {
+        let dt = try_from("2024-01-15T10:30:00.123Z".to_string()).unwrap();
+        assert_eq!(dt.year(), 2024);
+        assert_eq!(dt.second(), 0);
+    }
+
+    #[test]
+    fn try_from_parses_date_only() {
+        let dt = try_from("2024-01-15".to_string()).unwrap();
+        assert_eq!(dt.year(), 2024);
+        assert_eq!(dt.month(), 1);
+        assert_eq!(dt.day(), 15);
+        assert_eq!(dt.hour(), 0);
+    }
+
+    #[test]
+    fn try_from_returns_error_on_invalid_input() {
+        let result = try_from("not-a-date".to_string());
+        assert!(result.is_err());
+    }
+}
+
 
 //use serde::{Deserialize, Serialize};
 //use sqlx::types::time::OffsetDateTime;
