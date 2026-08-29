@@ -16,6 +16,7 @@ _Nothing currently in progress._
 
 ## Completed
 
+- **[feat/04_readme_docs]** Update README documentation — typo and broken-link fixes, new environment-variable reference section, and clarified SQLx setup notes.
 - **[feat/03_service_layer_tests]** Add unit tests for the services layer (pure logic)
   - Survey services layer — most services are DB-bound; pure-logic units: `password_hashing`, `generate_token` (auth_service + session_service), `utils::datetime`
   - Write unit tests: `password_hashing` (hash/verify roundtrip, wrong password rejection, salted uniqueness, invalid format panic), `generate_token` (non-empty, 64-char length, uniqueness, URL-safe alphabet), `datetime::now()` (within tolerance), `datetime::today()` (matches today), `datetime::try_from()` (RFC3339, ISO with microseconds, date-only, error on invalid input)

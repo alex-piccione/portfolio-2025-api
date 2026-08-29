@@ -1,30 +1,41 @@
 # Portfolio 2025 - API
 
-[![Deploy](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml/badge.svg)](https://github.com/alex-piccione/learning.Rust.Axum/actions/workflows/deploy.yml)
+[![Deploy](https://github.com/alex-piccione/portfolio-2025-api/actions/workflows/deploy.yml/badge.svg)](https://github.com/alex-piccione/portfolio-2025-api/actions/workflows/deploy.yml)
 
 This API was created as a learning project for the Rust language.  
 Web API with Rust.  
 **Axum**: library for API service.  
-**Sqlx**: library to interact with database (compile-time scghema cheks).
+**Sqlx**: library to interact with database (compile-time schema checks).
 
 
 ## Setup
 
-- _.env_ file: create a .env file on the root, see _.env_example_ as reference. 
-- convert migrations file to Linux format, if on Windows machine ( see README inside /migrations folder) 
+- _.env_ file: create a .env file on the root, see _.env_example_ as reference.
+- convert migrations file to Linux format, if on Windows machine ( see README inside /migrations folder)
+
+### Environment variables
+
+| Variable | Used by | Purpose |
+|---|---|---|
+| `DATABASE_URL` | SQLx CLI (`cargo sqlx prepare`, migrations) | Connection string for the local Postgres container |
+| `CONFIGURATION_FILE` | Application runtime | Path to the configuration JSON (see `src/configuration_local.json`) |
+| `RUST_LOG` | _tracing-subscriber_ | Log level filter, e.g. `info` or `your_crate=debug,tower=info` |
+
+The server port and other runtime settings live in the configuration file pointed to by `CONFIGURATION_FILE` (e.g. `server_port`).
 
 
 ## Development
 
-_rust-analyzer_ continuosly check the code and highlight issues, `cargo build` will compile the project with the list of errors too.    
+_rust-analyzer_ continuously checks the code and highlights issues, `cargo build` will compile the project with the list of errors too.
 
 ### SQLx
 
 SQLx is set to verify the database entity and need to be able to access the database.  
 It uses the **DATABASE_URL** variable set in the _.env_ file, it points to a local Docker container with Postgres.  
 `cargo sqlx prepare`.  
+Note: `cargo sqlx prepare` needs a reachable database via `DATABASE_URL`; CI instead uses the committed `.sqlx` cache with `SQLX_OFFLINE=true` (no DB required).
   
-Refer to thte [SQLx](src/repositories/SQLx.md) readme.
+Refer to the [SQLx](src/repositories/SQLx.md) readme.
 
 ### DateTime
 Rust standard library does not have Date or Datetime types (!).  
@@ -50,13 +61,13 @@ taskkill /PID <PID> /F
 ```
 
 ### Docker
-See [devop/README.md] for instruciton to run the api and database on local Docker.  
+See [devop/README.md](devop/README.md) for instructions to run the api and database on local Docker.
 
 ## Deploy
 
 ### On private server
 
-"distroless" Dockerfile avantages:
+"distroless" Dockerfile advantages:
 - Minimal attack surface (no shell, package manager, etc.)
 - Only contains your application and minimal runtime
 - Regularly updated by Google
@@ -69,7 +80,7 @@ See [devop/README.md](devop/README.md#Deploy) for how to configure the script.
 ## Logging
 
 I use _tracing_ and _tracing-subscriber_.  
-Use the environment variable _RUST_LOG_ (`RUST_LOG=info=info` or `RUST_LOG=your_crate=debug,tower=info`).  
+Use the environment variable _RUST_LOG_ (`RUST_LOG=info` or `RUST_LOG=your_crate=debug,tower=info`).
 There are macros in _logging.rs_ to facilitate it.  
 
 TODO:  
@@ -94,8 +105,8 @@ let port = std::env::var("PORT")
 ### static mut
 _static mut_ in Rust is ... not possible.  
 Not without _unsafe_.  
-In other languages you have thread-safe colelctions, but not in Rust standard library.  
-You can paly around and write cumbersome code with LazyLock, RwLock and Mutex... that's it.  
+In other languages you have thread-safe collections, but not in Rust standard library.
+You can play around and write cumbersome code with LazyLock, RwLock and Mutex... that's it.
 Otherwise, third party library. I choose "Dashmap". There is not an equivalent of Dashmap for collections! 
 
 ### Read local file
