@@ -1,8 +1,5 @@
-use rand::RngCore;
-use base64::{engine::general_purpose, Engine as _};
-
 use crate::{ constants, entities::{currency::Currency, session::Session, user::User}, repositories::{schemas::session_record::{SessionRecord, SessionWithUser, UpdateForAccess, UpdateForRefresh}, session_repository::SessionRepository}, services::{password_hashing::{hash_password, verify_password}, 
-session_service::SessionService, user_service::{CreateError, UserService}}, utils::datetime::{self, now}};
+session_service::SessionService, user_service::{CreateError, UserService}}, utils::datetime::{self, now}, utils::token::generate_token};
 
 #[derive(Clone)]
 pub struct AuthService {
@@ -20,12 +17,6 @@ pub enum LoginError {
 pub enum AuthError {
     DatabaseError(String),
     InvalidOrExpiredToken(String),
-}
-
-pub fn generate_token() -> String {
-    let mut bytes = [0u8; 48];
-    rand::rng().fill_bytes(&mut bytes);
-    general_purpose::URL_SAFE_NO_PAD.encode(bytes)
 }
 
 impl AuthService {
@@ -151,33 +142,3 @@ pub struct LoginRequest {
     pub user_agent:String
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn generate_token_returns_non_empty_string() {
-        let token = generate_token();
-        assert!(!token.is_empty());
-    }
-
-    #[test]
-    fn generate_token_has_expected_length() {
-        let token = generate_token();
-        // 48 bytes base64url without padding = 64 chars
-        assert_eq!(token.len(), 64);
-    }
-
-    #[test]
-    fn generate_token_returns_unique_values() {
-        let t1 = generate_token();
-        let t2 = generate_token();
-        assert_ne!(t1, t2);
-    }
-
-    #[test]
-    fn generate_token_uses_url_safe_alphabet() {
-        let token = generate_token();
-        assert!(token.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_'));
-    }
-}
