@@ -9,6 +9,7 @@ _Nothing currently in progress._
 - [ ] **Testing** Integration tests for endpoints with test Postgres container (follow-up after unit tests)
   - [ ] Add testcontainers-based Postgres fixture
   - [ ] Integration tests for main endpoints
+- [ ] **Utils** Extract `generate_token` from `auth_service` + `session_service` into `src/utils/token.rs` (DRY — identical 3-line function duplicated in both modules)
 - [ ] **Auth** Review session/refresh-token flow (Sessions table, refresh date migration)
 - [ ] **Docs** Update README setup instructions (typo fixes, .env reference)
 - [ ] **Jobs** Document and test scheduled jobs (currency rates via CoinGecko)
