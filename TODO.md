@@ -6,9 +6,14 @@ _Nothing currently in progress._
 
 ## Backlog
 
-- [ ] **Testing** Add unit/integration test suite (N/A framework choice for Rust: `cargo test` + `tokio::test`)
-  - [ ] Tests for services layer (pure logic)
-  - [ ] Integration tests for endpoints with test Postgres container
+- [ ] **[feat/03_service_layer_tests]** Add unit tests for the services layer (pure logic)
+  - [ ] Survey services layer (auth, currency, custodian, holding, session, user, password_hashing) and identify pure-logic units testable without DB/network
+  - [ ] Add dev-dependencies (`tokio` test features, etc.) to Cargo.toml
+  - [ ] Write unit tests per service module (incl. password_hashing, token/session logic)
+  - [ ] Run `cargo test` and wire into existing PR Check workflow (already covered: workflow runs `cargo test`)
+- [ ] **Testing** Integration tests for endpoints with test Postgres container (follow-up after unit tests)
+  - [ ] Add testcontainers-based Postgres fixture
+  - [ ] Integration tests for main endpoints
 - [ ] **Auth** Review session/refresh-token flow (Sessions table, refresh date migration)
 - [ ] **Docs** Update README setup instructions (typo fixes, .env reference)
 - [ ] **Jobs** Document and test scheduled jobs (currency rates via CoinGecko)
