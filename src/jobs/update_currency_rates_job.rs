@@ -41,7 +41,7 @@ impl RecurringJob for UpdateCurrencyRatesJob {
                     }
                 }
             }
-            Err(e) => crate::error!("Failed to get rats from Coingeco. {}", e),
+            Err(e) => crate::error!("Failed to get rates from CoinGecko. {}", e),
         }
     }
 }
