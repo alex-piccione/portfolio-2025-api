@@ -4,10 +4,6 @@
      pull_request:
        branches: [main]
 
-   # SQLX_OFFLINE: build uses the committed .sqlx cache, no DB needed in CI.
-   # NOTE: after changing a query or a migration, re-run `cargo sqlx prepare`
-   # locally and commit the refreshed .sqlx files, or CI will build against
-   # stale schema metadata.
    env:
      SQLX_OFFLINE: "true"
      CARGO_TERM_COLOR: always
