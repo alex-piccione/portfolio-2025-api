@@ -11,10 +11,11 @@ _Nothing currently in progress._
   - [ ] Integration tests for main endpoints
 - [ ] **Auth** Review session/refresh-token flow (Sessions table, refresh date migration)
 - [ ] **Docs** Update README setup instructions (typo fixes, .env reference)
-- [ ] **Jobs** Document and test scheduled jobs (currency rates via CoinGecko)
+- [ ] **Jobs** Test scheduled jobs (currency rates via CoinGecko) — follow-up after fix/07
 
 ## Completed
 
+- **[fix/07_jobs_typo_docs]** Fixed log-message typos in the currency-rates job ("rats"→"rates", "Coingeco"→"CoinGecko") and added doc comments documenting the `src/jobs` module (scheduler setup, `RecurringJob` trait, `UpdateCurrencyRatesJob`).
 - **[refactor/05_extract_generate_token]** DRY extraction of `generate_token` (implementation + unit tests) from auth_service/session_service into shared `src/utils/token.rs`.
 - **[feat/04_readme_docs]** Update README documentation — typo and broken-link fixes, new environment-variable reference section, and clarified SQLx setup notes.
 - **[feat/03_service_layer_tests]** Add unit tests for the services layer (pure logic)

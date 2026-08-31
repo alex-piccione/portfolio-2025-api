@@ -2,6 +2,10 @@ use crate::{configuration::Configuration, info, jobs::update_currency_rates_job:
 use tokio_cron_scheduler::{Job, JobScheduler};
 use async_trait::async_trait;
 
+/// Registers all recurring jobs with the scheduler and starts it.
+///
+/// Called once at application startup; the scheduler then drives each
+/// job according to its cron expression from `config.jobs`.
 pub async fn schedule_jobs(config: &Configuration, app_state: AppState) {
 
     let scheduler = JobScheduler::new().await.unwrap();
@@ -29,10 +33,13 @@ pub async fn schedule_jobs(config: &Configuration, app_state: AppState) {
 }
 
 
-// async_trait] is necessary because Rust async traits are not yet natively supported in stable.
-// Added Send + Sync bounds, which are typically required for types shared across threads.
+/// A job that can be executed repeatedly by the scheduler.
+///
+/// `Send + Sync` are required because the scheduler may invoke the job
+/// from a different thread than the one that created it.
 #[async_trait]
 pub trait RecurringJob: Send + Sync {
+    /// Executes one run of the job. Implementations should handle their own errors.
     async fn run(&self) -> ();
 }
 
