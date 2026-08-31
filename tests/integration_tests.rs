@@ -9,7 +9,6 @@
 
 use sqlx::PgPool;
 use testcontainers::runners::AsyncRunner;
-use testcontainers::ImageExt;
 use testcontainers_modules::postgres::Postgres;
 use portfolio_api::repositories::schemas::session_record::SessionWithUser;
 
