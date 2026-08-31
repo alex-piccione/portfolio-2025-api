@@ -5,8 +5,6 @@ use crate::{
     utils::dependency_injection::AppState,
 };
 
-/// Fetches current currency exchange rates from CoinGecko and stores them
-/// via [`crate::services::currency_rate_service`].
 #[derive(Clone)]
 pub struct UpdateCurrencyRatesJob {
     app_state: AppState,
@@ -20,7 +18,6 @@ impl UpdateCurrencyRatesJob {
 
 #[async_trait]
 impl RecurringJob for UpdateCurrencyRatesJob {
-    /// Loads all rates from CoinGecko, then inserts each one; failures are logged per rate.
     async fn run(&self) -> () {
         /*match self.app_state.api.ping().await {
             true => info!("Coingecko Ping OK"),
