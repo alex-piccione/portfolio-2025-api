@@ -1,14 +1,5 @@
 # TODO
 
-## In Progress
-
-- **[feat/06_endpoint_integration_tests]** ✅ COMPLETE — integration tests with testcontainers + real Postgres
-  - Branch: `feat/06_endpoint_integration_tests` — PR #9 open: https://github.com/alex-piccione/portfolio-2025-api/pull/9
-  - All compile errors fixed; `cargo check --tests` passes (unit + integration tests)
-  - Unit tests pass (17/17)
-  - CI workflow updated (`pr_check.yml`) to run Docker-based integration tests
-  - Ready for merge
-
 ## Backlog
 
 - [ ] **Testing** Integration tests for endpoints with test Postgres container (follow-up after unit tests)
