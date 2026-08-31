@@ -29,6 +29,8 @@ pub async fn schedule_jobs(config: &Configuration, app_state: AppState) {
 }
 
 
+// async_trait] is necessary because Rust async traits are not yet natively supported in stable.
+// Added Send + Sync bounds, which are typically required for types shared across threads.
 #[async_trait]
 pub trait RecurringJob: Send + Sync {
     async fn run(&self) -> ();
