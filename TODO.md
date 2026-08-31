@@ -51,6 +51,7 @@
   - Fixed dev-deps (`testcontainers-modules = { version = "0.14", features = ["postgres"] }`)
   - Rewrote `tests/integration_tests.rs` to use `portfolio_api::…` imports, `sqlx::PgPool::connect`, `Postgres::default()` (no arg), `with_db_name`, `container.get_host().await`
   - Fixed `Session` type alias and `State<AppState>` constructor issues
+- **[refactor/05_extract_generate_token]** DRY extraction of `generate_token` (implementation + unit tests) from auth_service/session_service into shared `src/utils/token.rs`.
 - **[feat/04_readme_docs]** Update README documentation — typo and broken-link fixes, new environment-variable reference section, and clarified SQLx setup notes.
 - **[feat/03_service_layer_tests]** Add unit tests for the services layer (pure logic)
   - Survey services layer — most services are DB-bound; pure-logic units: `password_hashing`, `generate_token` (auth_service + session_service), `utils::datetime`
