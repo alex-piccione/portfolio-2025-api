@@ -6,6 +6,8 @@
   - [ ] Add testcontainers-based Postgres fixture  ← DONE (see In Progress)
   - [ ] Integration tests for main endpoints (DB-backed variant)  ← COMPILE PASS (tests written; run on Docker-enabled machine)
   - [ ] `list_of_user` endpoint integration test
+  - [ ] `update` tests for currency/custodian/holding
+  - [ ] custodian CRUD tests (single/create/delete)
 - [ ] **[refactor/05_extract_generate_token]** Extract `generate_token` from `auth_service` + `session_service` into `src/utils/token.rs` (DRY)
   - [ ] Create `src/utils/token.rs` with shared implementation (+ module declaration in `utils/mod.rs`), move its unit tests along
   - [ ] Remove duplicated implementations and their test blocks from `auth_service.rs` / `session_service.rs`; import from `crate::utils::token`

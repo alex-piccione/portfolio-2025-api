@@ -202,8 +202,7 @@ async fn currency_create_and_delete_cycle() {
 #[tokio::test]
 async fn custodian_list_returns_custodians() {
     let state = app_state().await;
-    let session = login(&state).await;
-    let _session = &session;
+    let _session = login(&state).await;
 
     let response = portfolio_api::endpoints::custodian_endpoint::list(
         axum::extract::State(state.clone()),
