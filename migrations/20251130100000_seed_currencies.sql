@@ -18,6 +18,7 @@ INSERT INTO Currency (symbol, name, kind, is_active, precision, coingecko_id, is
 ('BTC', 'Bitcoin', 'Crypto', true, 8, 'bitcoin', true),
 ('ETH', 'Ethereum', 'Crypto', true, 18, 'ethereum', true),
 ('XRP', 'XRP', 'Crypto', true, 6, 'ripple', true),
+('XRD', 'Radix', 'Crypto', true, 18, 'radix', false),
 ('SOL', 'Solana', 'Crypto', true, 9, 'solana', false),
 ('ADA', 'Cardano', 'Crypto', true, 6, 'cardano', false),
 ('DOT', 'Polkadot', 'Crypto', true, 10, 'polkadot', false),
