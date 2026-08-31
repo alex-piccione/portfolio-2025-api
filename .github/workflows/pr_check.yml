@@ -16,11 +16,6 @@ jobs:
   build_and_test:
     name: 🧪 Build & Test
     runs-on: ubuntu-latest
-    services:
-      # Docker-in-Docker service for integration tests (testcontainers)
-      docker:
-        image: docker:dind
-        options: --privileged
     steps:
       - name: 📦 Checkout code
         uses: actions/checkout@v5
@@ -28,7 +23,8 @@ jobs:
       - name: 🦀 Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      # Cache cargo registry + build artifacts
+      # Cache cargo registry + build artifacts: Rust deps are heavy,
+      # this makes subsequent runs much faster.
       - name: 🗄️ Cache cargo registry and build artifacts
         uses: actions/cache@v4
         with:
@@ -39,11 +35,10 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
-      # Install Docker CLI so testcontainers can communicate with docker:dind
-      - name: 🐳 Install Docker CLI
-        run: |
-          apt-get update && apt-get install -y docker.io
-          echo "DOCKER_HOST=tcp://localhost:2375" >> $GITHUB_ENV
+      # GitHub-hosted runners have Docker pre-installed and running,
+      # so testcontainers can use it directly (no dind service needed).
+      - name: 🐳 Verify Docker
+        run: docker info
 
       - name: ✅ Check
         run: cargo check --all-targets
@@ -51,10 +46,11 @@ jobs:
       - name: 🔨 Build
         run: cargo build
 
-      # Unit tests only (no Docker required)
+      # Unit tests (library): pure logic, no Docker required.
       - name: 🧪 Unit Tests
         run: cargo test --lib
 
-      # Integration tests (requires Docker)
+      # Integration tests: spin up a real Postgres via testcontainers
+      # (one container per test, hence --test-threads=1).
       - name: 🧪 Integration Tests
         run: cargo test --test integration_tests -- --test-threads=1
