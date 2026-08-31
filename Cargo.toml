@@ -31,7 +31,7 @@ tracing-subscriber = { version = "0.3.20", features=["json"] }
 
 [dev-dependencies]
 testcontainers = "0.26"
-testcontainers-modules = "0.14"
+testcontainers-modules = { version = "0.14", features = ["postgres"] }
 tokio-test = "0.4.5"
 
 #[dev-dependencies]

@@ -7,32 +7,30 @@
 // CONFIGURATION_FILE to a local json file and the container url as the
 // database_connection_string (no container created in that case).
 
-use sqlx::PgPoolOptions;
-use testcontainers::core::Docker;
+use sqlx::PgPool;
+use testcontainers::runners::AsyncRunner;
+use testcontainers::ImageExt;
 use testcontainers_modules::postgres::Postgres;
+use portfolio_api::repositories::schemas::session_record::SessionWithUser;
 
 /// Spawn a Postgres container and return a ready connection pool.
-async fn postgres_pool() -> sqlx::PgPool {
-    let docker = Docker::default();
-
-    // use the community-maintained Postgres module (v17.6, matches devop compose)
-    let pg_image = Postgres::default("17.6")
+async fn postgres_pool() -> PgPool {
+    // use the community-maintained Postgres module (matches devop compose)
+    let pg_image = Postgres::default()
         .with_user("portfolio_user")
         .with_password("portfolio_password")
-        .with_database("portfolio");
+        .with_db_name("portfolio");
 
-    let container = docker.run(pg_image);
-    let port = container.get_host_port_ipv4(5432);
+    let container = pg_image.start().await.expect("Failed to start Postgres container");
+    let port = container.get_host_port_ipv4(5432).await.expect("port");
+    let host = container.get_host().await.expect("host");
 
     let url = format!(
-        "postgres://portfolio_user:portfolio_password@127.0.0.1:{port}/portfolio"
+        "postgres://portfolio_user:portfolio_password@{host}:{port}/portfolio"
     );
 
     // give Postgres a moment to accept connections
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect_timeout(std::time::Duration::from_secs(30))
-        .connect(&url)
+    let pool = PgPool::connect(&url)
         .await
         .expect("Failed to connect to Postgres container");
 
@@ -46,23 +44,23 @@ async fn postgres_pool() -> sqlx::PgPool {
 }
 
 /// Build the application state that each test uses.
-async fn app_state() -> crate::dependency_injection::AppState {
+async fn app_state() -> portfolio_api::utils::dependency_injection::AppState {
     let pool = postgres_pool().await;
-    crate::dependency_injection::inject_services(&load_config(), pool).await
+    portfolio_api::utils::dependency_injection::inject_services(&load_config(), pool).await
 }
 
-fn load_config() -> crate::configuration::Configuration {
+fn load_config() -> portfolio_api::configuration::Configuration {
     use std::env;
     // Use the local configuration file from the repo
     let cfg_path = env::var("CONFIGURATION_FILE")
         .unwrap_or_else(|_| "src/configuration_local.json".to_string());
-    crate::Configuration::load_from_json_file(&cfg_path)
+    portfolio_api::configuration::Configuration::load_from_json_file(&cfg_path)
         .expect("Failed to load configuration")
 }
 
 /// Helper to log in and obtain the session / tokens.
-async fn login(state: &crate::dependency_injection::AppState) -> crate::entities::session::Session {
-    use crate::services::auth_service::LoginRequest;
+async fn login(state: &portfolio_api::utils::dependency_injection::AppState) -> portfolio_api::entities::session::Session {
+    use portfolio_api::services::auth_service::LoginRequest;
     let req = LoginRequest {
         username: "testuser".to_string(),
         password: "TestPass1!".to_string(),
@@ -73,26 +71,26 @@ async fn login(state: &crate::dependency_injection::AppState) -> crate::entities
         .auth_service
         .login(req)
         .await
-        .expect("login failed")
+        .unwrap_or_else(|_| panic!("login failed"))
 }
 
-// ── Home / Config ────────────────────────────────────────────────────────────
+// ── Home / Config ────────────────────────────────────────────────────
 
 #[tokio::test]
 async fn home_returns_ok() {
     let _state = app_state().await;
-    let response = crate::endpoints::common_endpoint::home().await;
+    let response = portfolio_api::endpoints::common_endpoint::home().await;
     let _ = response; // must not panic
 }
 
 #[tokio::test]
 async fn config_returns_ok() {
     let _state = app_state().await;
-    let response = crate::endpoints::common_endpoint::config().await;
+    let response = portfolio_api::endpoints::common_endpoint::config().await;
     let _ = response;
 }
 
-// ── Auth: Signup / Login / Refresh ───────────────────────────────────────────
+// ── Auth: Signup / Login / Refresh ───────────────────────────────────
 
 #[tokio::test]
 async fn signup_creates_user_and_returns_session() {
@@ -101,15 +99,15 @@ async fn signup_creates_user_and_returns_session() {
     // ensure a currency exists for the signup request
     let currency = state.currency_service.try_get(1).expect("currency 1 missing");
 
-    use crate::endpoints::models::auth_models::signup;
+    use portfolio_api::endpoints::models::auth_models::signup;
     let req = signup::Request {
         username: format!("signup_test_{}", uuid::Uuid::new_v4()),
         password: "TestPass1!".to_string(),
         currency_id: currency.id,
     };
-    let response = crate::endpoints::auth_endpoint::signup(
-        crate::dependency_injection::AppState::clone(&state),
-        crate::endpoints::request_json_validator::ValidJson(req),
+    let response = portfolio_api::endpoints::auth_endpoint::signup(
+        axum::extract::State(state.clone()),
+        portfolio_api::endpoints::request_json_validator::ValidJson(req),
     ).await;
     let _ = response; // must not panic
 }
@@ -127,30 +125,30 @@ async fn refresh_token_returns_new_tokens() {
     let state = app_state().await;
     let session = login(&state).await;
 
-    use crate::endpoints::models::auth_models::refresh_token;
+    use portfolio_api::endpoints::models::auth_models::refresh_token;
     let req = refresh_token::Request {
         refresh_token: session.refresh_token.clone(),
     };
-    let response = crate::endpoints::auth_endpoint::refresh_token(
-        crate::dependency_injection::AppState::clone(&state),
-        crate::endpoints::request_json_validator::ValidJson(req),
+    let response = portfolio_api::endpoints::auth_endpoint::refresh_token(
+        axum::extract::State(state.clone()),
+        portfolio_api::endpoints::request_json_validator::ValidJson(req),
     ).await;
     let _ = response;
 }
 
-// ── Currency CRUD ────────────────────────────────────────────────────────────
+// ── Currency CRUD ────────────────────────────────────────────────────
 
 #[tokio::test]
 async fn currency_list_all_returns_currencies() {
     let state = app_state().await;
-    let response = crate::endpoints::currency_endpoint::list_all(
-        crate::dependency_injection::AppState::clone(&state),
-        crate::utils::auth_middleware::Session(
-            crate::repositories::schemas::session_record::SessionWithUser {
+    let response = portfolio_api::endpoints::currency_endpoint::list_all(
+        axum::extract::State(state.clone()),
+        axum::Extension(
+            portfolio_api::repositories::schemas::session_record::SessionWithUser {
                 user_id: "00000000-0000-0000-0000-000000000000".to_string(),
                 username: "admin".to_string(),
-                access_token_expires_at: crate::utils::datetime::now(),
-                refresh_token_expires_at: crate::utils::datetime::now(),
+                access_token_expires_at: portfolio_api::utils::datetime::now(),
+                refresh_token_expires_at: portfolio_api::utils::datetime::now(),
             }
             .into(),
         ),
@@ -163,8 +161,8 @@ async fn currency_single_returns_one() {
     let state = app_state().await;
     let currency = state.currency_service.try_get(1).expect("currency 1 missing");
 
-    let response = crate::endpoints::currency_endpoint::single(
-        crate::dependency_injection::AppState::clone(&state),
+    let response = portfolio_api::endpoints::currency_endpoint::single(
+        axum::extract::State(state.clone()),
         axum::extract::Path(currency.id),
     ).await;
     let _ = response;
@@ -174,7 +172,7 @@ async fn currency_single_returns_one() {
 async fn currency_create_and_delete_cycle() {
     let state = app_state().await;
 
-    use crate::endpoints::models::currency_models;
+    use portfolio_api::endpoints::models::currency_models;
     let create_req = currency_models::CreateRequest {
         symbol: "XTEST".to_string(),
         name: "Test Currency".to_string(),
@@ -184,23 +182,23 @@ async fn currency_create_and_delete_cycle() {
         is_major: false,
         coingecko_id: None,
     };
-    let response = crate::endpoints::currency_endpoint::create(
-        crate::dependency_injection::AppState::clone(&state),
-        crate::endpoints::request_json_validator::ValidJson(create_req),
+    let response = portfolio_api::endpoints::currency_endpoint::create(
+        axum::extract::State(state.clone()),
+        portfolio_api::endpoints::request_json_validator::ValidJson(create_req),
     ).await;
     let _ = response; // must not panic
 
     // cleanup: find and delete the created currency
     let currency = state.currency_service.try_get_by_symbol_CI("XTEST");
     if let Some(c) = currency {
-        let _ = crate::endpoints::currency_endpoint::delete(
-            crate::dependency_injection::AppState::clone(&state),
+        let _ = portfolio_api::endpoints::currency_endpoint::delete(
+            axum::extract::State(state.clone()),
             axum::extract::Path(c.id),
         ).await;
     }
 }
 
-// ── Custodian CRUD ───────────────────────────────────────────────────────────
+// ── Custodian CRUD ───────────────────────────────────────────────────
 
 #[tokio::test]
 async fn custodian_list_returns_custodians() {
@@ -208,13 +206,13 @@ async fn custodian_list_returns_custodians() {
     let session = login(&state).await;
     let _session = &session;
 
-    let response = crate::endpoints::custodian_endpoint::list(
-        crate::dependency_injection::AppState::clone(&state),
+    let response = portfolio_api::endpoints::custodian_endpoint::list(
+        axum::extract::State(state.clone()),
     ).await;
     let _ = response;
 }
 
-// ── Holding CRUD ─────────────────────────────────────────────────────────────
+// ── Holding CRUD ─────────────────────────────────────────────────────
 
 #[tokio::test]
 async fn holding_create_and_list_cycle() {
@@ -226,20 +224,25 @@ async fn holding_create_and_list_cycle() {
     let custodian_list = state.custodian_service.list().await.expect("custodian list failed");
     let custodian = custodian_list.first().expect("no custodians found");
 
-    use crate::endpoints::models::holding_models::create;
+    use portfolio_api::endpoints::models::holding_models::create;
     let req = create::Request {
         custodian_id: custodian.id,
         currency_id: currency.id,
-        date: crate::utils::datetime::now(),
+        date: portfolio_api::utils::datetime::now(),
         action: "Balance At".to_string(),
         amount: rust_decimal::Decimal::from(100),
         note: Some("integration test".to_string()),
     };
 
-    let response = crate::endpoints::holding_endpoint::create(
-        crate::dependency_injection::AppState::clone(&state),
-        crate::utils::auth_middleware::Session(session.clone()),
-        crate::endpoints::request_json_validator::ValidJson(req),
+    let response = portfolio_api::endpoints::holding_endpoint::create(
+        axum::extract::State(state.clone()),
+        axum::Extension(SessionWithUser {
+            user_id: session.user.id.clone(),
+            username: session.user.username.clone(),
+            access_token_expires_at: session.access_token_expires_at,
+            refresh_token_expires_at: session.refresh_token_expires_at,
+        }),
+        portfolio_api::endpoints::request_json_validator::ValidJson(req),
     ).await;
     let _ = response; // must not panic
 }
@@ -249,10 +252,15 @@ async fn holding_list_returns_items() {
     let state = app_state().await;
     let session = login(&state).await;
 
-    let response = crate::endpoints::holding_endpoint::list(
-        crate::dependency_injection::AppState::clone(&state),
-        crate::utils::auth_middleware::Session(session),
-        axum::extract::Query(crate::endpoints::models::holding_models::search::Params {
+    let response = portfolio_api::endpoints::holding_endpoint::list(
+        axum::extract::State(state.clone()),
+        axum::Extension(SessionWithUser {
+            user_id: session.user.id.clone(),
+            username: session.user.username.clone(),
+            access_token_expires_at: session.access_token_expires_at,
+            refresh_token_expires_at: session.refresh_token_expires_at,
+        }),
+        axum::extract::Query(portfolio_api::endpoints::models::holding_models::search::Params {
             only_latest_balance: false,
         }),
     ).await;
