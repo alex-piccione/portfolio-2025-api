@@ -1,5 +1,6 @@
 -- Seed initial currencies for the application
 -- These are the currencies required by the application to function properly
+-- precision = native smallest unit decimals (ISO 4217 minor units for fiat)
 
 INSERT INTO Currency (symbol, name, kind, is_active, precision, coingecko_id, is_major) VALUES
 -- Fiat currencies
@@ -12,13 +13,15 @@ INSERT INTO Currency (symbol, name, kind, is_active, precision, coingecko_id, is
 ('CAD', 'Canadian Dollar', 'Fiat', true, 2, NULL, false),
 ('CNY', 'Chinese Yuan', 'Fiat', true, 2, NULL, false),
 
--- Crypto currencies
+-- Crypto currencies (native decimals: satoshi 1e-8, wei 1e-18, lamport 1e-9,
+-- lovelace 1e-6, Planck 1e-10, drop 1e-6, LINK 1e-18)
 ('BTC', 'Bitcoin', 'Crypto', true, 8, 'bitcoin', true),
-('ETH', 'Ethereum', 'Crypto', true, 8, 'ethereum', true),
-('SOL', 'Solana', 'Crypto', true, 8, 'solana', false),
-('ADA', 'Cardano', 'Crypto', true, 8, 'cardano', false),
-('DOT', 'Polkadot', 'Crypto', true, 8, 'polkadot', false),
-('LINK', 'Chainlink', 'Crypto', true, 8, 'chainlink', false),
+('ETH', 'Ethereum', 'Crypto', true, 18, 'ethereum', true),
+('XRP', 'XRP', 'Crypto', true, 6, 'ripple', true),
+('SOL', 'Solana', 'Crypto', true, 9, 'solana', false),
+('ADA', 'Cardano', 'Crypto', true, 6, 'cardano', false),
+('DOT', 'Polkadot', 'Crypto', true, 10, 'polkadot', false),
+('LINK', 'Chainlink', 'Crypto', true, 18, 'chainlink', false),
 
 -- Stablecoins
 ('USDT', 'Tether', 'Stablecoin', true, 6, 'tether', false),
