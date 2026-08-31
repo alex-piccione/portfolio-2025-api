@@ -11,7 +11,6 @@ _Nothing currently in progress._
   - [ ] Integration tests for main endpoints
 - [ ] **Auth** Review session/refresh-token flow (Sessions table, refresh date migration)
 - [ ] **Docs** Update README setup instructions (typo fixes, .env reference)
-- [ ] **Jobs** Document and test scheduled jobs (currency rates via CoinGecko)
 
 ## Completed
 
