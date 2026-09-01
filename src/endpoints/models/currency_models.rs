@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use crate::entities::currency as entities;
 use crate::entities::currency::CurrencyKind;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
-#[serde(rename_all = "camelCase")] 
+#[serde(rename_all = "camelCase")]
 pub struct Currency {
     pub id: i32,
     pub symbol: String,
@@ -29,7 +29,7 @@ impl From<entities::Currency> for Currency {
 }
 
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")] 
+#[serde(rename_all = "camelCase")]
 pub struct CreateRequest {
     pub symbol: String,
     pub name: String,
@@ -40,6 +40,7 @@ pub struct CreateRequest {
     pub coingecko_id: Option<String>,
 }
 
+#[allow(clippy::wrong_self_convention)]
 impl CreateRequest {
     pub fn to_entity(self) -> Result<entities::Currency, String> {
         Ok(entities::Currency {
@@ -55,9 +56,8 @@ impl CreateRequest {
     }
 }
 
-
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")] 
+#[serde(rename_all = "camelCase")]
 pub struct UpdateRequest {
     pub id: i32,
     pub symbol: String,
@@ -69,6 +69,7 @@ pub struct UpdateRequest {
     pub coingecko_id: Option<String>,
 }
 
+#[allow(clippy::wrong_self_convention)]
 impl UpdateRequest {
     pub fn to_entity(self) -> Result<entities::Currency, String> {
         Ok(entities::Currency {
@@ -84,10 +85,9 @@ impl UpdateRequest {
     }
 }
 
-
 //#[derive(Debug, Clone, FromRow)]
 #[derive(serde::Serialize)]
-#[serde(rename_all ="camelCase")] 
+#[serde(rename_all = "camelCase")]
 pub struct CurrencyOfUser {
     pub id: i32,
     pub symbol: String,
